@@ -28,16 +28,22 @@
       return {
         offset: 0,
         lowerBound: 0,
-        upperBound: 0
+        upperBound: 0,
+        sliderMin: 0,
+        sliderMax: 0,
+        value: this.props.minValue
       };
     },
 
     componentDidMount: function() {
-      var sliderWidth = this.refs.slider.getDOMNode().clientWidth;
-      var handleWidth = this.refs.handle.getDOMNode().clientWidth;
+      var slider = this.refs.slider.getDOMNode();
+      var handle = this.refs.handle.getDOMNode();
+      var rect = slider.getBoundingClientRect();
       
       this.setState({
-        upperBound: sliderWidth - handleWidth
+        upperBound: slider.clientWidth - handle.clientWidth,
+        sliderMin: rect.left,
+        sliderMax: rect.right - handle.clientWidth,
       });
     },
 
@@ -61,12 +67,18 @@
     },
 
     _dragMove: function(e) {
-      var nextOffset = this.state.offset + e.webkitMovementX;
+      var position = e.pageX;
 
-      if (nextOffset < this.state.lowerBound) nextOffset = this.state.lowerBound;
-      if (nextOffset > this.state.upperBound) nextOffset = this.state.upperBound;
+      if (position < this.state.sliderMin) position = this.state.sliderMin;
+      if (position > this.state.sliderMax) position = this.state.sliderMax;
+
+      var ratio = (position - this.state.sliderMin) / (this.state.sliderMax - this.state.sliderMin);
+
+      var nextValue = ratio * (this.props.maxValue - this.props.minValue) + this.props.minValue;
+      var nextOffset = ratio * this.state.upperBound;
 
       this.setState({
+        value: nextValue,
         offset: nextOffset
       });
     },
