@@ -29,6 +29,7 @@
         offset: 0,
         lowerBound: 0,
         upperBound: 0,
+        handleWidth: 0,
         sliderMin: 0,
         sliderMax: 0,
         value: this.props.minValue
@@ -42,6 +43,7 @@
       
       this.setState({
         upperBound: slider.clientWidth - handle.clientWidth,
+        handleWidth: handle.clientWidth,
         sliderMin: rect.left,
         sliderMax: rect.right - handle.clientWidth,
       });
@@ -55,10 +57,15 @@
       };
 
       return (
-        React.DOM.div({ ref: 'slider', className: this.props.className },
+        React.DOM.div({ ref: 'slider', className: this.props.className, onClick: this._onClick },
           React.DOM.div({ ref: 'handle', style: handleStyle, onMouseDown: this._dragStart }, 
             this.props.children
       )));
+    },
+
+    _onClick: function(e) {
+      // make center of handle appear under the cursor position
+      this._moveHandle(e.pageX - (this.state.handleWidth / 2));
     },
 
     _dragStart: function() {
@@ -67,8 +74,15 @@
     },
 
     _dragMove: function(e) {
-      var position = e.pageX;
+      this._moveHandle(e.pageX);
+    },
 
+    _dragEnd: function() {
+      document.removeEventListener('mousemove', this._dragMove, false);
+      document.removeEventListener('mouseup', this._dragEnd, false);
+    },
+
+    _moveHandle: function(position) {
       if (position < this.state.sliderMin) position = this.state.sliderMin;
       if (position > this.state.sliderMax) position = this.state.sliderMax;
 
@@ -81,12 +95,8 @@
         value: nextValue,
         offset: nextOffset
       });
-    },
-
-    _dragEnd: function() {
-      document.removeEventListener('mousemove', this._dragMove, false);
-      document.removeEventListener('mouseup', this._dragEnd, false);
     }
+
   });
 
   return ReactSlider;
