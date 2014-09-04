@@ -65,7 +65,7 @@
 
       return (
         React.DOM.div({ ref: 'slider', className: this.props.className, onClick: this._onClick },
-          React.DOM.div({ ref: 'handle', style: handleStyle, onMouseDown: this._dragStart }, 
+          React.DOM.div({ ref: 'handle', style: handleStyle, onMouseDown: this._dragStart, onTouchMove: this._touchMove }, 
             userHandle
       )));
     },
@@ -87,6 +87,12 @@
     _dragEnd: function() {
       document.removeEventListener('mousemove', this._dragMove, false);
       document.removeEventListener('mouseup', this._dragEnd, false);
+    },
+
+    _touchMove: function(e) {
+      var last = e.changedTouches[e.changedTouches.length - 1];
+      this._moveHandle(last.pageX);
+      e.preventDefault();
     },
 
     _moveHandle: function(position) {
