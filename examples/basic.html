@@ -16,10 +16,19 @@
 
     .slider-handle {
       width: 50px;
-      height: 23px;
+      line-height: 23px;
+      font-size: 0.9em;
+      text-align: center;
       background-color: black;
+      color: white;
       position: relative;
       top: 1px;
+      cursor: pointer;
+      -webkit-user-select: none;
+         -moz-user-select: none;
+          -ms-user-select: none;
+           -o-user-select: none;
+              user-select: none;
     }
   </style>
 </head>
@@ -27,9 +36,15 @@
   <div id="app"></div>
 
   <script>
+    var Handle = React.createClass({
+      render: function() {
+        return React.DOM.div({ className: 'slider-handle' }, this.props.sliderValue.toFixed(2));
+      }
+    });
+
     React.renderComponent(
         ReactSlider({ className: 'slider' },
-          React.DOM.div({ className: 'slider-handle' })), 
+          Handle(null)), 
         document.getElementById('app')
       );
   </script>

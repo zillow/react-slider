@@ -13,14 +13,16 @@
     propTypes: {
       offset: React.PropTypes.number,
       minValue: React.PropTypes.number,
-      maxValue: React.PropTypes.number
+      maxValue: React.PropTypes.number,
+      valuePropName: React.PropTypes.string
     },
 
     getDefaultProps: function() {
       return {
         offset: 0,
         minValue: 0,
-        maxValue: 100
+        maxValue: 100,
+        valuePropName: 'sliderValue'
       };
     },
 
@@ -56,10 +58,13 @@
         display: 'inline-block'
       };
 
+      var userHandle = this.props.children;
+      userHandle.props[this.props.valuePropName] = this.state.value;
+
       return (
         React.DOM.div({ ref: 'slider', className: this.props.className, onClick: this._onClick },
           React.DOM.div({ ref: 'handle', style: handleStyle, onMouseDown: this._dragStart }, 
-            this.props.children
+            userHandle
       )));
     },
 
