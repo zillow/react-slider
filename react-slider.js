@@ -15,6 +15,7 @@
       minValue: React.PropTypes.number,
       maxValue: React.PropTypes.number,
       step: React.PropTypes.number,
+      onChange: React.PropTypes.func,
       valuePropName: React.PropTypes.string
     },
 
@@ -96,6 +97,8 @@
     },
 
     _moveHandle: function(position) {
+      var lastValue = this.state.value;
+
       var ratio = (position - this.state.sliderMin) / (this.state.sliderMax - this.state.sliderMin);
       var value = ratio * (this.props.maxValue - this.props.minValue) + this.props.minValue;
 
@@ -107,6 +110,11 @@
         value: nextValue,
         offset: nextOffset
       });
+
+      var changed = nextValue !== lastValue;
+      if (changed && this.props.onChange) {
+        this.props.onChange(nextValue);
+      }
     },
 
     _trimAlignValue: function(val) {

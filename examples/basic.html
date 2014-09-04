@@ -44,8 +44,12 @@
       }
     });
 
+    var onChange = function(value) {
+      console.log(value);
+    };
+
     React.renderComponent(
-        ReactSlider({ className: 'slider', step: 10 },
+        ReactSlider({ className: 'slider', step: 10, onChange: onChange },
           Handle(null)), 
         document.getElementById('app')
       );
