@@ -14,6 +14,7 @@
       offset: React.PropTypes.number,
       minValue: React.PropTypes.number,
       maxValue: React.PropTypes.number,
+      step: React.PropTypes.number,
       valuePropName: React.PropTypes.string
     },
 
@@ -22,6 +23,7 @@
         offset: 0,
         minValue: 0,
         maxValue: 100,
+        step: 1,
         valuePropName: 'sliderValue'
       };
     },
@@ -88,18 +90,31 @@
     },
 
     _moveHandle: function(position) {
-      if (position < this.state.sliderMin) position = this.state.sliderMin;
-      if (position > this.state.sliderMax) position = this.state.sliderMax;
-
       var ratio = (position - this.state.sliderMin) / (this.state.sliderMax - this.state.sliderMin);
+      var value = ratio * (this.props.maxValue - this.props.minValue) + this.props.minValue;
 
-      var nextValue = ratio * (this.props.maxValue - this.props.minValue) + this.props.minValue;
-      var nextOffset = ratio * this.state.upperBound;
+      var nextValue = this._trimAlignValue(value);
+      var nextRatio = (nextValue - this.props.minValue) / (this.props.maxValue - this.props.minValue);
+      var nextOffset = nextRatio * this.state.upperBound;
 
       this.setState({
         value: nextValue,
         offset: nextOffset
       });
+    },
+
+    _trimAlignValue: function(val) {
+      if (val <= this.props.minValue) val = this.props.minValue;
+      if (val >= this.props.maxValue) val = this.props.maxValue;
+
+      var valModStep = (val - this.props.minValue) % this.props.step;
+      var alignValue = val - valModStep;
+
+      if (Math.abs(valModStep) * 2 >= this.props.step) {
+        alignValue += (valModStep > 0) ? this.props.step : (- this.props.step);
+      }
+
+      return parseFloat(alignValue.toFixed(5));
     }
 
   });
