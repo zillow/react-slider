@@ -15,6 +15,7 @@
       minValue: React.PropTypes.number,
       maxValue: React.PropTypes.number,
       step: React.PropTypes.number,
+      orientation: React.PropTypes.oneOf(['horizontal', 'vertical']),
       onChange: React.PropTypes.func,
       valuePropName: React.PropTypes.string
     },
@@ -25,6 +26,7 @@
         minValue: 0,
         maxValue: 100,
         step: 1,
+        orientation: 'horizontal',
         valuePropName: 'sliderValue'
       };
     },
@@ -45,18 +47,28 @@
       var slider = this.refs.slider.getDOMNode();
       var handle = this.refs.handle.getDOMNode();
       var rect = slider.getBoundingClientRect();
+
+      var size = {
+        horizontal: 'clientWidth',
+        vertical: 'clientHeight'
+      }[this.props.orientation];
+
+      var position = {
+        horizontal: { min: 'left', max: 'right' },
+        vertical: { min: 'top', max: 'bottom' }
+      }[this.props.orientation];
       
       this.setState({
-        upperBound: slider.clientWidth - handle.clientWidth,
-        handleWidth: handle.clientWidth,
-        sliderMin: rect.left,
-        sliderMax: rect.right - handle.clientWidth,
+        upperBound: slider[size] - handle[size],
+        handleWidth: handle[size],
+        sliderMin: rect[position.min],
+        sliderMax: rect[position.max] - handle[size],
       });
     },
 
     render: function() {
       var handleStyle = {
-        transform: 'translateX(' + this.state.offset + 'px)',
+        transform: 'translate' + this._axis() + '(' + this.state.offset + 'px)',
         // We use inline-block value to set 'wrapping element' width same as its children.
         display: 'inline-block'
       };
@@ -72,8 +84,9 @@
     },
 
     _onClick: function(e) {
+      var position = e['page' + this._axis()];
       // make center of handle appear under the cursor position
-      this._moveHandle(e.pageX - (this.state.handleWidth / 2));
+      this._moveHandle(position - (this.state.handleWidth / 2));
     },
 
     _dragStart: function() {
@@ -82,7 +95,8 @@
     },
 
     _dragMove: function(e) {
-      this._moveHandle(e.pageX);
+      var position = e['page' + this._axis()];
+      this._moveHandle(position);
     },
 
     _dragEnd: function() {
@@ -92,7 +106,8 @@
 
     _touchMove: function(e) {
       var last = e.changedTouches[e.changedTouches.length - 1];
-      this._moveHandle(last.pageX);
+      var position = last['page' + this._axis()];
+      this._moveHandle(position);
       e.preventDefault();
     },
 
@@ -115,6 +130,13 @@
       if (changed && this.props.onChange) {
         this.props.onChange(nextValue);
       }
+    },
+
+    _axis: function() {
+      return {
+        'horizontal': 'X',
+        'vertical': 'Y'
+      }[this.props.orientation];
     },
 
     _trimAlignValue: function(val) {
