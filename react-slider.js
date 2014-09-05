@@ -67,7 +67,7 @@
     render: function() {
       var handleStyle = {
         transform: 'translate' + this._axis() + '(' + this.state.offset + 'px)',
-        // We use inline-block value to set 'wrapping element' width same as its children.
+        // let this element be the same size as its children.
         display: 'inline-block'
       };
 
