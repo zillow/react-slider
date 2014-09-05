@@ -1,6 +1,6 @@
 {
   "name": "react-slider",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "description": "Slider component for React.js",
   "main": "react-slider.js",
   "scripts": {
