@@ -11,7 +11,6 @@
   var ReactSlider = React.createClass({ displayName: 'ReactSlider',
     
     propTypes: {
-      offset: React.PropTypes.number,
       minValue: React.PropTypes.number,
       maxValue: React.PropTypes.number,
       step: React.PropTypes.number,
@@ -22,7 +21,6 @@
 
     getDefaultProps: function() {
       return {
-        offset: 0,
         minValue: 0,
         maxValue: 100,
         step: 1,
