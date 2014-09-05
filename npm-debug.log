@@ -1,0 +1,112 @@
+0 info it worked if it ends with ok
+1 verbose cli [ '/usr/local/bin/node', '/usr/local/bin/npm', 'publish' ]
+2 info using npm@1.4.9
+3 info using node@v0.10.28
+4 verbose publish [ '.' ]
+5 verbose cache add [ '.', null ]
+6 verbose cache add name=undefined spec="." args=[".",null]
+7 verbose parsed url { protocol: null,
+7 verbose parsed url   slashes: null,
+7 verbose parsed url   auth: null,
+7 verbose parsed url   host: null,
+7 verbose parsed url   port: null,
+7 verbose parsed url   hostname: null,
+7 verbose parsed url   hash: null,
+7 verbose parsed url   search: null,
+7 verbose parsed url   query: null,
+7 verbose parsed url   pathname: '.',
+7 verbose parsed url   path: '.',
+7 verbose parsed url   href: '.' }
+8 silly lockFile 3a52ce78- .
+9 verbose lock . /home/michal/.npm/3a52ce78-.lock
+10 verbose tar pack [ '/home/michal/tmp/npm-19504-1TzEipUu/1409954754726-0.11876599513925612/tmp.tgz',
+10 verbose tar pack   '.' ]
+11 verbose tarball /home/michal/tmp/npm-19504-1TzEipUu/1409954754726-0.11876599513925612/tmp.tgz
+12 verbose folder .
+13 info prepublish react-slider@0.1.0
+14 silly lockFile 1f1177db-tar tar://.
+15 verbose lock tar://. /home/michal/.npm/1f1177db-tar.lock
+16 silly lockFile 1ea140b4-4726-0-11876599513925612-tmp-tgz tar:///home/michal/tmp/npm-19504-1TzEipUu/1409954754726-0.11876599513925612/tmp.tgz
+17 verbose lock tar:///home/michal/tmp/npm-19504-1TzEipUu/1409954754726-0.11876599513925612/tmp.tgz /home/michal/.npm/1ea140b4-4726-0-11876599513925612-tmp-tgz.lock
+18 silly lockFile 1f1177db-tar tar://.
+19 silly lockFile 1f1177db-tar tar://.
+20 silly lockFile 1ea140b4-4726-0-11876599513925612-tmp-tgz tar:///home/michal/tmp/npm-19504-1TzEipUu/1409954754726-0.11876599513925612/tmp.tgz
+21 silly lockFile 1ea140b4-4726-0-11876599513925612-tmp-tgz tar:///home/michal/tmp/npm-19504-1TzEipUu/1409954754726-0.11876599513925612/tmp.tgz
+22 verbose tar unpack /home/michal/tmp/npm-19504-1TzEipUu/1409954754726-0.11876599513925612/tmp.tgz
+23 silly lockFile 3334e3d9-l-npm-react-slider-0-1-0-package tar:///home/michal/.npm/react-slider/0.1.0/package
+24 verbose lock tar:///home/michal/.npm/react-slider/0.1.0/package /home/michal/.npm/3334e3d9-l-npm-react-slider-0-1-0-package.lock
+25 silly lockFile 1ea140b4-4726-0-11876599513925612-tmp-tgz tar:///home/michal/tmp/npm-19504-1TzEipUu/1409954754726-0.11876599513925612/tmp.tgz
+26 verbose lock tar:///home/michal/tmp/npm-19504-1TzEipUu/1409954754726-0.11876599513925612/tmp.tgz /home/michal/.npm/1ea140b4-4726-0-11876599513925612-tmp-tgz.lock
+27 silly gunzTarPerm modes [ '755', '644' ]
+28 silly gunzTarPerm extractEntry package.json
+29 silly gunzTarPerm modified mode [ 'package.json', 436, 420 ]
+30 silly gunzTarPerm extractEntry .npmignore
+31 silly gunzTarPerm modified mode [ '.npmignore', 436, 420 ]
+32 silly gunzTarPerm extractEntry README.md
+33 silly gunzTarPerm modified mode [ 'README.md', 436, 420 ]
+34 silly gunzTarPerm extractEntry react-slider.js
+35 silly gunzTarPerm modified mode [ 'react-slider.js', 436, 420 ]
+36 silly gunzTarPerm extractEntry examples/basic.html
+37 silly gunzTarPerm modified mode [ 'examples/basic.html', 436, 420 ]
+38 silly lockFile 3334e3d9-l-npm-react-slider-0-1-0-package tar:///home/michal/.npm/react-slider/0.1.0/package
+39 silly lockFile 3334e3d9-l-npm-react-slider-0-1-0-package tar:///home/michal/.npm/react-slider/0.1.0/package
+40 silly lockFile 1ea140b4-4726-0-11876599513925612-tmp-tgz tar:///home/michal/tmp/npm-19504-1TzEipUu/1409954754726-0.11876599513925612/tmp.tgz
+41 silly lockFile 1ea140b4-4726-0-11876599513925612-tmp-tgz tar:///home/michal/tmp/npm-19504-1TzEipUu/1409954754726-0.11876599513925612/tmp.tgz
+42 silly lockFile 3a52ce78- .
+43 silly lockFile 3a52ce78- .
+44 silly publish { name: 'react-slider',
+44 silly publish   version: '0.1.0',
+44 silly publish   description: 'Slider component for React.js',
+44 silly publish   main: 'react-slider.js',
+44 silly publish   scripts: { test: 'echo "Error: no test specified" && exit 1' },
+44 silly publish   keywords: [ 'react-component', 'react', 'slider', 'component' ],
+44 silly publish   author: { name: 'Michał Powaga', email: 'michalpowaga13@gmail.com' },
+44 silly publish   license: 'MIT',
+44 silly publish   dependencies: { react: '^0.11.1' },
+44 silly publish   readme: 'CSS agnostic slider component for React.\n\n### Important Note\n\nThis is alpha release. Use with caution and hope.\n\n### Installation\n\n```\nnpm install react-slider\n```\n\n### Overview\n\n```javascript\nvar Handle = React,createClass({\n  render: function() {\n    return <div className="handle">{this.props.sliderValue}</div>;\n  }\n});\n\nvar slider = (\n  <ReactSlider className="slider">\n    <Handle />\n  </ReactSlider>\n);\n\nReact.renderComponent(slider, document.body);\n```\n\nOutputs following html:\n\n```html\n<div class="slider">\n  <div style="/* some weird stuff */">\n    <!-- yes, this is your handle component -->\n    <div className="handle">0</div>\n</div>\n```\n\nNow you can style it as you want. Checkout the ```examples``` directory to see how.\n\n### Properties\n\n##### minValue {number} default: 0\n\nThe minimum value of the slider.\n\n##### maxValue {number} default: 100\n\nThe maximum value of the slider\n\n##### step {number} default: 1\n\nValue to be added or subtracted on each step the slider makes. Must be greater than zero. ```maxValue - minValue``` should be evenly divisible by the step value.\n\n##### orientation {string} default: \'horizontal\'\n\nDetermines whether the slider moves horizontally (from left to right) or vertically (from top to bottom). Can be one of: **horizontal**, **vertical**.\n\n##### onChange {function}\n\nCallback called on every value change. Example:\n\n```javascript\nfunction onChange(value) { \n  console.log(\'New slider value: \' + value); \n}\n```\n\n##### valuePropName {string} default: \'sliderValue\'\n\nName of property which is passed to children component and contains current slider value. ',
+44 silly publish   readmeFilename: 'README.md',
+44 silly publish   _id: 'react-slider@0.1.0',
+44 silly publish   _shasum: '8d9be2b9475cab33cc57bcb9f0d87a5964ffac59',
+44 silly publish   _from: '.' }
+45 verbose url raw react-slider
+46 verbose url resolving [ 'https://registry.npmjs.org/', './react-slider' ]
+47 verbose url resolved https://registry.npmjs.org/react-slider
+48 info trying registry request attempt 1 at 23:05:54
+49 http PUT https://registry.npmjs.org/react-slider
+50 http 403 https://registry.npmjs.org/react-slider
+51 verbose headers { date: 'Fri, 05 Sep 2014 22:05:55 GMT',
+51 verbose headers   server: 'CouchDB/1.5.0 (Erlang OTP/R14B04)',
+51 verbose headers   'content-type': 'application/json',
+51 verbose headers   'cache-control': 'max-age=60',
+51 verbose headers   'content-length': '3860',
+51 verbose headers   'accept-ranges': 'bytes',
+51 verbose headers   via: '1.1 varnish',
+51 verbose headers   'x-served-by': 'cache-fra1222-FRA',
+51 verbose headers   'x-cache': 'MISS',
+51 verbose headers   'x-cache-hits': '0',
+51 verbose headers   'x-timer': 'S1409954755.189702,VS0,VE664',
+51 verbose headers   'keep-alive': 'timeout=10, max=50',
+51 verbose headers   connection: 'Keep-Alive' }
+52 error publish Failed PUT 403
+53 error Error: forbidden cannot modify pre-existing version: 0.1.0
+53 error old={"name":"react-slider","version":"0.1.0","description":"Slider component for React.js","main":"react-slider.js","scripts":{"test":"echo \"Error: no test specified\" && exit 1"},"keywords":["react","slider"],"author":{"name":"Michał Powaga","email":"michalpowaga13@gmail.com"},"license":"MIT","dependencies":{"react":"^0.11.1"},"_id":"react-slider@0.1.0","_shasum":"8804e625b1a630f1ce99c6a3f38fa3d2b3b50478","_from":".","_npmVersion":"1.4.9","_npmUser":{"name":"mpowaga","email":"michalpowaga13@gmail.com"},"maintainers":[{"name":"mpowaga","email":"michalpowaga13@gmail.com"}],"dist":{"shasum":"8804e625b1a630f1ce99c6a3f38fa3d2b3b50478","tarball":"http://registry.npmjs.org/react-slider/-/react-slider-0.1.0.tgz"}}
+53 error new={"name":"react-slider","version":"0.1.0","description":"Slider component for React.js","main":"react-slider.js","scripts":{"test":"echo \"Error: no test specified\" && exit 1"},"keywords":["react-component","react","slider","component"],"author":{"name":"Michał Powaga","email":"michalpowaga13@gmail.com"},"license":"MIT","dependencies":{"react":"^0.11.1"},"readme":"CSS agnostic slider component for React.\u000a\u000a### Important Note\u000a\u000aThis is alpha release. Use with caution and hope.\u000a\u000a### Installation\u000a\u000a```\u000anpm install react-slider\u000a```\u000a\u000a### Overview\u000a\u000a```javascript\u000avar Handle = React,createClass({\u000a  render: function() {\u000a    return <div className=\"handle\">{this.props.sliderValue}</div>;\u000a  }\u000a});\u000a\u000avar slider = (\u000a  <ReactSlider className=\"slider\">\u000a    <Handle />\u000a  </ReactSlider>\u000a);\u000a\u000aReact.renderComponent(slider, document.body);\u000a```\u000a\u000aOutputs following html:\u000a\u000a```html\u000a<div class=\"slider\">\u000a  <div style=\"/* some weird stuff */\">\u000a    <!-- yes, this is your handle component -->\u000a    <div className=\"handle\">0</div>\u000a</div>\u000a```\u000a\u000aNow you can style it as you want. Checkout the ```examples``` directory to see how.\u000a\u000a### Properties\u000a\u000a##### minValue {number} default: 0\u000a\u000aThe minimum value of the slider.\u000a\u000a##### maxValue {number} default: 100\u000a\u000aThe maximum value of the slider\u000a\u000a##### step {number} default: 1\u000a\u000aValue to be added or subtracted on each step the slider makes. Must be greater than zero. ```maxValue - minValue``` should be evenly divisible by the step value.\u000a\u000a##### orientation {string} default: 'horizontal'\u000a\u000aDetermines whether the slider moves horizontally (from left to right) or vertically (from top to bottom). Can be one of: **horizontal**, **vertical**.\u000a\u000a##### onChange {function}\u000a\u000aCallback called on every value change. Example:\u000a\u000a```javascript\u000afunction onChange(value) { \u000a  console.log('New slider value: ' + value); \u000a}\u000a```\u000a\u000a##### valuePropName {string} default: 'sliderValue'\u000a\u000aName of property which is passed to children component and contains current slider value. ","readmeFilename":"README.md","_id":"react-slider@0.1.0","_shasum":"8d9be2b9475cab33cc57bcb9f0d87a5964ffac59","_from":".","_npmVersion":"1.4.9","_npmUser":{"name":"mpowaga","email":"michalpowaga13@gmail.com"},"maintainers":[{"name":"mpowaga","email":"michalpowaga13@gmail.com"}],"dist":{"shasum":"8d9be2b9475cab33cc57bcb9f0d87a5964ffac59","tarball":"http://registry.npmjs.org/react-slider/-/react-slider-0.1.0.tgz"}}: react-slider
+53 error     at RegClient.<anonymous> (/usr/local/lib/node_modules/npm/node_modules/npm-registry-client/lib/request.js:273:14)
+53 error     at Request._callback (/usr/local/lib/node_modules/npm/node_modules/npm-registry-client/lib/request.js:211:65)
+53 error     at Request.self.callback (/usr/local/lib/node_modules/npm/node_modules/request/request.js:123:22)
+53 error     at Request.EventEmitter.emit (events.js:98:17)
+53 error     at Request.<anonymous> (/usr/local/lib/node_modules/npm/node_modules/request/request.js:893:14)
+53 error     at Request.EventEmitter.emit (events.js:117:20)
+53 error     at IncomingMessage.<anonymous> (/usr/local/lib/node_modules/npm/node_modules/request/request.js:844:12)
+53 error     at IncomingMessage.EventEmitter.emit (events.js:117:20)
+53 error     at _stream_readable.js:919:16
+53 error     at process._tickCallback (node.js:419:13)
+54 error If you need help, you may report this *entire* log,
+54 error including the npm and node versions, at:
+54 error     <http://github.com/npm/npm/issues>
+55 error System Linux 3.2.0-67-generic-pae
+56 error command "/usr/local/bin/node" "/usr/local/bin/npm" "publish"
+57 error cwd /home/michal/dev/react-slider
+58 error node -v v0.10.28
+59 error npm -v 1.4.9
+60 verbose exit [ 1, true ]

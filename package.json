@@ -1,14 +1,16 @@
 {
   "name": "react-slider",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Slider component for React.js",
   "main": "react-slider.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [
+    "react-component",
     "react",
-    "slider"
+    "slider",
+    "component"
   ],
   "author": "Michał Powaga <michalpowaga13@gmail.com>",
   "license": "MIT",
