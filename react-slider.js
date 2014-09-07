@@ -19,8 +19,8 @@
   var ReactSlider = React.createClass({ displayName: 'ReactSlider',
     
     propTypes: {
-      minValue: React.PropTypes.number,
-      maxValue: React.PropTypes.number,
+      min: React.PropTypes.number,
+      max: React.PropTypes.number,
       step: positiveNumber,
       orientation: React.PropTypes.oneOf(['horizontal', 'vertical']),
       onChange: React.PropTypes.func,
@@ -29,8 +29,8 @@
 
     getDefaultProps: function() {
       return {
-        minValue: 0,
-        maxValue: 100,
+        min: 0,
+        max: 100,
         step: 1,
         orientation: 'horizontal',
         valuePropName: 'sliderValue'
@@ -45,7 +45,7 @@
         handleWidth: 0,
         sliderMin: 0,
         sliderMax: 0,
-        value: this.props.minValue
+        value: this.props.min
       };
     },
 
@@ -121,10 +121,10 @@
       var lastValue = this.state.value;
 
       var ratio = (position - this.state.sliderMin) / (this.state.sliderMax - this.state.sliderMin);
-      var value = ratio * (this.props.maxValue - this.props.minValue) + this.props.minValue;
+      var value = ratio * (this.props.max - this.props.min) + this.props.min;
 
       var nextValue = this._trimAlignValue(value);
-      var nextRatio = (nextValue - this.props.minValue) / (this.props.maxValue - this.props.minValue);
+      var nextRatio = (nextValue - this.props.min) / (this.props.max - this.props.min);
       var nextOffset = nextRatio * this.state.upperBound;
 
       this.setState({
@@ -146,10 +146,10 @@
     },
 
     _trimAlignValue: function(val) {
-      if (val <= this.props.minValue) val = this.props.minValue;
-      if (val >= this.props.maxValue) val = this.props.maxValue;
+      if (val <= this.props.min) val = this.props.min;
+      if (val >= this.props.max) val = this.props.max;
 
-      var valModStep = (val - this.props.minValue) % this.props.step;
+      var valModStep = (val - this.props.min) % this.props.step;
       var alignValue = val - valModStep;
 
       if (Math.abs(valModStep) * 2 >= this.props.step) {
