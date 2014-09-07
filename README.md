@@ -13,7 +13,7 @@ npm install react-slider
 ### Overview
 
 ```javascript
-var Handle = React,createClass({
+var Handle = React.createClass({
   render: function() {
     return <div className="handle">{this.props.sliderValue}</div>;
   }
@@ -34,7 +34,7 @@ Outputs following html:
 <div class="slider">
   <div style="/* some weird stuff */">
     <!-- yes, this is your handle component -->
-    <div className="handle">0</div>
+    <div class="handle">0</div>
 </div>
 ```
 
