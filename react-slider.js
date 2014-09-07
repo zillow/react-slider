@@ -7,13 +7,21 @@
     root.ReactSlider = factory(root.React);
   }
 }(this, function(React) {
+  
+  function positiveNumber(props, propName, componentName, location) {
+    var value = props[propName];
+    if (typeof value !== 'number' || value <= 0) {
+      return new Error('Invalid prop `' + propName + '` supplied to `' + componentName +
+                       '`, expected number greater than zero');
+    }
+  }
 
   var ReactSlider = React.createClass({ displayName: 'ReactSlider',
     
     propTypes: {
       minValue: React.PropTypes.number,
       maxValue: React.PropTypes.number,
-      step: React.PropTypes.number,
+      step: positiveNumber,
       orientation: React.PropTypes.oneOf(['horizontal', 'vertical']),
       onChange: React.PropTypes.func,
       valuePropName: React.PropTypes.string
