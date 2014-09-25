@@ -9,7 +9,7 @@
 }(this, function(React) {
 
   var ReactSlider = React.createClass({ displayName: 'ReactSlider',
-    
+
     propTypes: {
       minValue: React.PropTypes.number,
       maxValue: React.PropTypes.number,
@@ -55,7 +55,7 @@
         horizontal: { min: 'left', max: 'right' },
         vertical: { min: 'top', max: 'bottom' }
       }[this.props.orientation];
-      
+
       this.setState({
         upperBound: slider[size] - handle[size],
         handleWidth: handle[size],
@@ -76,7 +76,7 @@
 
       return (
         React.DOM.div({ ref: 'slider', className: this.props.className, onClick: this._onClick },
-          React.DOM.div({ ref: 'handle', style: handleStyle, onMouseDown: this._dragStart, onTouchMove: this._touchMove }, 
+          React.DOM.div({ ref: 'handle', style: handleStyle, onMouseDown: this._dragStart, onTouchMove: this._touchMove },
             userHandle
       )));
     },
@@ -104,7 +104,7 @@
 
     _touchMove: function(e) {
       var last = e.changedTouches[e.changedTouches.length - 1];
-      var position = last['page' + this._axis()];
+      var position = last['screen' + this._axis()];
       this._moveHandle(position);
       e.preventDefault();
     },
