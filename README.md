@@ -70,4 +70,8 @@ function onChange(value) {
 
 ##### valuePropName {string} default: 'sliderValue'
 
-Name of property which is passed to children component and contains current slider value. 
+Name of property which is passed to children component and contains current slider value.
+
+### License ###
+
+See the (License)[LICENSE] file.
