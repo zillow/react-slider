@@ -74,4 +74,4 @@ Name of property which is passed to children component and contains current slid
 
 ### License ###
 
-See the (License)[LICENSE] file.
+See the [License](LICENSE) file.
