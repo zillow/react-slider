@@ -83,8 +83,7 @@
 
     _onClick: function(e) {
       var position = e['page' + this._axis()];
-      // make center of handle appear under the cursor position
-      this._moveHandle(position - (this.state.handleWidth / 2));
+      this._moveHandle(position);
     },
 
     _dragStart: function() {
@@ -110,6 +109,10 @@
     },
 
     _moveHandle: function(position) {
+      
+      // make center of handle appear under the cursor position
+      position = position - (this.state.handleWidth / 2);
+      
       var lastValue = this.state.value;
 
       var ratio = (position - this.state.sliderMin) / (this.state.sliderMax - this.state.sliderMin);
