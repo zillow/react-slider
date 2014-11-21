@@ -6,14 +6,14 @@ This is alpha release. Use with caution and hope.
 
 ### Installation
 
-```
+```sh
 npm install react-slider
 ```
 
 ### Overview
 
 ```javascript
-var Handle = React,createClass({
+var Handle = React.createClass({
   render: function() {
     return <div className="handle">{this.props.sliderValue}</div>;
   }
