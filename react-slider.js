@@ -60,7 +60,7 @@
 
       // position the handle if the intial handle value is non-zero
       var value = this._trimAlignValue(this.props.initialValue);
-      var currRatio = (this.props.initialValue - this.props.minValue) / (this.props.maxValue - this.props.minValue)
+      var currRatio = (value - this.props.minValue) / (this.props.maxValue - this.props.minValue)
       var currOffset = currRatio * (slider[size] - handle[size]);
       
       this.setState({
