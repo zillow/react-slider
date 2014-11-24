@@ -34,7 +34,7 @@ Outputs following html:
 <div class="slider">
   <div style="/* some weird stuff */">
     <!-- yes, this is your handle component -->
-    <div className="handle">0</div>
+    <div class="handle">0</div>
 </div>
 ```
 
