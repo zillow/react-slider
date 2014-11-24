@@ -14,6 +14,7 @@
       minValue: React.PropTypes.number,
       maxValue: React.PropTypes.number,
       step: React.PropTypes.number,
+      initialValue: React.PropTypes.number,
       orientation: React.PropTypes.oneOf(['horizontal', 'vertical']),
       onChange: React.PropTypes.func,
       valuePropName: React.PropTypes.string
@@ -24,6 +25,7 @@
         minValue: 0,
         maxValue: 100,
         step: 1,
+        initialValue: 0,
         orientation: 'horizontal',
         valuePropName: 'sliderValue'
       };
@@ -37,7 +39,7 @@
         handleWidth: 0,
         sliderMin: 0,
         sliderMax: 0,
-        value: this.props.minValue
+        value: this.props.initialValue
       };
     },
 
@@ -55,12 +57,18 @@
         horizontal: { min: 'left', max: 'right' },
         vertical: { min: 'top', max: 'bottom' }
       }[this.props.orientation];
+
+      // position the handle if the intial handle value is non-zero
+      var value = this._trimAlignValue(this.props.initialValue);
+      var currRatio = (value - this.props.minValue) / (this.props.maxValue - this.props.minValue)
+      var currOffset = currRatio * (slider[size] - handle[size]);
       
       this.setState({
         upperBound: slider[size] - handle[size],
         handleWidth: handle[size],
         sliderMin: rect[position.min],
         sliderMax: rect[position.max] - handle[size],
+        offset:  currOffset,
       });
     },
 
