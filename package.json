@@ -19,6 +19,6 @@
   "author": "Michał Powaga <michalpowaga13@gmail.com>",
   "license": "MIT",
   "dependencies": {
-    "react": "^0.11.1"
+    "react": "^0.12.0"
   }
 }
