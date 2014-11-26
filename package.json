@@ -1,14 +1,14 @@
 {
-  "name": "react-slider",
-  "version": "0.1.2",
-  "description": "Slider component for React.js",
-  "main": "react-slider.js",
+  "name": "react-multi-slider",
+  "version": "0.2.0",
+  "description": "Slider component for React",
+  "main": "react-multi-slider.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/mpowaga/react-slider.git"
+    "url": "https://github.com/cell303/react-multi-slider.git"
   },
   "keywords": [
     "react-component",
@@ -16,7 +16,11 @@
     "slider",
     "component"
   ],
-  "author": "Michał Powaga <michalpowaga13@gmail.com>",
+  "author": "Florian Klampfer <f.klampfer@gmail.com>",
+  "contributors": [{
+    "name": "Michał Powaga",
+    "email": "michalpowaga13@gmail.com"
+  }],
   "license": "MIT",
   "dependencies": {
     "react": "^0.12.0"

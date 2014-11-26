@@ -7,17 +7,18 @@
   <title>React Slider Example</title>
 
   <script src="../node_modules/react/dist/react.js"></script>
-  <script src="../react-slider.js"></script>
+  <script src="../react-multi-slider.js"></script>
 
   <style>
     .horizontal-slider {
       width: 100%;
+      max-width: 480px;
       height: 25px;
       border: 1px solid grey;
     }
 
     .vertical-slider {
-      height: 500px;
+      height: 380px;
       width: 25px;
       border: 1px solid grey;
     }
@@ -28,67 +29,97 @@
       background-color: black;
       color: white;
       cursor: pointer;
-      -webkit-user-select: none;
-         -moz-user-select: none;
-          -ms-user-select: none;
-           -o-user-select: none;
-              user-select: none;
+    }
+
+    .bar {
+      position: relative;
+      background: #ddd;
+    }
+
+    .bar.bar-1 {
+      background: #f00;
+    }
+
+    .bar.bar-2 {
+      background: #0f0;
+    }
+
+    .horizontal-slider .bar {
+      top: 12px;
+      height: 1px;
     }
 
     .horizontal-slider .handle {
-      position: relative;
       top: 1px;
       width: 50px;
+      height: 23px;
       line-height: 23px;
     }
 
     .vertical-slider .handle {
-      position: relative;
       left: 1px;
       width: 23px;
       line-height: 50px;
     }
 
-    #horizontal,
+    .vertical-slider .bar {
+      left: 12px;
+      width: 1px;
+    }
+
+    #horizontal-0,
+    #horizontal-1, #horizontal-2, #horizontal-3,
     #vertical {
-      padding: 20px;
+      margin: 20px 10px;
     }
 
   </style>
 </head>
 <body>
-  <div id="horizontal"></div>
+  <div id="horizontal-0"></div>
+  <div id="horizontal-1"></div>
+  <div id="horizontal-2"></div>
+  <div id="horizontal-3"></div>
   <div id="vertical"></div>
 
   <script>
-    var ReactSlider = React.createFactory(ReactSlider);
-
     React.initializeTouchEvents(true);
 
-    var Handle = React.createFactory(React.createClass({
-      render: function() {
-        return React.createElement('div', this.props, this.props.sliderValue.toFixed(0));
+    var ReactMultiSlider = React.createFactory(ReactMultiSlider);
+
+    function map(v, f, context) {
+      return (v && v.map) ? v.map(f, context) : f.call(context, v, 0);
+    }
+
+    var Demo = React.createFactory(React.createClass({
+      getInitialState: function () {
+        return { value: this.props.initialValue }
+      },
+
+      onChange: function(value) {
+        this.setState({ value: value });
+      },
+
+      render: function () {
+        return ReactMultiSlider({
+            className: this.props.orientation + '-slider',
+            orientation: this.props.orientation,
+            step: 5,
+            value: this.state.value,
+            onChange: this.onChange
+          },
+          map(this.state.value, function (value, i) {
+            return React.createElement('div', {key: i}, value);
+          })
+        );
       }
     }));
 
-    var onChange = function(value) {
-      console.log(value);
-    };
+    React.render(Demo({ initialValue: 50, orientation: 'horizontal' }), document.getElementById('horizontal-1'));
+    React.render(Demo({ initialValue: [0, 100], orientation: 'horizontal' }), document.getElementById('horizontal-2'));
+    React.render(Demo({ initialValue: [0, 50, 100], orientation: 'horizontal' }), document.getElementById('horizontal-3'));
 
-    React.render(
-        ReactSlider({ className: 'horizontal-slider', step: 10, onChange: onChange },
-          Handle({ className: 'handle' })
-        ),
-        document.getElementById('horizontal')
-      );
-
-    React.render(
-        ReactSlider({ className: 'vertical-slider', orientation: 'vertical', step: 10, onChange: onChange },
-          Handle({ className: 'handle' }),
-          Handle({ className: 'handle' })
-        ),
-        document.getElementById('vertical')
-      );
+    React.render(Demo({ initialValue: [0, 50, 100], orientation: 'vertical' }), document.getElementById('vertical'));
   </script>
 </body>
 </html>
