@@ -2,6 +2,8 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+
   <title>React Slider Example</title>
 
   <script src="../node_modules/react/dist/react.js"></script>
@@ -9,14 +11,15 @@
 
   <style>
     .horizontal-slider {
-      width: 500px;
-      height: 25px;
+      width: 100%;
+      max-width: 480px;
+      height: 50px;
       border: 1px solid grey;
     }
-    
+
     .vertical-slider {
-      height: 500px;
-      width: 25px;
+      height: 380px;
+      width: 50px;
       border: 1px solid grey;
     }
 
@@ -26,63 +29,99 @@
       background-color: black;
       color: white;
       cursor: pointer;
-      -webkit-user-select: none;
-         -moz-user-select: none;
-          -ms-user-select: none;
-           -o-user-select: none;
-              user-select: none;
+    }
+
+    .bar {
+      position: relative;
+      background: #ddd;
+    }
+
+    .bar.bar-1 {
+      background: #f00;
+    }
+
+    .bar.bar-2 {
+      background: #0f0;
+    }
+
+    .horizontal-slider .bar {
+      top: 20px;
+      height: 10px;
     }
 
     .horizontal-slider .handle {
-      position: relative;
       top: 1px;
       width: 50px;
-      line-height: 23px;
+      height: 48px;
+      line-height: 48px;
     }
 
     .vertical-slider .handle {
-      position: relative;
       left: 1px;
-      width: 23px;
+      width: 48px;
       line-height: 50px;
     }
 
-    #horizontal,
+    .vertical-slider .bar {
+      left: 20px;
+      width: 10px;
+    }
+
+    #horizontal-0,
+    #horizontal-1, #horizontal-2, #horizontal-3,
     #vertical {
-      float: left;
-      padding: 20px;
+      margin: 20px 10px;
     }
 
   </style>
 </head>
 <body>
+  <div id="horizontal-0"></div>
+  <div id="horizontal-1"></div>
+  <div id="horizontal-2"></div>
+  <div id="horizontal-3"></div>
   <div id="vertical"></div>
-  <div id="horizontal"></div>
 
   <script>
     React.initializeTouchEvents(true);
 
-    var Handle = React.createClass({
-      render: function() {
-        return React.DOM.div(this.props, this.props.sliderValue.toFixed(0));
+    var ReactSlider = React.createFactory(ReactSlider);
+
+    function map(v, f, context) {
+      return (v && v.map) ? v.map(f, context) : f.call(context, v, 0);
+    }
+
+    var Demo = React.createFactory(React.createClass({
+      displayName: 'Demo',
+
+      getInitialState: function () {
+        return { value: this.props.defaultValue }
+      },
+
+      onChange: function(value) {
+        this.setState({ value: value });
+      },
+
+      render: function () {
+        return ReactSlider({
+            className: this.props.orientation + '-slider',
+            orientation: this.props.orientation,
+            withBars: this.props.withBars,
+            value: this.state.value,
+            onChange: this.onChange
+          },
+          map(this.state.value, function (value, i) {
+            return React.createElement('div', {key: i}, value);
+          })
+        );
       }
-    });
+    }));
 
-    var onChange = function(value) {
-      console.log(value);
-    };
+    React.render(Demo({ defaultValue: 0, orientation: 'horizontal' }), document.getElementById('horizontal-1'));
+    React.render(Demo({ defaultValue: [0, 100], orientation: 'horizontal', withBars: true }), document.getElementById('horizontal-2'));
+    React.render(Demo({ defaultValue: [0, 50, 100], orientation: 'horizontal', withBars: true }), document.getElementById('horizontal-3'));
 
-    React.renderComponent(
-        ReactSlider({ className: 'horizontal-slider', step: 10, onChange: onChange },
-          Handle({ className: 'handle' })), 
-        document.getElementById('horizontal')
-      );
-
-    React.renderComponent(
-        ReactSlider({ className: 'vertical-slider', orientation: 'vertical', step: 10, onChange: onChange },
-          Handle({ className: 'handle' })),
-        document.getElementById('vertical')
-      );
+    React.render(Demo({ defaultValue: [0, 50, 100], orientation: 'vertical', withBars: true }), document.getElementById('vertical'));
   </script>
 </body>
 </html>
