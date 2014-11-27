@@ -93,7 +93,7 @@
 
     var Demo = React.createFactory(React.createClass({
       getInitialState: function () {
-        return { value: this.props.initialValue }
+        return { value: this.props.defaultValue }
       },
 
       onChange: function(value) {
@@ -115,11 +115,11 @@
       }
     }));
 
-    React.render(Demo({ initialValue: 50, orientation: 'horizontal' }), document.getElementById('horizontal-1'));
-    React.render(Demo({ initialValue: [0, 100], orientation: 'horizontal' }), document.getElementById('horizontal-2'));
-    React.render(Demo({ initialValue: [0, 50, 100], orientation: 'horizontal' }), document.getElementById('horizontal-3'));
+    React.render(Demo({ defaultValue: 50, orientation: 'horizontal' }), document.getElementById('horizontal-1'));
+    React.render(Demo({ defaultValue: [0, 100], orientation: 'horizontal' }), document.getElementById('horizontal-2'));
+    React.render(Demo({ defaultValue: [0, 50, 100], orientation: 'horizontal' }), document.getElementById('horizontal-3'));
 
-    React.render(Demo({ initialValue: [0, 50, 100], orientation: 'vertical' }), document.getElementById('vertical'));
+    React.render(Demo({ defaultValue: [0, 50, 100], orientation: 'vertical' }), document.getElementById('vertical'));
   </script>
 </body>
 </html>

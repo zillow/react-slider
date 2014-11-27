@@ -15,11 +15,11 @@
       min: React.PropTypes.number,
       max: React.PropTypes.number,
       step: React.PropTypes.number,
-      value: React.PropTypes.oneOfType([
+      defaultValue: React.PropTypes.oneOfType([
         React.PropTypes.number,
         React.PropTypes.arrayOf(React.PropTypes.number)
       ]),
-      initialValue: React.PropTypes.oneOfType([
+      value: React.PropTypes.oneOfType([
         React.PropTypes.number,
         React.PropTypes.arrayOf(React.PropTypes.number)
       ]),
@@ -37,7 +37,7 @@
         min: 0,
         max: 100,
         step: 1,
-        initialValue: 0,
+        defaultValue: 0,
         orientation: 'horizontal',
         className: 'slider',
         handleClassName: 'handle',
@@ -54,7 +54,7 @@
         handleWidth: 0,
         sliderMin: 0,
         sliderMax: 0,
-        value: or(this.props.value, this.props.initialValue)
+        value: or(this.props.value, this.props.defaultValue)
       };
     },
 
@@ -282,7 +282,7 @@
         return (
           React.createElement('div', {
               ref: 'handle' + i,
-              className: self.props.handleClassName,
+              className: self.props.handleClassName + ' ' + self.props.handleClassName + '-' + i,
               style: at(styles, i),
               onMouseDown: self._dragStart(i),
               onTouchMove: self._touchMove(i),
