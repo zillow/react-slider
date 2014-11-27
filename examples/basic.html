@@ -115,6 +115,16 @@
       }
     }));
 
+    /*
+    React.render(
+            ReactMultiSlider({ className: 'horizontal-slider', value: [0, 20, 40, 60]},
+                React.createElement('div'),
+                React.createElement('div'),
+                React.createElement('div')
+            ),
+            document.getElementById('horizontal-1')
+    );
+    */
     React.render(Demo({ defaultValue: 50, orientation: 'horizontal' }), document.getElementById('horizontal-1'));
     React.render(Demo({ defaultValue: [0, 100], orientation: 'horizontal' }), document.getElementById('horizontal-2'));
     React.render(Demo({ defaultValue: [0, 50, 100], orientation: 'horizontal' }), document.getElementById('horizontal-3'));

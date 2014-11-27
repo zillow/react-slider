@@ -31,7 +31,6 @@
       onChange: React.PropTypes.func,
       onChanged: React.PropTypes.func // unlike onChange gets called only after sliding has stopped
     },
-
     getDefaultProps: function () {
       return {
         min: 0,
@@ -54,8 +53,25 @@
         handleWidth: 0,
         sliderMin: 0,
         sliderMax: 0,
-        value: or(this.props.value, this.props.defaultValue)
+        value: this._or(this.props.value, this.props.defaultValue)
       };
+    },
+
+    _or: function (v1, v2) {
+      var count = React.Children.count(this.props.children);
+      switch (count) {
+        case 0:
+          return or(v1, v2);
+        case size(v1):
+          return v1;
+        case size(v2):
+          return v2;
+        default:
+          if (size(v1) !== count || size(v2) !== count) {
+            console.warn("ReactMultiSlider: Number of values does not match number of children.");
+          }
+          return linspace(this.props.min, this.props.max, count);
+      }
     },
 
     componentDidMount: function () {
@@ -105,7 +121,6 @@
         msTransform: transform,
         OTransform: transform,
         transform: transform,
-        display: 'inline-block',
         position: 'absolute'
       }
     },
@@ -134,7 +149,6 @@
       }, [-1, Number.MAX_VALUE])[0];
     },
 
-    // TODO: prevent this event when the mouse is on top of the slider when dragging stops
     _onClick: function (e) {
       var position = e['page' + this._axis()];
 
@@ -146,10 +160,6 @@
       if (this.props.onChanged) {
         this.props.onChanged(this.state.value);
       }
-    },
-
-    _preventClick: function (e) {
-      pauseEvent(e);
     },
 
     _dragStart: function (i) {
@@ -211,10 +221,11 @@
 
       var lastValue = this.state.value;
 
-      var nextValue = select(this.state.value, i, function () {
+      var nextValue = map(this.state.value, function (value, j) {
+        if (i !== j) return value;
+
         var ratio = (position - this.state.sliderMin) / (this.state.sliderMax - this.state.sliderMin);
-        var value = ratio * (this.props.max - this.props.min) + this.props.min;
-        var nextValue = this._trimAlignValue(value);
+        var nextValue = this._trimAlignValue(ratio * (this.props.max - this.props.min) + this.props.min);
 
         // TODO: DRY?
         if (i > 0) {
@@ -282,12 +293,13 @@
         return (
           React.createElement('div', {
               ref: 'handle' + i,
+              key: 'handle' + i,
               className: self.props.handleClassName + ' ' + self.props.handleClassName + '-' + i,
               style: at(styles, i),
               onMouseDown: self._dragStart(i),
               onTouchMove: self._touchMove(i),
               onTouchEnd: self._onTouchEnd,
-              onClick: self._preventClick
+              onClick: pauseEvent
             },
             child
           )
@@ -295,11 +307,13 @@
       }
     },
 
-    _renderHandles: function (value, styles) {
+    _renderHandles: function (offset) {
+      var styles = map(offset, this._buildHandleStyle, this);
+
       if (React.Children.count(this.props.children) > 0) {
         return React.Children.map(this.props.children, this._renderHandle(styles), this);
       } else {
-        return map(value, function (value, i) {
+        return map(offset, function (offset, i) {
           return this._renderHandle(styles)(null, i);
         }, this);
       }
@@ -335,12 +349,11 @@
     },
 
     render: function () {
-      var value = or(this.props.value, this.state.value);
+      var value = this._or(this.props.value, this.state.value);
       var offset = map(value, this._calcOffset, this);
-      var styles = map(offset, this._buildHandleStyle, this);
 
       var bars = this._renderBars(offset);
-      var handles = this._renderHandles(value, styles);
+      var handles = this._renderHandles(offset);
 
       return (
         React.createElement('div', {
@@ -375,21 +388,12 @@
     return (v && v.map) ? v.map(f, context) : f.call(context, v, 0);
   }
 
-  /**
-   * Like map, but apply f only to index i.
-   */
-  function select(v, i, f, context) {
-    return (v && v.map) ? v.map(function (value, j) {
-      return (i === j) ? f.call(context, value) : value;
-    }, context) : f.call(context, v);
-  }
-
   function reduce(v, f, init) {
     return (v && v.reduce) ? v.reduce(f, init) : f(init, v, 0);
   }
 
   function size(v) {
-    return (v && v.map) ? v.length : 1;
+    return exists(v) ? (v.length ? v.length : 1) : 0;
   }
 
   function at(v, i) {
@@ -404,7 +408,20 @@
   }
 
   function or(maybe, other) {
-      return typeof maybe !== 'undefined' ? maybe : other;
+    return exists(maybe) ? maybe : other;
+  }
+
+  function exists(maybe) {
+    return typeof maybe !== 'undefined'
+  }
+
+  function linspace(min, max, count) {
+    var range = (max - min) / (count - 1);
+    var res = [];
+    for (var i = 0; i < count; i++) {
+      res.push(range * i);
+    }
+    return res;
   }
 
   return ReactMultiSlider;
