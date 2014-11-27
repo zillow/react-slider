@@ -26,8 +26,8 @@
       orientation: React.PropTypes.oneOf(['horizontal', 'vertical']),
       className: React.PropTypes.string,
       handleClassName: React.PropTypes.string,
-      drawBar: React.PropTypes.bool,
       barClassName: React.PropTypes.string,
+      withBars: React.PropTypes.bool,
       disabled: React.PropTypes.bool,
       onChange: React.PropTypes.func,
       onChanged: React.PropTypes.func
@@ -358,7 +358,7 @@
       var value = this._or(this.props.value, this.state.value);
       var offset = map(value, this._calcOffset, this);
 
-      var bars = this.props.drawBar ? this._renderBars(offset) : null;
+      var bars = this.props.withBars ? this._renderBars(offset) : null;
       var handles = this._renderHandles(offset);
 
       return (

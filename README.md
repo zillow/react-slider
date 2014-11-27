@@ -1,33 +1,52 @@
-# React Multi Slider
+# React Slider
 
 CSS agnostic slider component for React.
 
-See demo: [https://cell303.github.io/react-multi-slider](https://cell303.github.io/react-multi-slider/)
+See demo: [https://cell303.github.io/react-slider](https://cell303.github.io/react-slider/)
 
 ### Important Note
 
-This is alpha release. Use with caution and hope.
+This is an alpha release. Use with caution and hope.
+
+### Installation
+
+```sh
+npm install react-slider
+```
 
 ### Overview
 
 #### Single slider:
 
-Similar to `<input type="range" />`
+Similar to `<input type="range" defaultValue={50} />`
 
 ```javascript
-React.render(<ReactMultiSlider initialValue={50} />, document.body);
+React.render(<ReactSlider defaultValue={50} />, document.body);
 ```
 
-#### Double slider (Airbnb style):
+#### Double slider (with bars between the handles):
 
 ```javascript
-React.render(<ReactMultiSlider initialValue={[0, 100]} />, document.body);
+React.render(<ReactSlider defaultValue={[0, 100]} withBars />, document.body);
 ```
 
 #### Multi slider:
 
 ```javascript
-React.render(<ReactMultiSlider initialValue={[0, 33, 67, 100]} />, document.body);
+React.render(<ReactSlider defaultValue={[0, 33, 67, 100]} withBars />, document.body);
+```
+
+#### Provide custom handles:
+
+```javascript
+React.render(
+  <ReactSlider withBars>
+    <div className="my-handle">1</div>
+    <div className="my-handle">2</div>
+    <div className="my-handle">3</div>
+  </ReactSlider>,
+  document.body
+);
 ```
 
 Now you can style it as you want. Checkout the ```examples``` directory to see how.
@@ -71,14 +90,18 @@ The css class set on the slider node.
 ##### handleClassName {string} default: 'handle'
 
 The css class set on each handle node.
-In addition each handle will receive a numbered css class like `${handleClassName}-${i}`,
-e.g. `handle-0`, `handle-1`
+In addition each handle will receive a numbered css class of the form `${handleClassName}-${i}`,
+e.g. `handle-0`, `handle-1`, ...
 
 ##### barClassName {string} default: 'bar'
 
 The css class set on the bars between the handles.
-In addition bar fragment will receive a numbered css class like `${barClassName}-${i}`,
-e.g. `bar-0`, `bar-1`
+In addition bar fragment will receive a numbered css class of the form `${barClassName}-${i}`,
+e.g. `bar-0`, `bar-1`, ...
+
+##### withBars {boolean} default: false
+
+If `true` bars between the handles will be rendered.
 
 ##### disabled {boolean} default: false
 

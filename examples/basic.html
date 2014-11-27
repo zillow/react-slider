@@ -106,7 +106,7 @@
         return ReactSlider({
             className: this.props.orientation + '-slider',
             orientation: this.props.orientation,
-            drawBar: this.props.drawBar,
+            withBars: this.props.withBars,
             value: this.state.value,
             onChange: this.onChange
           },
@@ -118,10 +118,10 @@
     }));
 
     React.render(Demo({ defaultValue: 0, orientation: 'horizontal' }), document.getElementById('horizontal-1'));
-    React.render(Demo({ defaultValue: [0, 100], orientation: 'horizontal', drawBar: true }), document.getElementById('horizontal-2'));
-    React.render(Demo({ defaultValue: [0, 50, 100], orientation: 'horizontal', drawBar: true }), document.getElementById('horizontal-3'));
+    React.render(Demo({ defaultValue: [0, 100], orientation: 'horizontal', withBars: true }), document.getElementById('horizontal-2'));
+    React.render(Demo({ defaultValue: [0, 50, 100], orientation: 'horizontal', withBars: true }), document.getElementById('horizontal-3'));
 
-    React.render(Demo({ defaultValue: [0, 50, 100], orientation: 'vertical', drawBar: true }), document.getElementById('vertical'));
+    React.render(Demo({ defaultValue: [0, 50, 100], orientation: 'vertical', withBars: true }), document.getElementById('vertical'));
   </script>
 </body>
 </html>
