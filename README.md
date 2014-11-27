@@ -2,6 +2,8 @@
 
 CSS agnostic slider component for React.
 
+See demo: [https://cell303.github.io/react-multi-slider](https://cell303.github.io/react-multi-slider/)
+
 ### Important Note
 
 This is alpha release. Use with caution and hope.
