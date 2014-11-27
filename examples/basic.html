@@ -7,7 +7,7 @@
   <title>React Slider Example</title>
 
   <script src="../node_modules/react/dist/react.js"></script>
-  <script src="../react-multi-slider.js"></script>
+  <script src="../react-slider.js"></script>
 
   <style>
     .horizontal-slider {
@@ -85,13 +85,15 @@
   <script>
     React.initializeTouchEvents(true);
 
-    var ReactMultiSlider = React.createFactory(ReactMultiSlider);
+    var ReactSlider = React.createFactory(ReactSlider);
 
     function map(v, f, context) {
       return (v && v.map) ? v.map(f, context) : f.call(context, v, 0);
     }
 
     var Demo = React.createFactory(React.createClass({
+      displayName: 'Demo',
+
       getInitialState: function () {
         return { value: this.props.defaultValue }
       },
@@ -101,10 +103,10 @@
       },
 
       render: function () {
-        return ReactMultiSlider({
+        return ReactSlider({
             className: this.props.orientation + '-slider',
             orientation: this.props.orientation,
-            step: 5,
+            drawBar: this.props.drawBar,
             value: this.state.value,
             onChange: this.onChange
           },
@@ -115,21 +117,11 @@
       }
     }));
 
-    /*
-    React.render(
-            ReactMultiSlider({ className: 'horizontal-slider', value: [0, 20, 40, 60]},
-                React.createElement('div'),
-                React.createElement('div'),
-                React.createElement('div')
-            ),
-            document.getElementById('horizontal-1')
-    );
-    */
-    React.render(Demo({ defaultValue: 50, orientation: 'horizontal' }), document.getElementById('horizontal-1'));
-    React.render(Demo({ defaultValue: [0, 100], orientation: 'horizontal' }), document.getElementById('horizontal-2'));
-    React.render(Demo({ defaultValue: [0, 50, 100], orientation: 'horizontal' }), document.getElementById('horizontal-3'));
+    React.render(Demo({ defaultValue: 0, orientation: 'horizontal' }), document.getElementById('horizontal-1'));
+    React.render(Demo({ defaultValue: [0, 100], orientation: 'horizontal', drawBar: true }), document.getElementById('horizontal-2'));
+    React.render(Demo({ defaultValue: [0, 50, 100], orientation: 'horizontal', drawBar: true }), document.getElementById('horizontal-3'));
 
-    React.render(Demo({ defaultValue: [0, 50, 100], orientation: 'vertical' }), document.getElementById('vertical'));
+    React.render(Demo({ defaultValue: [0, 50, 100], orientation: 'vertical', drawBar: true }), document.getElementById('vertical'));
   </script>
 </body>
 </html>

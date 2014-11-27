@@ -4,12 +4,12 @@
   } else if (typeof exports === 'object') {
     module.exports = factory(require('react'));
   } else {
-    root.ReactMultiSlider = factory(root.React);
+    root.ReactSlider = factory(root.React);
   }
 }(this, function (React) {
 
-  var ReactMultiSlider = React.createClass({
-    displayName: 'ReactMultiSlider',
+  var ReactSlider = React.createClass({
+    displayName: 'ReactSlider',
 
     propTypes: {
       min: React.PropTypes.number,
@@ -26,11 +26,13 @@
       orientation: React.PropTypes.oneOf(['horizontal', 'vertical']),
       className: React.PropTypes.string,
       handleClassName: React.PropTypes.string,
+      drawBar: React.PropTypes.bool,
       barClassName: React.PropTypes.string,
       disabled: React.PropTypes.bool,
       onChange: React.PropTypes.func,
-      onChanged: React.PropTypes.func // unlike onChange gets called only after sliding has stopped
+      onChanged: React.PropTypes.func
     },
+
     getDefaultProps: function () {
       return {
         min: 0,
@@ -68,7 +70,7 @@
           return v2;
         default:
           if (size(v1) !== count || size(v2) !== count) {
-            console.warn("ReactMultiSlider: Number of values does not match number of children.");
+            console.warn("ReactSlider: Number of values does not match number of children.");
           }
           return linspace(this.props.min, this.props.max, count);
       }
@@ -352,7 +354,7 @@
       var value = this._or(this.props.value, this.state.value);
       var offset = map(value, this._calcOffset, this);
 
-      var bars = this._renderBars(offset);
+      var bars = this.props.drawBar ? this._renderBars(offset) : null;
       var handles = this._renderHandles(offset);
 
       return (
@@ -424,6 +426,6 @@
     return res;
   }
 
-  return ReactMultiSlider;
+  return ReactSlider;
 
 }));
