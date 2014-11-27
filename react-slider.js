@@ -191,7 +191,7 @@
         document.removeEventListener('mousemove', self._dragMove(i), false);
         document.removeEventListener('mouseup', self._dragEnd(i), false);
         if (self.props.onChanged) {
-          self.props.onChanged(this.state.value);
+          self.props.onChanged(self.state.value);
         }
       }
     },
