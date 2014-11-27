@@ -64,7 +64,7 @@ The maximum value of the slider
 ##### step {number} default: 1
 
 Value to be added or subtracted on each step the slider makes. Must be greater than zero.
-```maxValue - minValue``` should be evenly divisible by the step value.
+```max - min``` should be evenly divisible by the step value.
 
 ##### defaultValue {number|array\<number\>} default: 0
 
