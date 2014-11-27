@@ -49,14 +49,17 @@
 
     getInitialState: function () {
       return {
-        _dragMoveCache: {}, // TODO: find better solution
-        _touchMoveCache: {}, // TODO: find better solution
+        _index: -1, // TODO: find better solution
         upperBound: 0,
         handleWidth: 0,
         sliderMin: 0,
         sliderMax: 0,
         value: this._or(this.props.value, this.props.defaultValue)
       };
+    },
+
+    componentWillReceiveProps: function (newProps) {
+      this.state.value = this._or(newProps.value, this.state.value)
     },
 
     _or: function (v1, v2) {
@@ -167,32 +170,24 @@
     _dragStart: function (i) {
       var self = this;
       return function (e) {
-        document.addEventListener('mousemove', self._dragMove(i), false);
-        document.addEventListener('mouseup', self._dragEnd(i), false);
+        self.state._index = i;
+        document.addEventListener('mousemove', self._dragMove, false);
+        document.addEventListener('mouseup', self._dragEnd, false);
         pauseEvent(e);
       }
     },
 
-    _dragMove: function (i) {
-      var self = this;
-      if (!this.state._dragMoveCache[i]) {
-        this.state._dragMoveCache[i] =
-          function (e) {
-            var position = e['page' + self._axis()];
-            self._moveHandle(i, position);
-          }
-      }
-      return this.state._dragMoveCache[i];
+    _dragMove: function (e) {
+      var position = e['page' + this._axis()];
+      this._moveHandle(this.state._index, position);
     },
 
-    _dragEnd: function (i) {
-      var self = this;
-      return function () {
-        document.removeEventListener('mousemove', self._dragMove(i), false);
-        document.removeEventListener('mouseup', self._dragEnd(i), false);
-        if (self.props.onChanged) {
-          self.props.onChanged(self.state.value);
-        }
+    _dragEnd: function () {
+      this.state._index = -1;
+      document.removeEventListener('mousemove', this._dragMove, false);
+      document.removeEventListener('mouseup', this._dragEnd, false);
+      if (this.props.onChanged) {
+        this.props.onChanged(this.state.value);
       }
     },
 
@@ -204,16 +199,12 @@
 
     _touchMove: function (i) {
       var self = this;
-      if (!this.state._touchMoveCache[i]) {
-        this.state._touchMoveCache[i] =
-          function (e) {
-            var last = e.changedTouches[e.changedTouches.length - 1];
-            var position = last['page' + self._axis()];
-            self._moveHandle(i, position);
-            e.preventDefault();
-          }
+      return function (e) {
+        var last = e.changedTouches[e.changedTouches.length - 1];
+        var position = last['page' + self._axis()];
+        self._moveHandle(i, position);
+        e.preventDefault();
       }
-      return this.state._touchMoveCache[i];
     },
 
     _moveHandle: function (i, position) {
@@ -300,17 +291,12 @@
               style: at(styles, i),
               onMouseDown: self._dragStart(i),
               onTouchMove: self._touchMove(i),
-              onTouchEnd: self._onTouchEnd,
-              onClick: self._pauseEvent
+              onTouchEnd: self._onTouchEnd
             },
             child
           )
         );
       }
-    },
-
-    _pauseEvent: function (e) {
-      pauseEvent(e);
     },
 
     _renderHandles: function (offset) {
@@ -355,8 +341,7 @@
     },
 
     render: function () {
-      var value = this._or(this.props.value, this.state.value);
-      var offset = map(value, this._calcOffset, this);
+      var offset = map(this.state.value, this._calcOffset, this);
 
       var bars = this.props.withBars ? this._renderBars(offset) : null;
       var handles = this._renderHandles(offset);
