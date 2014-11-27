@@ -301,12 +301,16 @@
               onMouseDown: self._dragStart(i),
               onTouchMove: self._touchMove(i),
               onTouchEnd: self._onTouchEnd,
-              onClick: pauseEvent
+              onClick: self._pauseEvent
             },
             child
           )
         );
       }
+    },
+
+    _pauseEvent: function (e) {
+      pauseEvent(e);
     },
 
     _renderHandles: function (offset) {
