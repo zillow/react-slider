@@ -22,7 +22,7 @@
     "email": "f.klampfer@gmail.com"
   }],
   "license": "MIT",
-  "dependencies": {
+  "devDependencies": {
     "react": "^0.12.1"
   }
 }
