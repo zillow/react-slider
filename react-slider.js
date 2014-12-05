@@ -26,6 +26,7 @@
       orientation: React.PropTypes.oneOf(['horizontal', 'vertical']),
       className: React.PropTypes.string,
       handleClassName: React.PropTypes.string,
+      minDistance: React.PropTypes.number,
       barClassName: React.PropTypes.string,
       withBars: React.PropTypes.bool,
       disabled: React.PropTypes.bool,
@@ -42,6 +43,7 @@
         orientation: 'horizontal',
         className: 'slider',
         handleClassName: 'handle',
+        minDistance: 0,
         barClassName: 'bar',
         disabled: false
       };
@@ -220,18 +222,17 @@
         var ratio = (position - this.state.sliderMin) / (this.state.sliderMax - this.state.sliderMin);
         var nextValue = this._trimAlignValue(ratio * (this.props.max - this.props.min) + this.props.min);
 
-        // TODO: DRY?
         if (i > 0) {
           var valueBefore = at(this.state.value, i - 1);
-          if (nextValue <= valueBefore) {
-            nextValue = this._trimAlignValue(valueBefore + this.props.step);
+          if (nextValue < valueBefore + this.props.minDistance) {
+            nextValue = this._trimAlignValue(valueBefore + this.props.minDistance);
           }
         }
 
         if (i < size(this.state.value) - 1) {
           var valueAfter = at(this.state.value, i + 1);
-          if (nextValue >= valueAfter) {
-            nextValue = this._trimAlignValue(valueAfter - this.props.step);
+          if (nextValue > valueAfter - this.props.minDistance) {
+            nextValue = this._trimAlignValue(valueAfter - this.props.minDistance);
           }
         }
 

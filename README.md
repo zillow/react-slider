@@ -93,6 +93,11 @@ The css class set on each handle node.
 In addition each handle will receive a numbered css class of the form `${handleClassName}-${i}`,
 e.g. `handle-0`, `handle-1`, ...
 
+##### minDistance {number} default: 0
+
+Sets the minimal distance between any pair of handles.
+Zero means they can sit on top of each other.
+
 ##### barClassName {string} default: 'bar'
 
 The css class set on the bars between the handles.

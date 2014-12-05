@@ -108,7 +108,8 @@
             orientation: this.props.orientation,
             withBars: this.props.withBars,
             value: this.state.value,
-            onChange: this.onChange
+            onChange: this.onChange,
+            minDistance: 10
           },
           map(this.state.value, function (value, i) {
             return React.createElement('div', {key: i}, value);
