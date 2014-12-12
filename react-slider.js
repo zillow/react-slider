@@ -121,11 +121,17 @@
     },
 
     getInitialState: function () {
+      var value = this._or(this.props.value, this.props.defaultValue);
+
       return {
         index: -1, // TODO: find better solution
         upperBound: 0,
         sliderLength: 0,
-        value: this._or(this.props.value, this.props.defaultValue)
+        value: value,
+        zIndices: reduce(value, function (acc, x, i) {
+          acc.push(i);
+          return acc;
+        }, [])
       };
     },
 
@@ -196,7 +202,7 @@
       return ratio * this.state.upperBound;
     },
 
-    _buildHandleStyle: function (offset) {
+    _buildHandleStyle: function (offset, i) {
       var transform = 'translate' + this._axis() + '(' + offset + 'px)';
       return {
         WebkitTransform: transform,
@@ -204,7 +210,8 @@
         msTransform: transform,
         OTransform: transform,
         transform: transform,
-        position: 'absolute'
+        position: 'absolute',
+        zIndex: this.state.zIndices.indexOf(i) + 1
       }
     },
 
@@ -218,34 +225,34 @@
     },
 
     /*
-    _getClosestIndex: function (clickOffset) {
-      var self = this;
+     _getClosestIndex: function (clickOffset) {
+     var self = this;
 
-      // TODO: No need to iterate all
-      return reduce(this.state.value, function (min, value, i) {
-        var minDist = min[1];
+     // TODO: No need to iterate all
+     return reduce(this.state.value, function (min, value, i) {
+     var minDist = min[1];
 
-        var offset = self._calcOffset(value);
-        var dist = Math.abs(clickOffset - offset);
+     var offset = self._calcOffset(value);
+     var dist = Math.abs(clickOffset - offset);
 
-        return (dist < minDist) ? [i, dist] : min;
+     return (dist < minDist) ? [i, dist] : min;
 
-      }, [-1, Number.MAX_VALUE])[0];
-    },
+     }, [-1, Number.MAX_VALUE])[0];
+     },
 
-    _onClick: function (e) {
-      var position = e['page' + this._axis()];
+     _onClick: function (e) {
+     var position = e['page' + this._axis()];
 
-      var clickOffset = position - this.state.sliderMin;
-      var closestIndex = this._getClosestIndex(clickOffset);
+     var clickOffset = position - this.state.sliderMin;
+     var closestIndex = this._getClosestIndex(clickOffset);
 
-      this._move(closestIndex, position);
+     this._move(closestIndex, position);
 
-      if (this.props.onChanged) {
-        this.props.onChanged(this.state.value);
-      }
-    },
-    */
+     if (this.props.onChanged) {
+     this.props.onChanged(this.state.value);
+     }
+     },
+     */
 
     _dragStart: function (i) {
       if (this.props.disabled) return;
@@ -274,10 +281,15 @@
     },
 
     _start: function (i, position) {
+      var zIndices = this.state.zIndices;
+      zIndices.splice(zIndices.indexOf(i), 1); // remove wherever the element is
+      zIndices.push(i); // add to end
+
       this.setState({
         startValue: at(this.state.value, i),
         startPosition: position,
-        index: i
+        index: i,
+        zIndices: zIndices
       });
     },
 
