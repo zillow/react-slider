@@ -122,7 +122,7 @@
 
     getInitialState: function () {
       return {
-        _index: -1, // TODO: find better solution
+        index: -1, // TODO: find better solution
         upperBound: 0,
         sliderLength: 0,
         value: this._or(this.props.value, this.props.defaultValue)
@@ -217,6 +217,7 @@
       return obj;
     },
 
+    /*
     _getClosestIndex: function (clickOffset) {
       var self = this;
 
@@ -244,8 +245,11 @@
         this.props.onChanged(this.state.value);
       }
     },
+    */
 
     _dragStart: function (i) {
+      if (this.props.disabled) return;
+
       var self = this;
       return function (e) {
         var position = e['page' + self._axis()];
@@ -259,6 +263,8 @@
     },
 
     _touchStart: function (i) {
+      if (this.props.disabled) return;
+
       var self = this;
       return function (e) {
         var last = e.changedTouches[e.changedTouches.length - 1];
@@ -271,7 +277,7 @@
       this.setState({
         startValue: at(this.state.value, i),
         startPosition: position,
-        _index: i
+        index: i
       });
     },
 
@@ -287,7 +293,7 @@
 
     _end: function () {
       this.setState({
-        _index: -1
+        index: -1
       });
 
       if (this.props.onChanged) {
@@ -297,17 +303,14 @@
 
     _dragMove: function (e) {
       var position = e['page' + this._axis()];
-      this._move(this.state._index, position);
+      this._move(this.state.index, position);
     },
 
-    _touchMove: function (i) {
-      var self = this;
-      return function (e) {
-        var last = e.changedTouches[e.changedTouches.length - 1];
-        var position = last['page' + self._axis()];
-        self._move(i, position);
-        e.preventDefault();
-      }
+    _touchMove: function (e) {
+      var last = e.changedTouches[e.changedTouches.length - 1];
+      var position = last['page' + this._axis()];
+      this._move(this.state.index, position);
+      e.preventDefault();
     },
 
     _move: function (i, position) {
@@ -430,7 +433,7 @@
       return function (child, i) {
         var className = self.props.handleClassName + ' ' +
           (self.props.handleClassName + '-' + i) + ' ' +
-          (self.state._index === i ? self.props.handleActiveClassName : '');
+          (self.state.index === i ? self.props.handleActiveClassName : '');
 
         return (
           React.createElement('div', {
@@ -440,7 +443,7 @@
               style: at(styles, i),
               onMouseDown: self._dragStart(i),
               onTouchStart: self._touchStart(i),
-              onTouchMove: self._touchMove(i),
+              onTouchMove: self._touchMove,
               onTouchEnd: self._onTouchEnd
             },
             child
