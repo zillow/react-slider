@@ -59,8 +59,7 @@
         _index: -1, // TODO: find better solution
         upperBound: 0,
         handleWidth: 0,
-        sliderMin: 0,
-        sliderMax: 0,
+        sliderLength: 0,
         value: this._or(this.props.value, this.props.defaultValue)
       };
     },
@@ -112,11 +111,13 @@
         vertical: 'clientHeight'
       }[this.props.orientation];
 
+      var sliderMax = rect[this._max()] - handle[size];
+      var sliderMin = rect[this._min()];
+
       this.setState({
         upperBound: slider[size] - handle[size],
         handleWidth: handle[size],
-        sliderMin: rect[this._min()],
-        sliderMax: rect[this._max()] - handle[size]
+        sliderLength: sliderMax - sliderMin
       });
     },
 
@@ -167,7 +168,7 @@
       var clickOffset = position - this.state.sliderMin;
       var closestIndex = this._getClosestIndex(clickOffset);
 
-      this._moveHandle(closestIndex, position);
+      this._move(closestIndex, position);
 
       if (this.props.onChanged) {
         this.props.onChanged(this.state.value);
@@ -177,9 +178,8 @@
     _dragStart: function (i) {
       var self = this;
       return function (e) {
-        self.setState({
-          _index: i
-        });
+        var position = e['page' + self._axis()];
+        self._start(i, position);
 
         document.addEventListener('mousemove', self._dragMove, false);
         document.addEventListener('mouseup', self._dragEnd, false);
@@ -190,39 +190,44 @@
 
     _touchStart: function (i) {
       var self = this;
-      return function () {
-        self.setState({
-          _index: i
-        });
+      return function (e) {
+        var last = e.changedTouches[e.changedTouches.length - 1];
+        var position = last['page' + self._axis()];
+        self._start(i, position);
+      }
+    },
+
+    _start: function (i, position) {
+      this.setState({
+        startValue: at(this.state.value, i),
+        startPosition: position,
+        _index: i
+      });
+    },
+
+    _dragEnd: function () {
+      document.removeEventListener('mousemove', this._dragMove, false);
+      document.removeEventListener('mouseup', this._dragEnd, false);
+      this._end();
+    },
+
+    _onTouchEnd: function () {
+      this._end();
+    },
+
+    _end: function () {
+      this.setState({
+        _index: -1
+      });
+
+      if (this.props.onChanged) {
+        this.props.onChanged(this.state.value);
       }
     },
 
     _dragMove: function (e) {
       var position = e['page' + this._axis()];
-      this._moveHandle(this.state._index, position);
-    },
-
-    _dragEnd: function () {
-      this.setState({
-        _index: -1
-      });
-
-      document.removeEventListener('mousemove', this._dragMove, false);
-      document.removeEventListener('mouseup', this._dragEnd, false);
-
-      if (this.props.onChanged) {
-        this.props.onChanged(this.state.value);
-      }
-    },
-
-    _onTouchEnd: function () {
-      this.setState({
-        _index: -1
-      });
-
-      if (this.props.onChanged) {
-        this.props.onChanged(this.state.value);
-      }
+      this._move(this.state._index, position);
     },
 
     _touchMove: function (i) {
@@ -230,23 +235,21 @@
       return function (e) {
         var last = e.changedTouches[e.changedTouches.length - 1];
         var position = last['page' + self._axis()];
-        self._moveHandle(i, position);
+        self._move(i, position);
         e.preventDefault();
       }
     },
 
-    _moveHandle: function (i, position) {
+    _move: function (i, position) {
       if (this.props.disabled) return;
 
-      position = position - (this.state.handleWidth / 2);
-
       var lastValue = this.state.value;
-
       var nextValue = map(this.state.value, function (value, j) {
         if (i !== j) return value;
 
-        var ratio = (position - this.state.sliderMin) / (this.state.sliderMax - this.state.sliderMin);
-        var nextValue = this._trimAlignValue(ratio * (this.props.max - this.props.min) + this.props.min);
+        var diffPosition = position - this.state.startPosition;
+        var diffValue = (diffPosition / this.state.sliderLength) * (this.props.max - this.props.min);
+        var nextValue = this._trimAlignValue(this.state.startValue + diffValue);
 
         if (!this.props.pearling) {
           if (i > 0) {
@@ -427,8 +430,8 @@
         React.createElement('div', {
             ref: 'slider',
             style: {position: 'relative'},
-            className: this.props.className,
-            onClick: this._onClick
+            className: this.props.className
+            //onClick: this._onClick
           },
           bars,
           handles
