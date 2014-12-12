@@ -10,6 +10,10 @@
   <script src="../react-slider.js"></script>
 
   <style>
+    body {
+      -webkit-tap-highlight-color: rgba(0,0,0,0);
+    }
+
     .horizontal-slider {
       width: 100%;
       max-width: 480px;
@@ -29,11 +33,6 @@
       background-color: black;
       color: white;
       cursor: pointer;
-      -webkit-user-select: none;
-         -moz-user-select: none;
-          -ms-user-select: none;
-           -o-user-select: none;
-              user-select: none;
     }
 
     .handle.active {
@@ -116,6 +115,7 @@
             className: this.props.orientation + '-slider',
             orientation: this.props.orientation,
             withBars: this.props.withBars,
+            pearling: true,
             value: this.state.value,
             onChange: this.onChange,
             minDistance: 10

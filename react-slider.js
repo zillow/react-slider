@@ -30,6 +30,7 @@
       minDistance: React.PropTypes.number,
       barClassName: React.PropTypes.string,
       withBars: React.PropTypes.bool,
+      pearling: React.PropTypes.bool,
       disabled: React.PropTypes.bool,
       onChange: React.PropTypes.func,
       onChanged: React.PropTypes.func
@@ -47,6 +48,8 @@
         handleActiveClassName: 'active',
         minDistance: 0,
         barClassName: 'bar',
+        withBars: false,
+        pearling: false,
         disabled: false
       };
     },
@@ -245,27 +248,72 @@
         var ratio = (position - this.state.sliderMin) / (this.state.sliderMax - this.state.sliderMin);
         var nextValue = this._trimAlignValue(ratio * (this.props.max - this.props.min) + this.props.min);
 
-        if (i > 0) {
-          var valueBefore = at(this.state.value, i - 1);
-          if (nextValue < valueBefore + this.props.minDistance) {
-            nextValue = this._trimAlignValue(valueBefore + this.props.minDistance);
+        if (!this.props.pearling) {
+          if (i > 0) {
+            var valueBefore = at(this.state.value, i - 1);
+            if (nextValue < valueBefore + this.props.minDistance) {
+              nextValue = this._trimAlignValue(valueBefore + this.props.minDistance);
+            }
           }
-        }
 
-        if (i < size(this.state.value) - 1) {
-          var valueAfter = at(this.state.value, i + 1);
-          if (nextValue > valueAfter - this.props.minDistance) {
-            nextValue = this._trimAlignValue(valueAfter - this.props.minDistance);
+          if (i < size(this.state.value) - 1) {
+            var valueAfter = at(this.state.value, i + 1);
+            if (nextValue > valueAfter - this.props.minDistance) {
+              nextValue = this._trimAlignValue(valueAfter - this.props.minDistance);
+            }
           }
         }
 
         return nextValue;
       }, this);
 
+      if (this.props.pearling) {
+        var n = nextValue.length;
+        if (n && n > 1) {
+          if (nextValue[i] > lastValue[i]) {
+            this._pearlNext(i, nextValue);
+            this._limitNext(n, nextValue);
+          } else if (nextValue[i] < lastValue[i]) {
+            this._pearlPrev(i, nextValue);
+            this._limitPrev(n, nextValue);
+          }
+        }
+      }
+
       var changed = !is(nextValue, lastValue);
       if (changed) {
         this.setState({value: nextValue});
         if (this.props.onChange) this.props.onChange(nextValue);
+      }
+    },
+
+    _pearlNext: function (i, nextValue) {
+      if (nextValue[i + 1] && nextValue[i] + this.props.minDistance > nextValue[i + 1]) {
+        nextValue[i + 1] = this._trimAlignValue(nextValue[i] + this.props.minDistance);
+        this._pearlNext(i + 1, nextValue);
+      }
+    },
+
+    _limitNext: function (n, nextValue) {
+      for (var i = 0; i < n; i++) {
+        if (nextValue[n - 1 - i] > this.props.max - i * this.props.minDistance) {
+          nextValue[n - 1 - i] = this.props.max - i * this.props.minDistance;
+        }
+      }
+    },
+
+    _pearlPrev: function (i, nextValue) {
+      if (nextValue[i - 1] && nextValue[i] - this.props.minDistance < nextValue[i - 1]) {
+        nextValue[i - 1] = this._trimAlignValue(nextValue[i] - this.props.minDistance);
+        this._pearlPrev(i - 1, nextValue);
+      }
+    },
+
+    _limitPrev: function (n, nextValue) {
+      for (var i = 0; i < n; i++) {
+        if (nextValue[i] < this.props.min + i * this.props.minDistance) {
+          nextValue[i] = this.props.min + i * this.props.minDistance;
+        }
       }
     },
 
@@ -308,8 +356,8 @@
       var self = this;
       return function (child, i) {
         var className = self.props.handleClassName + ' ' +
-            (self.props.handleClassName + '-' + i) + ' ' +
-            (self.state._index === i ? self.props.handleActiveClassName : '');
+          (self.props.handleClassName + '-' + i) + ' ' +
+          (self.state._index === i ? self.props.handleActiveClassName : '');
 
         return (
           React.createElement('div', {
