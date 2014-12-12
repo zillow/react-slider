@@ -8,6 +8,72 @@
   }
 }(this, function (React) {
 
+  /**
+   * To prevent text selection while dragging.
+   * http://stackoverflow.com/questions/5429827/how-can-i-prevent-text-element-selection-with-cursor-drag
+   */
+  function pauseEvent(e) {
+    if (e.stopPropagation) e.stopPropagation();
+    if (e.preventDefault) e.preventDefault();
+    e.cancelBubble = true;
+    e.returnValue = false;
+    return false;
+  }
+
+  // These functions allow to treat a single value and an array of values equally:
+  // e.g. map(5, x => x + 1) returns 6
+  //      map([5, 6, 7], x => x + 1) returns [6, 7, 8]
+
+  /**
+   * Apply `f` to each value in `v` or call `f` with `v` directly if it is a single value.
+   */
+  function map(v, f, context) {
+    return (v && v.map) ? v.map(f, context) : f.call(context, v, 0);
+  }
+
+  /**
+   * Reduce `v` with `f` and `init` or call `f` directly with `init` and `v` if it is a single value.
+   */
+  function reduce(v, f, init) {
+    return (v && v.reduce) ? v.reduce(f, init) : f(init, v, 0);
+  }
+
+  /**
+   * Returns the size of `v` if it is an array, or 1 if it is a single value or 0 if it does not exists.
+   */
+  function size(v) {
+    return v != null ? v.length ? v.length : 1 : 0;
+  }
+
+  /**
+   * Returns the value at `i` if `v` is an array. Just returns the value otherwise.
+   */
+  function at(v, i) {
+    return v && v.map ? v[i] : v;
+  }
+
+  /**
+   * Compares `a` and `b` which can be either single values or an array of values.
+   */
+  function is(a, b) {
+    return size(a) === size(b) &&
+      reduce(a, function (res, v, i) {
+        return res && v === at(b, i)
+      }, true);
+  }
+
+  /**
+   * Spreads `count` values equally between `min` and `max`.
+   */
+  function linspace(min, max, count) {
+    var range = (max - min) / (count - 1);
+    var res = [];
+    for (var i = 0; i < count; i++) {
+      res.push(range * i);
+    }
+    return res;
+  }
+
   var ReactSlider = React.createClass({
     displayName: 'ReactSlider',
 
@@ -58,27 +124,31 @@
       return {
         _index: -1, // TODO: find better solution
         upperBound: 0,
-        handleWidth: 0,
         sliderLength: 0,
         value: this._or(this.props.value, this.props.defaultValue)
       };
     },
 
+    // Keep the internal `value` consistent with an outside `value` if present.
+    // This basically allows the slider to be a controlled component.
     componentWillReceiveProps: function (newProps) {
       this.state.value = this._or(newProps.value, this.state.value)
     },
 
-    _or: function (v1, v2) {
+    // Check if the arity of `value` or `defaultValue` matches the number of children (= number of custom handles) and returns it.
+    // If no custom handles are provided, just returns `value` if present or `defaultValue` otherwise.
+    // If custom handles are present but neither `value` nor `defaultValue` are applicable the handles are spread out equally.
+    _or: function (value, defaultValue) {
       var count = React.Children.count(this.props.children);
       switch (count) {
         case 0:
-          return or(v1, v2);
-        case size(v1):
-          return v1;
-        case size(v2):
-          return v2;
+          return value != null ? value : defaultValue;
+        case size(value):
+          return value;
+        case size(defaultValue):
+          return defaultValue;
         default:
-          if (size(v1) !== count || size(v2) !== count) {
+          if (size(value) !== count || size(defaultValue) !== count) {
             console.warn("ReactSlider: Number of values does not match number of children.");
           }
           return linspace(this.props.min, this.props.max, count);
@@ -116,11 +186,11 @@
 
       this.setState({
         upperBound: slider[size] - handle[size],
-        handleWidth: handle[size],
         sliderLength: sliderMax - sliderMin
       });
     },
 
+    // calculates the offset of a handle in pixels based on its value.
     _calcOffset: function (value) {
       var ratio = (value - this.props.min) / (this.props.max - this.props.min);
       return ratio * this.state.upperBound;
@@ -439,61 +509,6 @@
       );
     }
   });
-
-  /**
-   * Prevent text selection while dragging.
-   * http://stackoverflow.com/questions/5429827/how-can-i-prevent-text-element-selection-with-cursor-drag
-   */
-  function pauseEvent(e) {
-    if (e.stopPropagation) e.stopPropagation();
-    if (e.preventDefault) e.preventDefault();
-    e.cancelBubble = true;
-    e.returnValue = false;
-    return false;
-  }
-
-  /**
-   * A little "hack" to treat a value and an array of values equally.
-   */
-  function map(v, f, context) {
-    return (v && v.map) ? v.map(f, context) : f.call(context, v, 0);
-  }
-
-  function reduce(v, f, init) {
-    return (v && v.reduce) ? v.reduce(f, init) : f(init, v, 0);
-  }
-
-  function size(v) {
-    return exists(v) ? (v.length ? v.length : 1) : 0;
-  }
-
-  function at(v, i) {
-    return (v && v.map) ? v[i] : v;
-  }
-
-  function is(a, b) {
-    return size(a) === size(b) &&
-      reduce(a, function (res, v, i) {
-        return res && v === at(b, i)
-      }, true);
-  }
-
-  function or(maybe, other) {
-    return exists(maybe) ? maybe : other;
-  }
-
-  function exists(maybe) {
-    return typeof maybe !== 'undefined'
-  }
-
-  function linspace(min, max, count) {
-    var range = (max - min) / (count - 1);
-    var res = [];
-    for (var i = 0; i < count; i++) {
-      res.push(range * i);
-    }
-    return res;
-  }
 
   return ReactSlider;
 
