@@ -26,6 +26,7 @@
       orientation: React.PropTypes.oneOf(['horizontal', 'vertical']),
       className: React.PropTypes.string,
       handleClassName: React.PropTypes.string,
+      handleActiveClassName: React.PropTypes.string,
       minDistance: React.PropTypes.number,
       barClassName: React.PropTypes.string,
       withBars: React.PropTypes.bool,
@@ -43,6 +44,7 @@
         orientation: 'horizontal',
         className: 'slider',
         handleClassName: 'handle',
+        handleActiveClassName: 'active',
         minDistance: 0,
         barClassName: 'bar',
         disabled: false
@@ -172,10 +174,23 @@
     _dragStart: function (i) {
       var self = this;
       return function (e) {
-        self.state._index = i;
+        self.setState({
+          _index: i
+        });
+
         document.addEventListener('mousemove', self._dragMove, false);
         document.addEventListener('mouseup', self._dragEnd, false);
+
         pauseEvent(e);
+      }
+    },
+
+    _touchStart: function (i) {
+      var self = this;
+      return function () {
+        self.setState({
+          _index: i
+        });
       }
     },
 
@@ -185,15 +200,23 @@
     },
 
     _dragEnd: function () {
-      this.state._index = -1;
+      this.setState({
+        _index: -1
+      });
+
       document.removeEventListener('mousemove', this._dragMove, false);
       document.removeEventListener('mouseup', this._dragEnd, false);
+
       if (this.props.onChanged) {
         this.props.onChanged(this.state.value);
       }
     },
 
     _onTouchEnd: function () {
+      this.setState({
+        _index: -1
+      });
+
       if (this.props.onChanged) {
         this.props.onChanged(this.state.value);
       }
@@ -284,13 +307,18 @@
     _renderHandle: function (styles) {
       var self = this;
       return function (child, i) {
+        var className = self.props.handleClassName + ' ' +
+            (self.props.handleClassName + '-' + i) + ' ' +
+            (self.state._index === i ? self.props.handleActiveClassName : '');
+
         return (
           React.createElement('div', {
               ref: 'handle' + i,
               key: 'handle' + i,
-              className: self.props.handleClassName + ' ' + self.props.handleClassName + '-' + i,
+              className: className,
               style: at(styles, i),
               onMouseDown: self._dragStart(i),
+              onTouchStart: self._touchStart(i),
               onTouchMove: self._touchMove(i),
               onTouchEnd: self._onTouchEnd
             },
