@@ -295,6 +295,11 @@
         var last = e.changedTouches[e.changedTouches.length - 1];
         var position = last['page' + self._axis()];
         self._start(i, position);
+
+        document.addEventListener('touchmove', self._touchMove, false);
+        document.addEventListener('touchend', self._touchEnd, false);
+
+        pauseEvent(e);
       }
     },
 
@@ -317,7 +322,9 @@
       this._end();
     },
 
-    _onTouchEnd: function () {
+    _touchEnd: function () {
+      document.removeEventListener('touchmove', this._touchMove, false);
+      document.removeEventListener('touchend', this._touchEnd, false);
       this._end();
     },
 
@@ -472,9 +479,9 @@
               className: className,
               style: at(styles, i),
               onMouseDown: self._dragStart(i),
-              onTouchStart: self._touchStart(i),
-              onTouchMove: self._touchMove,
-              onTouchEnd: self._onTouchEnd
+              onTouchStart: self._touchStart(i)
+              //onTouchMove: self._touchMove,
+              //onTouchEnd: self._onTouchEnd
             },
             child
           )
