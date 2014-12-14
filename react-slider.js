@@ -69,7 +69,7 @@
     var range = (max - min) / (count - 1);
     var res = [];
     for (var i = 0; i < count; i++) {
-      res.push(range * i);
+      res.push(min + range * i);
     }
     return res;
   }
@@ -133,10 +133,13 @@
     },
 
     getInitialState: function () {
-      var value = this._or(this.props.value, this.props.defaultValue);
+      //var value = this._or(this.props.value, this.props.defaultValue);
+      var value = map(this._or(this.props.value, this.props.defaultValue), this._trimAlignValue);
 
       return {
         index: -1, // TODO: find better solution
+        min: this._trimAlignValue(this.props.min),
+        max: this._trimAlignValue(this.props.max),
         upperBound: 0,
         sliderLength: 0,
         value: value,
@@ -150,7 +153,9 @@
     // Keep the internal `value` consistent with an outside `value` if present.
     // This basically allows the slider to be a controlled component.
     componentWillReceiveProps: function (newProps) {
-      this.state.value = this._or(newProps.value, this.state.value)
+      this.state.value = map(this._or(newProps.value, this.state.value), this._trimAlignValue);
+      this.state.min = this._trimAlignValue(newProps.min);
+      this.state.max = this._trimAlignValue(newProps.max);
     },
 
     // Check if the arity of `value` or `defaultValue` matches the number of children (= number of custom handles) and returns it.
@@ -177,8 +182,10 @@
       window.addEventListener('resize', this._handleResize);
       this._handleResize();
 
-      var value = map(this.state.value, this._trimAlignValue);
-      this.setState({value: value});
+      // values could have changed due to `this._trimAlignValue`.
+      if (this.props.onChange && !is(this.props.value, this.state.value)) {
+        this.props.onChange(this.state.value);
+      }
     },
 
     componentWillUnmount: function () {
@@ -210,7 +217,7 @@
 
     // calculates the offset of a handle in pixels based on its value.
     _calcOffset: function (value) {
-      var ratio = (value - this.props.min) / (this.props.max - this.props.min);
+      var ratio = (value - this.state.min) / (this.state.max - this.state.min);
       return ratio * this.state.upperBound;
     },
 
@@ -358,7 +365,7 @@
         if (i !== j) return value;
 
         var diffPosition = position - this.state.startPosition;
-        var diffValue = (diffPosition / this.state.sliderLength) * (this.props.max - this.props.min);
+        var diffValue = (diffPosition / this.state.sliderLength) * (this.state.max - this.state.min);
         var nextValue = this._trimAlignValue(this.state.startValue + diffValue);
 
         if (!this.props.pearling) {
@@ -409,8 +416,8 @@
 
     _limitNext: function (n, nextValue) {
       for (var i = 0; i < n; i++) {
-        if (nextValue[n - 1 - i] > this.props.max - i * this.props.minDistance) {
-          nextValue[n - 1 - i] = this.props.max - i * this.props.minDistance;
+        if (nextValue[n - 1 - i] > this.state.max - i * this.props.minDistance) {
+          nextValue[n - 1 - i] = this.state.max - i * this.props.minDistance;
         }
       }
     },
@@ -424,8 +431,8 @@
 
     _limitPrev: function (n, nextValue) {
       for (var i = 0; i < n; i++) {
-        if (nextValue[i] < this.props.min + i * this.props.minDistance) {
-          nextValue[i] = this.props.min + i * this.props.minDistance;
+        if (nextValue[i] < this.state.min + i * this.props.minDistance) {
+          nextValue[i] = this.state.min + i * this.props.minDistance;
         }
       }
     },
