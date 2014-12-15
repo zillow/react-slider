@@ -93,6 +93,15 @@ The css class set on each handle node.
 In addition each handle will receive a numbered css class of the form `${handleClassName}-${i}`,
 e.g. `handle-0`, `handle-1`, ...
 
+##### handleActiveClassName {string} default: 'active'
+
+The css class set on the handle that is currently being moved.
+
+##### minDistance {number} default: 0
+
+Sets the minimal distance between any pair of handles.
+Zero means they can sit on top of each other.
+
 ##### barClassName {string} default: 'bar'
 
 The css class set on the bars between the handles.
@@ -102,6 +111,10 @@ e.g. `bar-0`, `bar-1`, ...
 ##### withBars {boolean} default: false
 
 If `true` bars between the handles will be rendered.
+
+##### pearling {boolean} default: false
+
+If `true` the handles behave like pearls on a pearl necklace.
 
 ##### disabled {boolean} default: false
 
