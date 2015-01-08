@@ -74,6 +74,18 @@
     return res;
   }
 
+  /**
+   * If `v` is an array, returns a copy of `v` with the `i`th element set to `newv`. Otherwise returns `newv`.
+   */
+  function insteadOf(v, i, newv) {
+    if (v.length) {
+      v = v.slice();
+      v[i] = newv;
+      return v;
+    } else
+      return newv;
+  }
+
   var ReactSlider = React.createClass({
     displayName: 'ReactSlider',
 
@@ -188,7 +200,7 @@
       }[this.props.orientation];
 
       var sliderMax = rect[this._max()] - handle[size];
-      var sliderMin = rect[this._min()];
+      var sliderMin = this._sliderMin = rect[this._min()];
 
       this.setState({
         upperBound: slider[size] - handle[size],
@@ -200,6 +212,12 @@
     _calcOffset: function (value) {
       var ratio = (value - this.props.min) / (this.props.max - this.props.min);
       return ratio * this.state.upperBound;
+    },
+
+    // Calculates the value corresponding to a given pixel offset, i.e. the inverse of `_calcOffset`.
+    _calcValue: function (offset) {
+      var ratio = offset / this.state.upperBound;
+      return ratio * (this.props.max - this.props.min) + this.props.min;
     },
 
     _buildHandleStyle: function (offset, i) {
@@ -224,35 +242,35 @@
       return obj;
     },
 
-    /*
-     _getClosestIndex: function (clickOffset) {
-     var self = this;
+    _getClosestIndex: function (pixelOffset) {
+      var self = this;
 
-     // TODO: No need to iterate all
-     return reduce(this.state.value, function (min, value, i) {
-     var minDist = min[1];
+      // TODO: No need to iterate all
+      return reduce(this.state.value, function (min, value, i) {
+        var minDist = min[1];
 
-     var offset = self._calcOffset(value);
-     var dist = Math.abs(clickOffset - offset);
+        var offset = self._calcOffset(value);
+        var dist = Math.abs(pixelOffset - offset);
 
-     return (dist < minDist) ? [i, dist] : min;
+        return (dist < minDist) ? [i, dist] : min;
 
-     }, [-1, Number.MAX_VALUE])[0];
-     },
+      }, [-1, Number.MAX_VALUE])[0];
+    },
 
-     _onClick: function (e) {
-     var position = e['page' + this._axis()];
+    // Snaps the nearest handle to the value corresponding to `position` and calls `callback` with that handle's index.
+    _forceValueFromPosition: function (position, callback) {
+      var pixelOffset = position - this._sliderMin;
+      var closestIndex = this._getClosestIndex(pixelOffset);
 
-     var clickOffset = position - this.state.sliderMin;
-     var closestIndex = this._getClosestIndex(clickOffset);
+      var nextValue = this._trimAlignValue(this._calcValue(pixelOffset));
 
-     this._move(closestIndex, position);
-
-     if (this.props.onChanged) {
-     this.props.onChanged(this.state.value);
-     }
-     },
-     */
+      this.setState({
+        value: insteadOf(this.state.value, closestIndex, nextValue)
+      }, function () {
+        if (typeof callback === 'function')
+          callback(closestIndex);
+      });
+    },
 
     _dragStart: function (i) {
       if (this.props.disabled) return;
@@ -505,6 +523,47 @@
       return bars;
     },
 
+      // Handle mouseDown events on the slider.
+    _onSliderMouseDown: function (e) {
+      if (this.props.disabled) return;
+      console.log('_onSliderTouchStart');
+      var position = e['page' + this._axis()];
+
+      this._forceValueFromPosition(position, function (i) {
+        // Set up a drag operation.
+        if (this.props.onChange) {
+          this.props.onChange(this.state.value);
+        }
+
+        this._start(i, position);
+
+        document.addEventListener('mousemove', this._dragMove, false);
+        document.addEventListener('mouseup', this._dragEnd, false);
+      }.bind(this));
+      pauseEvent(e);
+    },
+
+    // Handle touchStart events on the slider.
+    _onSliderTouchStart: function (e) {
+      if (this.props.disabled) return;
+      console.log('_onSliderTouchStart');
+      var last = e.changedTouches[e.changedTouches.length - 1];
+      var position = last['page' + this._axis()];
+      this._forceValueFromPosition(position, function (i) {
+        // Set up a drag operation.
+        if (this.props.onChange) {
+          this.props.onChange(this.state.value);
+        }
+
+        this._start(i, position);
+
+        document.addEventListener('touchmove', this._touchMove, false);
+        document.addEventListener('touchend', this._onTouchEnd, false);
+      }.bind(this));
+      pauseEvent(e);
+    },
+
+
     render: function () {
       var offset = map(this.state.value, this._calcOffset, this);
 
@@ -515,8 +574,9 @@
         React.createElement('div', {
             ref: 'slider',
             style: {position: 'relative'},
-            className: this.props.className
-            //onClick: this._onClick
+            className: this.props.className,
+            onMouseDown: this._onSliderMouseDown,
+            onTouchStart: this._onSliderTouchStart
           },
           bars,
           handles
