@@ -207,11 +207,13 @@
       }[this.props.orientation];
 
       var sliderMax = rect[this._max()] - handle[size];
-      var sliderMin = this._sliderMin = rect[this._min()];
+      var sliderMin = rect[this._min()];
 
       this.setState({
         upperBound: slider[size] - handle[size],
-        sliderLength: sliderMax - sliderMin
+        sliderLength: sliderMax - sliderMin,
+        sliderMin: sliderMin,
+        handleSize: handle[size]
       });
     },
 
@@ -264,7 +266,7 @@
 
     // Snaps the nearest handle to the value corresponding to `position` and calls `callback` with that handle's index.
     _forceValueFromPosition: function (position, callback) {
-      var pixelOffset = position - this._sliderMin;
+      var pixelOffset = position - this.state.sliderMin - (this.state.handleSize / 2);
       var closestIndex = this._getClosestIndex(pixelOffset);
 
       var nextValue = this._trimAlignValue(this._calcValue(pixelOffset));
