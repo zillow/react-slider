@@ -250,18 +250,16 @@
     },
 
     _getClosestIndex: function (pixelOffset) {
-      var self = this;
-
       // TODO: No need to iterate all
       return reduce(this.state.value, function (min, value, i) {
         var minDist = min[1];
 
-        var offset = self._calcOffset(value);
+        var offset = this._calcOffset(value);
         var dist = Math.abs(pixelOffset - offset);
 
         return (dist < minDist) ? [i, dist] : min;
 
-      }, [-1, Number.MAX_VALUE])[0];
+      }.bind(this), [-1, Number.MAX_VALUE])[0];
     },
 
     // Snaps the nearest handle to the value corresponding to `position` and calls `callback` with that handle's index.
@@ -282,32 +280,30 @@
     _dragStart: function (i) {
       if (this.props.disabled) return;
 
-      var self = this;
       return function (e) {
-        var position = e['page' + self._axis()];
-        self._start(i, position);
+        var position = e['page' + this._axis()];
+        this._start(i, position);
 
-        document.addEventListener('mousemove', self._dragMove, false);
-        document.addEventListener('mouseup', self._dragEnd, false);
+        document.addEventListener('mousemove', this._dragMove, false);
+        document.addEventListener('mouseup', this._dragEnd, false);
 
         pauseEvent(e);
-      }
+      }.bind(this);
     },
 
     _touchStart: function (i) {
       if (this.props.disabled) return;
 
-      var self = this;
       return function (e) {
         var last = e.changedTouches[e.changedTouches.length - 1];
-        var position = last['page' + self._axis()];
-        self._start(i, position);
+        var position = last['page' + this._axis()];
+        this._start(i, position);
 
-        document.addEventListener('touchmove', self._touchMove, false);
-        document.addEventListener('touchend', self._touchEnd, false);
+        document.addEventListener('touchmove', this._touchMove, false);
+        document.addEventListener('touchend', this._touchEnd, false);
 
         pauseEvent(e);
-      }
+      }.bind(this);
     },
 
     _start: function (i, position) {
@@ -473,11 +469,10 @@
     },
 
     _renderHandle: function (styles) {
-      var self = this;
       return function (child, i) {
-        var className = self.props.handleClassName + ' ' +
-          (self.props.handleClassName + '-' + i) + ' ' +
-          (self.state.index === i ? self.props.handleActiveClassName : '');
+        var className = this.props.handleClassName + ' ' +
+          (this.props.handleClassName + '-' + i) + ' ' +
+          (this.state.index === i ? this.props.handleActiveClassName : '');
 
         return (
           React.createElement('div', {
@@ -485,15 +480,15 @@
               key: 'handle' + i,
               className: className,
               style: at(styles, i),
-              onMouseDown: self._dragStart(i),
-              onTouchStart: self._touchStart(i)
-              //onTouchMove: self._touchMove,
-              //onTouchEnd: self._onTouchEnd
+              onMouseDown: this._dragStart(i),
+              onTouchStart: this._touchStart(i)
+              //onTouchMove: this._touchMove,
+              //onTouchEnd: this._onTouchEnd
             },
             child
           )
         );
-      }
+      }.bind(this);
     },
 
     _renderHandles: function (offset) {
@@ -579,7 +574,6 @@
 
       pauseEvent(e);
     },
-
 
     render: function () {
       var offset = map(this.state.value, this._calcOffset, this);
