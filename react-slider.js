@@ -238,13 +238,15 @@
         OTransform: transform,
         transform: transform,
         position: 'absolute',
+        willChange: this.state.index >= 0 ? 'transform' : '',
         zIndex: this.state.zIndices.indexOf(i) + 1
       }
     },
 
     _buildBarStyle: function (minMax) {
       var obj = {
-        position: 'absolute'
+        position: 'absolute',
+        willChange: this.state.index >= 0 ? this._min() + ',' + this._max() : ''
       };
       obj[this._min()] = minMax.min;
       obj[this._max()] = minMax.max;
