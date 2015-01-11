@@ -540,7 +540,7 @@
       // Handle mouseDown events on the slider.
     _onSliderMouseDown: function (e) {
       if (this.props.disabled) return;
-      console.log('_onSliderTouchStart');
+
       var position = e['page' + this._axis()];
 
       this._forceValueFromPosition(position, function (i) {
@@ -554,15 +554,17 @@
         document.addEventListener('mousemove', this._dragMove, false);
         document.addEventListener('mouseup', this._dragEnd, false);
       }.bind(this));
+
       pauseEvent(e);
     },
 
     // Handle touchStart events on the slider.
     _onSliderTouchStart: function (e) {
       if (this.props.disabled) return;
-      console.log('_onSliderTouchStart');
+
       var last = e.changedTouches[e.changedTouches.length - 1];
       var position = last['page' + this._axis()];
+
       this._forceValueFromPosition(position, function (i) {
         // Set up a drag operation.
         if (this.props.onChange) {
@@ -572,8 +574,9 @@
         this._start(i, position);
 
         document.addEventListener('touchmove', this._touchMove, false);
-        document.addEventListener('touchend', this._onTouchEnd, false);
+        document.addEventListener('touchend', this._touchEnd, false);
       }.bind(this));
+
       pauseEvent(e);
     },
 
