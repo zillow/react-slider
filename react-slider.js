@@ -86,6 +86,13 @@
       return newv;
   }
 
+  function extend(dst, src) {
+    for (var key in src)
+      if (src.hasOwnProperty(key))
+        dst[key] = src[key];
+    return dst;
+  }
+
   var ReactSlider = React.createClass({
     displayName: 'ReactSlider',
 
@@ -230,17 +237,16 @@
     },
 
     _buildHandleStyle: function (offset, i) {
-      var transform = 'translate' + this._axis() + '(' + offset + 'px)';
-      return {
-        WebkitTransform: transform,
-        MozTransform: transform,
-        msTransform: transform,
-        OTransform: transform,
-        transform: transform,
+      var style = {
+        horizontal: { left: offset + 'px' },
+        vertical: { top: offset + 'px' }
+      }[this.props.orientation];
+      extend(style, {
         position: 'absolute',
         willChange: this.state.index >= 0 ? 'transform' : '',
         zIndex: this.state.zIndices.indexOf(i) + 1
-      }
+      });
+      return style;
     },
 
     _buildBarStyle: function (minMax) {
