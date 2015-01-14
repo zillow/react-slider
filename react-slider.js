@@ -285,6 +285,8 @@
       if (this.props.disabled) return;
 
       return function (e) {
+        document.activeElement.blur();
+
         var position = e['page' + this._axis()];
         this._start(i, position);
 
@@ -299,6 +301,8 @@
       if (this.props.disabled) return;
 
       return function (e) {
+        document.activeElement.blur();
+
         var last = e.changedTouches[e.changedTouches.length - 1];
         var position = last['page' + this._axis()];
         this._start(i, position);
@@ -540,6 +544,8 @@
     _onSliderMouseDown: function (e) {
       if (this.props.disabled) return;
 
+      document.activeElement.blur();
+
       var position = e['page' + this._axis()];
 
       this._forceValueFromPosition(position, function (i) {
@@ -560,6 +566,8 @@
     // Handle touchStart events on the slider.
     _onSliderTouchStart: function (e) {
       if (this.props.disabled) return;
+      
+      document.activeElement.blur();
 
       var last = e.changedTouches[e.changedTouches.length - 1];
       var position = last['page' + this._axis()];
