@@ -462,14 +462,17 @@
       if (val <= this.props.min) val = this.props.min;
       if (val >= this.props.max) val = this.props.max;
 
-      var valModStep = (val - this.props.min) % this.props.step;
-      var alignValue = val - valModStep;
+      if (this.props.step) {
+        var valModStep = (val - this.props.min) % this.props.step;
+        var alignValue = val - valModStep;
 
-      if (Math.abs(valModStep) * 2 >= this.props.step) {
-        alignValue += (valModStep > 0) ? this.props.step : (-this.props.step);
-      }
+        if (Math.abs(valModStep) * 2 >= this.props.step) {
+          alignValue += (valModStep > 0) ? this.props.step : (-this.props.step);
+        }
 
-      return parseFloat(alignValue.toFixed(5));
+        return parseFloat(alignValue.toFixed(5));
+      } else
+        return val;
     },
 
     _renderHandle: function (styles) {
