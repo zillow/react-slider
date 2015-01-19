@@ -152,7 +152,9 @@
     // This basically allows the slider to be a controlled component.
     componentWillReceiveProps: function (newProps) {
       var value = this._or(newProps.value, this.state.value);
-      this.state.value = this._trimAlignValue(value, newProps.min, newProps.max, newProps.step);
+      this.state.value = map(value, function (v) {
+        return this._trimAlignValue(v, newProps.min, newProps.max, newProps.step);
+      }, this);
     },
 
     // Check if the arity of `value` or `defaultValue` matches the number of children (= number of custom handles) and returns it.
@@ -452,9 +454,9 @@
     // min, max, and step come from props, but can be overridden so
     // this method can work correctly during the update process.
     _trimAlignValue: function (val, min, max, step) {
-      min = (min === undefined) ? this.props.min : min;
-      max = (max === undefined) ? this.props.max : max;
-      step = (step === undefined) ? this.props.step : step;
+      min = (min != null) ? min : this.props.min;
+      max = (max != null) ? max : this.props.max;
+      step = (step != null) ? step : this.props.step;
 
       if (val <= min) val = min;
       if (val >= max) val = max;
