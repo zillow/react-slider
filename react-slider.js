@@ -20,48 +20,6 @@
     return false;
   }
 
-  // These functions allow to treat a single value and an array of values equally:
-  // e.g. map(5, x => x + 1) returns 6
-  //      map([5, 6, 7], x => x + 1) returns [6, 7, 8]
-
-  /**
-   * Apply `f` to each value in `v` or call `f` with `v` directly if it is a single value.
-   */
-  function map(v, f, context) {
-    return (v && v.map) ? v.map(f, context) : f.call(context, v, 0);
-  }
-
-  /**
-   * Reduce `v` with `f` and `init` or call `f` directly with `init` and `v` if it is a single value.
-   */
-  function reduce(v, f, init) {
-    return (v && v.reduce) ? v.reduce(f, init) : f(init, v, 0);
-  }
-
-  /**
-   * Returns the size of `v` if it is an array, or 1 if it is a single value or 0 if it does not exists.
-   */
-  function size(v) {
-    return v != null ? v.length ? v.length : 1 : 0;
-  }
-
-  /**
-   * Returns the value at `i` if `v` is an array. Just returns the value otherwise.
-   */
-  function at(v, i) {
-    return v && v.map ? v[i] : v;
-  }
-
-  /**
-   * Compares `a` and `b` which can be either single values or an array of values.
-   */
-  function is(a, b) {
-    return size(a) === size(b) &&
-      reduce(a, function (res, v, i) {
-        return res && v === at(b, i)
-      }, true);
-  }
-
   /**
    * Spreads `count` values equally between `min` and `max`.
    */
@@ -74,16 +32,12 @@
     return res;
   }
 
-  /**
-   * If `v` is an array, returns a copy of `v` with the `i`th element set to `newv`. Otherwise returns `newv`.
-   */
-  function insteadOf(v, i, newv) {
-    if (v.length) {
-      v = v.slice();
-      v[i] = newv;
-      return v;
-    } else
-      return newv;
+  function ensureArray(x) {
+    return Array.isArray(x) ? x : [x];
+  }
+
+  function undoEnsureArray(x) {
+    return x.length === 1 ? x[0] : x;
   }
 
   var ReactSlider = React.createClass({
@@ -133,15 +87,16 @@
     },
 
     getInitialState: function () {
-      //var value = this._or(this.props.value, this.props.defaultValue);
-      var value = map(this._or(this.props.value, this.props.defaultValue), this._trimAlignValue);
+      var value = ensureArray(this.props.value);
+      var defaultValue = ensureArray(this.props.defaultValue);
+      value = this._or(value, defaultValue).map(this._trimAlignValue);
 
       return {
         index: -1,
         upperBound: 0,
         sliderLength: 0,
         value: value,
-        zIndices: reduce(value, function (acc, x, i) {
+        zIndices: value.reduce(function (acc, x, i) {
           acc.push(i);
           return acc;
         }, [])
@@ -151,8 +106,8 @@
     // Keep the internal `value` consistent with an outside `value` if present.
     // This basically allows the slider to be a controlled component.
     componentWillReceiveProps: function (newProps) {
-      var value = this._or(newProps.value, this.state.value);
-      this.state.value = map(value, function (v) {
+      var value = this._or(ensureArray(newProps.value), this.state.value);
+      this.state.value = value.map(function (v) {
         return this._trimAlignValue(v, newProps.min, newProps.max, newProps.step);
       }, this);
     },
@@ -165,12 +120,12 @@
       switch (count) {
         case 0:
           return value != null ? value : defaultValue;
-        case size(value):
+        case value.length:
           return value;
-        case size(defaultValue):
+        case defaultValue.length:
           return defaultValue;
         default:
-          if (size(value) !== count || size(defaultValue) !== count) {
+          if (value.length !== count || defaultValue.length !== count) {
             console.warn("ReactSlider: Number of values does not match number of children.");
           }
           return linspace(this.props.min, this.props.max, count);
@@ -187,7 +142,7 @@
     },
 
     getValue: function () {
-      return this.state.value
+      return undoEnsureArray(this.state.value);
     },
 
     _handleResize: function () {
@@ -245,7 +200,7 @@
 
     _getClosestIndex: function (pixelOffset) {
       // TODO: No need to iterate all
-      return reduce(this.state.value, function (min, value, i) {
+      return this.state.value.reduce(function (min, value, i) {
         var minDist = min[1];
 
         var offset = this._calcOffset(value);
@@ -262,9 +217,11 @@
       var closestIndex = this._getClosestIndex(pixelOffset);
 
       var nextValue = this._trimAlignValue(this._calcValue(pixelOffset));
+      var value = this.state.value;
+      value[closestIndex] = nextValue;
 
       this.setState({
-        value: insteadOf(this.state.value, closestIndex, nextValue)
+        value: value
       }, function () {
         if (typeof callback === 'function')
           callback(closestIndex);
@@ -310,7 +267,7 @@
       zIndices.push(i); // add to end
 
       this.setState({
-        startValue: at(this.state.value, i),
+        startValue: this.state.value[i],
         startPosition: position,
         index: i,
         zIndices: zIndices
@@ -330,13 +287,8 @@
     },
 
     _end: function () {
-      this.setState({
-        index: -1
-      });
-
-      if (this.props.onChanged) {
-        this.props.onChanged(this.state.value);
-      }
+      this.setState({ index: -1 });
+      this._onEvent('onChanged', this.state.value);
     },
 
     _dragMove: function (e) {
@@ -354,7 +306,7 @@
       if (this.props.disabled) return;
 
       var lastValue = this.state.value;
-      var nextValue = map(this.state.value, function (value, j) {
+      var nextValue = this.state.value.map(function (value, j) {
         if (i !== j) return value;
 
         var diffPosition = position - this.state.startPosition;
@@ -363,14 +315,14 @@
 
         if (!this.props.pearling) {
           if (i > 0) {
-            var valueBefore = at(this.state.value, i - 1);
+            var valueBefore = this.state.value[i - 1];
             if (nextValue < valueBefore + this.props.minDistance) {
               nextValue = this._trimAlignValue(valueBefore + this.props.minDistance);
             }
           }
 
-          if (i < size(this.state.value) - 1) {
-            var valueAfter = at(this.state.value, i + 1);
+          if (i < this.state.value.length - 1) {
+            var valueAfter = this.state.value[i + 1];
             if (nextValue > valueAfter - this.props.minDistance) {
               nextValue = this._trimAlignValue(valueAfter - this.props.minDistance);
             }
@@ -393,10 +345,12 @@
         }
       }
 
-      var changed = !is(nextValue, lastValue);
-      if (changed) {
-        this.setState({value: nextValue});
-        if (this.props.onChange) this.props.onChange(nextValue);
+      var isEqual = nextValue.reduce(function (isEqual, v, i) {
+        return isEqual && v === lastValue[i];
+      }, true);
+
+      if (!isEqual) {
+        this.setState({value: nextValue}, this._onEvent.bind(this, 'onChange', nextValue));
       }
     },
 
@@ -482,11 +436,9 @@
               ref: 'handle' + i,
               key: 'handle' + i,
               className: className,
-              style: at(styles, i),
+              style: styles[i],
               onMouseDown: this._dragStart(i),
               onTouchStart: this._touchStart(i)
-              //onTouchMove: this._touchMove,
-              //onTouchEnd: this._onTouchEnd
             },
             child
           )
@@ -495,12 +447,12 @@
     },
 
     _renderHandles: function (offset) {
-      var styles = map(offset, this._buildHandleStyle, this);
+      var styles = offset.map(this._buildHandleStyle);
 
       if (React.Children.count(this.props.children) > 0) {
-        return React.Children.map(this.props.children, this._renderHandle(styles), this);
+        return React.Children.map(this.props.children, this._renderHandle(styles));
       } else {
-        return map(offset, function (offset, i) {
+        return offset.map(function (offset, i) {
           return this._renderHandle(styles)(null, i);
         }, this);
       }
@@ -522,15 +474,15 @@
 
     _renderBars: function (offset) {
       var bars = [];
-      var lastIndex = size(offset) - 1;
+      var lastIndex = offset.length - 1;
 
-      bars.push(this._renderBar(0, 0, at(offset, 0)));
+      bars.push(this._renderBar(0, 0, offset[0]));
 
       for (var i = 0; i < lastIndex; i++) {
         bars.push(this._renderBar(i + 1, offset[i], offset[i + 1]));
       }
 
-      bars.push(this._renderBar(lastIndex + 1, at(offset, lastIndex), this.state.upperBound));
+      bars.push(this._renderBar(lastIndex + 1, offset[lastIndex], this.state.upperBound));
 
       return bars;
     },
@@ -544,11 +496,7 @@
       var position = e['page' + this._axis()];
 
       this._forceValueFromPosition(position, function (i) {
-        // Set up a drag operation.
-        if (this.props.onChange) {
-          this.props.onChange(this.state.value);
-        }
-
+        this._onEvent('onChange', this.state.value);
         this._start(i, position);
 
         document.addEventListener('mousemove', this._dragMove, false);
@@ -568,11 +516,7 @@
       var position = last['page' + this._axis()];
 
       this._forceValueFromPosition(position, function (i) {
-        // Set up a drag operation.
-        if (this.props.onChange) {
-          this.props.onChange(this.state.value);
-        }
-
+        this._onEvent('onChange', this.state.value);
         this._start(i, position);
 
         document.addEventListener('touchmove', this._touchMove, false);
@@ -582,8 +526,14 @@
       pauseEvent(e);
     },
 
+    _onEvent: function(eventType, value) {
+      if (this.props[eventType]) {
+        this.props[eventType](undoEnsureArray(value));
+      }
+    },
+
     render: function () {
-      var offset = map(this.state.value, this._calcOffset, this);
+      var offset = this.state.value.map(this._calcOffset);
 
       var bars = this.props.withBars ? this._renderBars(offset) : null;
       var handles = this._renderHandles(offset);
