@@ -221,17 +221,13 @@
     },
 
     _buildHandleStyle: function (offset, i) {
-      var transform = 'translate' + this._axis() + '(' + offset + 'px)';
-      return {
-        WebkitTransform: transform,
-        MozTransform: transform,
-        msTransform: transform,
-        OTransform: transform,
-        transform: transform,
+      var style = {
         position: 'absolute',
-        willChange: this.state.index >= 0 ? 'transform' : '',
+        willChange: this.state.index >= 0 ? this._min() : '',
         zIndex: this.state.zIndices.indexOf(i) + 1
-      }
+      };
+      style[this._min()] = offset + 'px';
+      return style;
     },
 
     _buildBarStyle: function (minMax) {
@@ -349,7 +345,6 @@
       var last = e.changedTouches[e.changedTouches.length - 1];
       var position = last['page' + this._axis()];
       this._move(this.state.index, position);
-      e.preventDefault();
     },
 
     _move: function (i, position) {
@@ -531,7 +526,7 @@
       return bars;
     },
 
-      // Handle mouseDown events on the slider.
+    // Handle mouseDown events on the slider.
     _onSliderMouseDown: function (e) {
       if (this.props.disabled) return;
 
@@ -557,7 +552,7 @@
     // Handle touchStart events on the slider.
     _onSliderTouchStart: function (e) {
       if (this.props.disabled) return;
-      
+
       document.activeElement.blur();
 
       var last = e.changedTouches[e.changedTouches.length - 1];
