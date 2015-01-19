@@ -89,7 +89,10 @@
     getInitialState: function () {
       var value = ensureArray(this.props.value);
       var defaultValue = ensureArray(this.props.defaultValue);
-      value = this._or(value, defaultValue).map(this._trimAlignValue);
+
+      value = this._or(value, defaultValue).map(function (v) {
+        return this._trimAlignValue(v, this.props);
+      }, this);
 
       return {
         index: -1,
@@ -107,8 +110,9 @@
     // This basically allows the slider to be a controlled component.
     componentWillReceiveProps: function (newProps) {
       var value = this._or(ensureArray(newProps.value), this.state.value);
+
       this.state.value = value.map(function (v) {
-        return this._trimAlignValue(v, newProps.min, newProps.max, newProps.step);
+        return this._trimAlignValue(v, newProps);
       }, this);
     },
 
@@ -150,13 +154,10 @@
       var handle = this.refs.handle0.getDOMNode();
       var rect = slider.getBoundingClientRect();
 
-      var size = {
-        horizontal: 'clientWidth',
-        vertical: 'clientHeight'
-      }[this.props.orientation];
+      var size = this._sizeKey();
 
-      var sliderMax = rect[this._max()] - handle[size];
-      var sliderMin = rect[this._min()];
+      var sliderMax = rect[this._posMaxKey()] - handle[size];
+      var sliderMin = rect[this._posMinKey()];
 
       this.setState({
         upperBound: slider[size] - handle[size],
@@ -181,20 +182,20 @@
     _buildHandleStyle: function (offset, i) {
       var style = {
         position: 'absolute',
-        willChange: this.state.index >= 0 ? this._min() : '',
+        willChange: this.state.index >= 0 ? this._posMinKey() : '',
         zIndex: this.state.zIndices.indexOf(i) + 1
       };
-      style[this._min()] = offset + 'px';
+      style[this._posMinKey()] = offset + 'px';
       return style;
     },
 
-    _buildBarStyle: function (minMax) {
+    _buildBarStyle: function (min, max) {
       var obj = {
         position: 'absolute',
-        willChange: this.state.index >= 0 ? this._min() + ',' + this._max() : ''
+        willChange: this.state.index >= 0 ? this._posMinKey() + ',' + this._posMaxKey() : ''
       };
-      obj[this._min()] = minMax.min;
-      obj[this._max()] = minMax.max;
+      obj[this._posMinKey()] = min;
+      obj[this._posMaxKey()] = max;
       return obj;
     },
 
@@ -220,42 +221,52 @@
       var value = this.state.value;
       value[closestIndex] = nextValue;
 
-      this.setState({
-        value: value
-      }, function () {
-        if (typeof callback === 'function')
-          callback(closestIndex);
-      });
+      this.setState({value: value}, callback.bind(this, closestIndex));
     },
 
-    _dragStart: function (i) {
+    _getMousePosition: function (e) {
+      return e['page' + this._axisKey()];
+    },
+
+    _getTouchPosition: function (e) {
+      var last = e.changedTouches[e.changedTouches.length - 1];
+      return last['page' + this._axisKey()];
+    },
+
+    _getMouseEventMap: function () {
+      return {
+        'mousemove': this._onMouseMove,
+        'mouseup': this._onMouseUp
+      }
+    },
+
+    _getTouchEventMap: function () {
+      return {
+        'touchmove': this._onTouchMove,
+        'tochend': this._onTouchEnd
+      }
+    },
+
+    _createOnMouseDown: function (i) {
+      return this._createOnStart(i, this._getMousePosition, this._getMouseEventMap())
+    },
+
+    _createOnTouchStart: function (i) {
+      return this._createOnStart(i, this._getTouchPosition, this._getTouchEventMap())
+    },
+
+    _createOnStart: function (i, getPosition, eventMap) {
       if (this.props.disabled) return;
 
       return function (e) {
         document.activeElement.blur();
 
-        var position = e['page' + this._axis()];
+        var position = getPosition(e);
         this._start(i, position);
 
-        document.addEventListener('mousemove', this._dragMove, false);
-        document.addEventListener('mouseup', this._dragEnd, false);
-
-        pauseEvent(e);
-      }.bind(this);
-    },
-
-    _touchStart: function (i) {
-      if (this.props.disabled) return;
-
-      return function (e) {
-        document.activeElement.blur();
-
-        var last = e.changedTouches[e.changedTouches.length - 1];
-        var position = last['page' + this._axis()];
-        this._start(i, position);
-
-        document.addEventListener('touchmove', this._touchMove, false);
-        document.addEventListener('touchend', this._touchEnd, false);
+        for (var key in eventMap) {
+          document.addEventListener(key, eventMap[key], false);
+        }
 
         pauseEvent(e);
       }.bind(this);
@@ -274,72 +285,73 @@
       });
     },
 
-    _dragEnd: function () {
-      document.removeEventListener('mousemove', this._dragMove, false);
-      document.removeEventListener('mouseup', this._dragEnd, false);
-      this._end();
+    _onMouseUp: function () {
+      this._onEnd(this._getMouseEventMap());
     },
 
-    _touchEnd: function () {
-      document.removeEventListener('touchmove', this._touchMove, false);
-      document.removeEventListener('touchend', this._touchEnd, false);
-      this._end();
+    _onTouchEnd: function () {
+      this._onEnd(this._getTouchEventMap());
     },
 
-    _end: function () {
-      this.setState({ index: -1 });
-      this._onEvent('onChanged', this.state.value);
+    _onEnd: function (eventMap) {
+      for (var key in eventMap) {
+        document.removeEventListener(key, eventMap[key], false);
+      }
+
+      this.setState({index: -1});
+      this._fireEvent('onChanged');
     },
 
-    _dragMove: function (e) {
-      var position = e['page' + this._axis()];
+    _onMouseMove: function (e) {
+      var position = this._getMousePosition(e);
       this._move(this.state.index, position);
     },
 
-    _touchMove: function (e) {
-      var last = e.changedTouches[e.changedTouches.length - 1];
-      var position = last['page' + this._axis()];
+    _onTouchMove: function (e) {
+      var position = this._getTouchPosition(e);
       this._move(this.state.index, position);
     },
 
-    _move: function (i, position) {
+    _move: function (index, position) {
       if (this.props.disabled) return;
 
       var lastValue = this.state.value;
-      var nextValue = this.state.value.map(function (value, j) {
-        if (i !== j) return value;
+
+      var nextValue = this.state.value.map(function (v, i) {
+        if (index !== i) return v;
 
         var diffPosition = position - this.state.startPosition;
         var diffValue = (diffPosition / this.state.sliderLength) * (this.props.max - this.props.min);
-        var nextValue = this._trimAlignValue(this.state.startValue + diffValue);
+        var nv = this.state.startValue + diffValue;
 
         if (!this.props.pearling) {
-          if (i > 0) {
-            var valueBefore = this.state.value[i - 1];
-            if (nextValue < valueBefore + this.props.minDistance) {
-              nextValue = this._trimAlignValue(valueBefore + this.props.minDistance);
+          if (index > 0) {
+            var valueBefore = this.state.value[index - 1];
+            if (nv < valueBefore + this.props.minDistance) {
+              nv = valueBefore + this.props.minDistance;
             }
           }
 
-          if (i < this.state.value.length - 1) {
-            var valueAfter = this.state.value[i + 1];
-            if (nextValue > valueAfter - this.props.minDistance) {
-              nextValue = this._trimAlignValue(valueAfter - this.props.minDistance);
+          if (index < this.state.value.length - 1) {
+            var valueAfter = this.state.value[index + 1];
+            if (nv > valueAfter - this.props.minDistance) {
+              nv = valueAfter - this.props.minDistance;
             }
           }
         }
 
-        return nextValue;
+        return this._trimAlignValue(nv);
+
       }, this);
 
       if (this.props.pearling) {
         var n = nextValue.length;
-        if (n && n > 1) {
-          if (nextValue[i] > lastValue[i]) {
-            this._pearlNext(i, nextValue);
+        if (n > 1) {
+          if (nextValue[index] > lastValue[index]) {
+            this._pearlNext(index, nextValue);
             this._limitNext(n, nextValue);
-          } else if (nextValue[i] < lastValue[i]) {
-            this._pearlPrev(i, nextValue);
+          } else if (nextValue[index] < lastValue[index]) {
+            this._pearlPrev(index, nextValue);
             this._limitPrev(n, nextValue);
           }
         }
@@ -350,76 +362,93 @@
       }, true);
 
       if (!isEqual) {
-        this.setState({value: nextValue}, this._onEvent.bind(this, 'onChange', nextValue));
+        this.setState({value: nextValue}, this._fireEvent.bind(this, 'onChange'));
       }
     },
 
     _pearlNext: function (i, nextValue) {
-      if (nextValue[i + 1] && nextValue[i] + this.props.minDistance > nextValue[i + 1]) {
-        nextValue[i + 1] = this._trimAlignValue(nextValue[i] + this.props.minDistance);
+      var padding = nextValue[i] + this.props.minDistance;
+      if (nextValue[i + 1] && padding > nextValue[i + 1]) {
+        nextValue[i + 1] = this._alignValue(padding);
         this._pearlNext(i + 1, nextValue);
       }
     },
 
     _limitNext: function (n, nextValue) {
       for (var i = 0; i < n; i++) {
-        if (nextValue[n - 1 - i] > this.props.max - i * this.props.minDistance) {
-          nextValue[n - 1 - i] = this.props.max - i * this.props.minDistance;
+        var padding = this.props.max - i * this.props.minDistance;
+        if (nextValue[n - 1 - i] > padding) {
+          nextValue[n - 1 - i] = padding;
         }
       }
     },
 
     _pearlPrev: function (i, nextValue) {
-      if (nextValue[i - 1] && nextValue[i] - this.props.minDistance < nextValue[i - 1]) {
-        nextValue[i - 1] = this._trimAlignValue(nextValue[i] - this.props.minDistance);
+      var padding = nextValue[i] - this.props.minDistance;
+      if (nextValue[i - 1] && padding < nextValue[i - 1]) {
+        nextValue[i - 1] = this._alignValue(padding);
         this._pearlPrev(i - 1, nextValue);
       }
     },
 
     _limitPrev: function (n, nextValue) {
       for (var i = 0; i < n; i++) {
-        if (nextValue[i] < this.props.min + i * this.props.minDistance) {
-          nextValue[i] = this.props.min + i * this.props.minDistance;
+        var padding = this.props.min + i * this.props.minDistance;
+        if (nextValue[i] < padding) {
+          nextValue[i] = padding;
         }
       }
     },
 
-    _axis: function () {
+    _axisKey: function () {
       return {
         'horizontal': 'X',
         'vertical': 'Y'
       }[this.props.orientation];
     },
 
-    _min: function () {
+    _posMinKey: function () {
       return {
         'horizontal': 'left',
         'vertical': 'top'
       }[this.props.orientation];
     },
 
-    _max: function () {
+    _posMaxKey: function () {
       return {
         'horizontal': 'right',
         'vertical': 'bottom'
       }[this.props.orientation];
     },
 
-    // min, max, and step come from props, but can be overridden so
-    // this method can work correctly during the update process.
-    _trimAlignValue: function (val, min, max, step) {
-      min = (min != null) ? min : this.props.min;
-      max = (max != null) ? max : this.props.max;
-      step = (step != null) ? step : this.props.step;
+    _sizeKey: function () {
+      return {
+        horizontal: 'clientWidth',
+        vertical: 'clientHeight'
+      }[this.props.orientation];
+    },
 
-      if (val <= min) val = min;
-      if (val >= max) val = max;
+    _trimAlignValue: function (val, props) {
+      return this._alignValue(this._trimValue(val, props), props);
+    },
 
-      var valModStep = (val - min) % step;
+    _trimValue: function (val, props) {
+      props = props || this.props;
+
+      if (val <= props.min) val = props.min;
+      if (val >= props.max) val = props.max;
+
+      return val;
+    },
+
+    _alignValue: function (val, props) {
+      props = props || this.props;
+
+      var valModStep = (val - props.min) % props.step;
       var alignValue = val - valModStep;
 
-      if (Math.abs(valModStep) * 2 >= step) {
-        alignValue += (valModStep > 0) ? step : (-step);
+      if (Math.abs(valModStep) * 2 >= props.step) {
+        alignValue += (valModStep > 0) ? props.step : (-props.step);
       }
 
       return parseFloat(alignValue.toFixed(5));
@@ -437,8 +466,8 @@
               key: 'handle' + i,
               className: className,
               style: styles[i],
-              onMouseDown: this._dragStart(i),
-              onTouchStart: this._touchStart(i)
+              onMouseDown: this._createOnMouseDown(i),
+              onTouchStart: this._createOnTouchStart(i)
             },
             child
           )
@@ -452,8 +481,9 @@
       if (React.Children.count(this.props.children) > 0) {
         return React.Children.map(this.props.children, this._renderHandle(styles));
       } else {
+        var renderHandle = this._renderHandle(styles);
         return offset.map(function (offset, i) {
-          return this._renderHandle(styles)(null, i);
+          return renderHandle(null, i);
         }, this);
       }
     },
@@ -464,10 +494,7 @@
           key: 'bar' + i,
           ref: 'bar' + i,
           className: this.props.barClassName + ' ' + this.props.barClassName + '-' + i,
-          style: this._buildBarStyle({
-            min: offsetFrom,
-            max: this.state.upperBound - offsetTo
-          })
+          style: this._buildBarStyle(offsetFrom, this.state.upperBound - offsetTo)
         })
       );
     },
@@ -487,48 +514,36 @@
       return bars;
     },
 
-    // Handle mouseDown events on the slider.
+    _onSliderStart: function (e, getPosition, eventMap) {
+      if (this.props.disabled) return;
+
+      document.activeElement.blur();
+
+      var position = getPosition(e);
+
+      this._forceValueFromPosition(position, function (i) {
+        this._fireEvent('onChange');
+        this._start(i, position);
+
+        for (var key in eventMap) {
+          document.addEventListener(key, eventMap[key], false);
+        }
+      }.bind(this));
+
+      pauseEvent(e);
+    },
+
     _onSliderMouseDown: function (e) {
-      if (this.props.disabled) return;
-
-      document.activeElement.blur();
-
-      var position = e['page' + this._axis()];
-
-      this._forceValueFromPosition(position, function (i) {
-        this._onEvent('onChange', this.state.value);
-        this._start(i, position);
-
-        document.addEventListener('mousemove', this._dragMove, false);
-        document.addEventListener('mouseup', this._dragEnd, false);
-      }.bind(this));
-
-      pauseEvent(e);
+      this._onSliderStart(e, this._getMousePosition, this._getMouseEventMap());
     },
 
-    // Handle touchStart events on the slider.
     _onSliderTouchStart: function (e) {
-      if (this.props.disabled) return;
-
-      document.activeElement.blur();
-
-      var last = e.changedTouches[e.changedTouches.length - 1];
-      var position = last['page' + this._axis()];
-
-      this._forceValueFromPosition(position, function (i) {
-        this._onEvent('onChange', this.state.value);
-        this._start(i, position);
-
-        document.addEventListener('touchmove', this._touchMove, false);
-        document.addEventListener('touchend', this._touchEnd, false);
-      }.bind(this));
-
-      pauseEvent(e);
+      this._onSliderStart(e, this._getTouchPosition, this._getTouchEventMap());
     },
 
-    _onEvent: function(eventType, value) {
-      if (this.props[eventType]) {
-        this.props[eventType](undoEnsureArray(value));
+    _fireEvent: function (event) {
+      if (this.props[event]) {
+        this.props[event](undoEnsureArray(this.state.value));
       }
     },
 
@@ -542,7 +557,7 @@
         React.createElement('div', {
             ref: 'slider',
             style: {position: 'relative'},
-            className: this.props.className,
+            className: this.props.className + (this.props.disabled ? ' disabled' : ''),
             onMouseDown: this._onSliderMouseDown,
             onTouchStart: this._onSliderTouchStart
           },
