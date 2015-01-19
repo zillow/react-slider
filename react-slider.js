@@ -151,7 +151,8 @@
     // Keep the internal `value` consistent with an outside `value` if present.
     // This basically allows the slider to be a controlled component.
     componentWillReceiveProps: function (newProps) {
-      this.state.value = map(this._or(newProps.value, this.state.value), this._trimAlignValue);
+      var value = this._or(newProps.value, this.state.value);
+      this.state.value = this._trimAlignValue(value, newProps.min, newProps.max, newProps.step);
     },
 
     // Check if the arity of `value` or `defaultValue` matches the number of children (= number of custom handles) and returns it.
@@ -448,15 +449,21 @@
       }[this.props.orientation];
     },
 
-    _trimAlignValue: function (val) {
-      if (val <= this.props.min) val = this.props.min;
-      if (val >= this.props.max) val = this.props.max;
+    // min, max, and step come from props, but can be overridden so
+    // this method can work correctly during the update process.
+    _trimAlignValue: function (val, min, max, step) {
+      min = (min === undefined) ? this.props.min : min;
+      max = (max === undefined) ? this.props.max : max;
+      step = (step === undefined) ? this.props.step : step;
 
-      var valModStep = (val - this.props.min) % this.props.step;
+      if (val <= min) val = min;
+      if (val >= max) val = max;
+
+      var valModStep = (val - min) % step;
       var alignValue = val - valModStep;
 
-      if (Math.abs(valModStep) * 2 >= this.props.step) {
-        alignValue += (valModStep > 0) ? this.props.step : (-this.props.step);
+      if (Math.abs(valModStep) * 2 >= step) {
+        alignValue += (valModStep > 0) ? step : (-step);
       }
 
       return parseFloat(alignValue.toFixed(5));
