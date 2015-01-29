@@ -243,7 +243,7 @@
     _getTouchEventMap: function () {
       return {
         'touchmove': this._onTouchMove,
-        'tochend': this._onTouchEnd
+        'touchend': this._onTouchEnd
       }
     },
 
