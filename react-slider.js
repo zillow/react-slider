@@ -64,8 +64,10 @@
       withBars: React.PropTypes.bool,
       pearling: React.PropTypes.bool,
       disabled: React.PropTypes.bool,
+      sliderDisabled: React.PropTypes.bool,
       onChange: React.PropTypes.func,
-      onChanged: React.PropTypes.func
+      onChanged: React.PropTypes.func,
+      onSliderMouseDown: React.PropTypes.func
     },
 
     getDefaultProps: function () {
@@ -82,7 +84,8 @@
         barClassName: 'bar',
         withBars: false,
         pearling: false,
-        disabled: false
+        disabled: false,
+        sliderDisabled: false
       };
     },
 
@@ -514,12 +517,22 @@
       return bars;
     },
 
+    _isAbove: function (position) {
+      var pixelOffset = position - this.state.sliderMin - (this.state.handleSize / 2),
+        nextValue = this._trimAlignValue(this._calcValue(pixelOffset));
+
+      return nextValue > this.state.value;
+    },
+
     _onSliderStart: function (e, getPosition, eventMap) {
-      if (this.props.disabled) return;
+      var position = getPosition(e);
+
+      if (this.props.onSliderMouseDown) {
+        this.props.onSliderMouseDown(this._isAbove(position));
+      }
+      if (this.props.sliderDisabled) return;
 
       document.activeElement.blur();
-
-      var position = getPosition(e);
 
       this._forceValueFromPosition(position, function (i) {
         this._fireEvent('onChange');
