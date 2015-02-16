@@ -40,6 +40,10 @@
     return x.length === 1 ? x[0] : x;
   }
 
+  function notNull(x) {
+    return x != null;
+  }
+
   var ReactSlider = React.createClass({
     displayName: 'ReactSlider',
 
@@ -116,23 +120,14 @@
       }, this);
     },
 
-    // Check if the arity of `value` or `defaultValue` matches the number of children (= number of custom handles) and returns it.
-    // If no custom handles are provided, just returns `value` if present or `defaultValue` otherwise.
-    // If custom handles are present but neither `value` nor `defaultValue` are applicable the handles are spread out equally.
     _or: function (value, defaultValue) {
       var count = React.Children.count(this.props.children);
-      switch (count) {
-        case 0:
-          return value != null ? value : defaultValue;
-        case value.length:
-          return value;
-        case defaultValue.length:
-          return defaultValue;
-        default:
-          if (value.length !== count || defaultValue.length !== count) {
-            console.warn("ReactSlider: Number of values does not match number of children.");
-          }
-          return linspace(this.props.min, this.props.max, count);
+      if (value.every(notNull) && count === value.length) {
+        return value;
+      } else if (defaultValue.every(notNull) && count === defaultValue.length)  {
+        return defaultValue
+      } else {
+        return linspace(this.props.min, this.props.max, React.Children.count(this.props.children));
       }
     },
 
