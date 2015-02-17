@@ -121,10 +121,9 @@
     },
 
     _or: function (value, defaultValue) {
-      var count = React.Children.count(this.props.children);
-      if (value.every(notNull) && count === value.length) {
+      if (value.every(notNull)) {
         return value;
-      } else if (defaultValue.every(notNull) && count === defaultValue.length)  {
+      } else if (defaultValue.every(notNull))  {
         return defaultValue
       } else {
         return linspace(this.props.min, this.props.max, React.Children.count(this.props.children));
