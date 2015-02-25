@@ -253,7 +253,9 @@
       if (this.props.disabled) return;
 
       return function (e) {
-        document.activeElement.blur();
+        if (document.activeElement) {
+          document.activeElement.blur();
+        }
 
         var position = getPosition(e);
         this._start(i, position);
@@ -511,7 +513,9 @@
     _onSliderStart: function (e, getPosition, eventMap) {
       if (this.props.disabled) return;
 
-      document.activeElement.blur();
+      if (document.activeElement) {
+        document.activeElement.blur();
+      }
 
       var position = getPosition(e);
 
