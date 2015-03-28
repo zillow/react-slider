@@ -40,10 +40,6 @@
     return x.length === 1 ? x[0] : x;
   }
 
-  function notNull(x) {
-    return x != null;
-  }
-
   var ReactSlider = React.createClass({
     displayName: 'ReactSlider',
 
@@ -91,22 +87,20 @@
     },
 
     getInitialState: function () {
-      var value = ensureArray(this.props.value);
-      var defaultValue = ensureArray(this.props.defaultValue);
-
-      value = this._or(value, defaultValue).map(function (v) {
-        return this._trimAlignValue(v, this.props);
-      }, this);
+      var value = this._or(ensureArray(this.props.value), ensureArray(this.props.defaultValue));
+      var zIndices = [];
+      for (var i = 0; i < value.length; i++) {
+        value[i] = this._trimAlignValue(value[i], this.props);
+        zIndices.push(i);
+      }
 
       return {
         index: -1,
         upperBound: 0,
         sliderLength: 0,
         value: value,
-        zIndices: value.reduce(function (acc, x, i) {
-          acc.push(i);
-          return acc;
-        }, [])
+        zIndices: zIndices,
+        tempArray: value.slice()
       };
     },
 
@@ -114,19 +108,30 @@
     // This basically allows the slider to be a controlled component.
     componentWillReceiveProps: function (newProps) {
       var value = this._or(ensureArray(newProps.value), this.state.value);
+      this.state.tempArray = value.slice();
 
-      this.state.value = value.map(function (v) {
-        return this._trimAlignValue(v, newProps);
-      }, this);
+      for (var i = 0; i < value.length; i++) {
+        this.state.value[i] = this._trimAlignValue(value[i], newProps);
+      }
     },
 
+    // Check if the arity of `value` or `defaultValue` matches the number of children (= number of custom handles) and returns it.
+    // If no custom handles are provided, just returns `value` if present or `defaultValue` otherwise.
+    // If custom handles are present but neither `value` nor `defaultValue` are applicable the handles are spread out equally.
     _or: function (value, defaultValue) {
-      if (value.every(notNull)) {
-        return value;
-      } else if (defaultValue.every(notNull))  {
-        return defaultValue
-      } else {
-        return linspace(this.props.min, this.props.max, React.Children.count(this.props.children));
+      var count = React.Children.count(this.props.children);
+      switch (count) {
+        case 0:
+          return value != null ? value : defaultValue;
+        case value.length:
+          return value;
+        case defaultValue.length:
+          return defaultValue;
+        default:
+          if (value.length !== count || defaultValue.length !== count) {
+            console.warn("ReactSlider: Number of values does not match number of children.");
+          }
+          return linspace(this.props.min, this.props.max, count);
       }
     },
 
@@ -194,16 +199,22 @@
     },
 
     _getClosestIndex: function (pixelOffset) {
-      // TODO: No need to iterate all
-      return this.state.value.reduce(function (min, value, i) {
-        var minDist = min[1];
+      var minDist = Number.MAX_VALUE;
+      var closestIndex = -1;
 
+      var value = this.state.value;
+      var l = value.length;
+
+      for (var i = 0; i < l; i++) {
         var offset = this._calcOffset(value);
         var dist = Math.abs(pixelOffset - offset);
+        if (dist < minDist) {
+          minDist = dist;
+          closestIndex = i;
+        }
+      }
 
-        return (dist < minDist) ? [i, dist] : min;
-
-      }.bind(this), [-1, Number.MAX_VALUE])[0];
+      return closestIndex;
     },
 
     // Snaps the nearest handle to the value corresponding to `position` and calls `callback` with that handle's index.
@@ -309,87 +320,77 @@
     },
 
     _move: function (index, position) {
-      if (this.props.disabled) return;
+      var props = this.props;
+      var state = this.state;
 
-      var lastValue = this.state.value;
+      if (props.disabled) return;
 
-      var nextValue = this.state.value.map(function (v, i) {
-        if (index !== i) return v;
+      var value = state.value;
+      var l = value.length;
+      var oldValue = value[index];
 
-        var diffPosition = position - this.state.startPosition;
-        var diffValue = (diffPosition / this.state.sliderLength) * (this.props.max - this.props.min);
-        var nv = this.state.startValue + diffValue;
+      var diffPosition = position - state.startPosition;
+      var diffValue = (diffPosition / state.sliderLength) * (props.max - props.min);
+      var newValue = state.startValue + diffValue;
 
-        if (!this.props.pearling) {
-          if (index > 0) {
-            var valueBefore = this.state.value[index - 1];
-            if (nv < valueBefore + this.props.minDistance) {
-              nv = valueBefore + this.props.minDistance;
-            }
-          }
+      var minDistance = props.minDistance;
 
-          if (index < this.state.value.length - 1) {
-            var valueAfter = this.state.value[index + 1];
-            if (nv > valueAfter - this.props.minDistance) {
-              nv = valueAfter - this.props.minDistance;
-            }
+      if (!props.pearling) {
+        if (index > 0) {
+          var valueBefore = value[index - 1];
+          if (newValue < valueBefore + minDistance) {
+            newValue = valueBefore + minDistance;
           }
         }
 
-        return this._trimAlignValue(nv);
-
-      }, this);
-
-      if (this.props.pearling) {
-        var n = nextValue.length;
-        if (n > 1) {
-          if (nextValue[index] > lastValue[index]) {
-            this._pearlNext(index, nextValue);
-            this._limitNext(n, nextValue);
-          } else if (nextValue[index] < lastValue[index]) {
-            this._pearlPrev(index, nextValue);
-            this._limitPrev(n, nextValue);
+        if (index < l - 1) {
+          var valueAfter = value[index + 1];
+          if (newValue > valueAfter - minDistance) {
+            newValue = valueAfter - minDistance;
           }
         }
       }
 
-      var isEqual = nextValue.reduce(function (isEqual, v, i) {
-        return isEqual && v === lastValue[i];
-      }, true);
+      newValue = this._trimAlignValue(newValue);
+      value[index] = newValue;
 
-      if (!isEqual) {
-        this.setState({value: nextValue}, this._fireEvent.bind(this, 'onChange'));
+      if (props.pearling && l > 1) {
+        var i, padding;
+        if (newValue > oldValue) {
+          for (i = index, padding = value[i] + minDistance;
+               value[i + 1] != null && padding > value[i + 1];
+               i++, padding = value[i] + minDistance) {
+            value[i + 1] = this._alignValue(padding);
+          }
+          this._limitNext(l, value, minDistance, props.max);
+        }
+        else if (newValue < oldValue) {
+          for (i = index, padding = value[i] - minDistance;
+               value[i - 1] != null && padding < value[i - 1];
+               i--, padding = value[i] - minDistance) {
+            value[i - 1] = this._alignValue(padding);
+          }
+          this._limitPrev(l, value, minDistance, props.min);
+        }
+      }
+
+      if (newValue !== oldValue) {
+        this.setState({value: value}, this._fireEvent.bind(this, 'onChange'));
       }
     },
 
-    _pearlNext: function (i, nextValue) {
-      var padding = nextValue[i] + this.props.minDistance;
-      if (nextValue[i + 1] && padding > nextValue[i + 1]) {
-        nextValue[i + 1] = this._alignValue(padding);
-        this._pearlNext(i + 1, nextValue);
-      }
-    },
-
-    _limitNext: function (n, nextValue) {
-      for (var i = 0; i < n; i++) {
-        var padding = this.props.max - i * this.props.minDistance;
-        if (nextValue[n - 1 - i] > padding) {
-          nextValue[n - 1 - i] = padding;
+    _limitNext: function (l, nextValue, minDistance, max) {
+      for (var i = 0; i < l; i++) {
+        var padding = max - i * minDistance;
+        if (nextValue[l - 1 - i] > padding) {
+          nextValue[l - 1 - i] = padding;
         }
       }
     },
 
-    _pearlPrev: function (i, nextValue) {
-      var padding = nextValue[i] - this.props.minDistance;
-      if (nextValue[i - 1] && padding < nextValue[i - 1]) {
-        nextValue[i - 1] = this._alignValue(padding);
-        this._pearlPrev(i - 1, nextValue);
-      }
-    },
-
-    _limitPrev: function (n, nextValue) {
-      for (var i = 0; i < n; i++) {
-        var padding = this.props.min + i * this.props.minDistance;
+    _limitPrev: function (l, nextValue, minDistance, min) {
+      for (var i = 0; i < l; i++) {
+        var padding = min + i * minDistance;
         if (nextValue[i] < padding) {
           nextValue[i] = padding;
         }
@@ -397,31 +398,27 @@
     },
 
     _axisKey: function () {
-      return {
-        'horizontal': 'X',
-        'vertical': 'Y'
-      }[this.props.orientation];
+      var orientation = this.props.orientation;
+      if (orientation === 'horizontal') return 'X';
+      if (orientation === 'vertical') return 'Y';
     },
 
     _posMinKey: function () {
-      return {
-        'horizontal': 'left',
-        'vertical': 'top'
-      }[this.props.orientation];
+      var orientation = this.props.orientation;
+      if (orientation === 'horizontal') return 'left';
+      if (orientation === 'vertical') return 'top';
     },
 
     _posMaxKey: function () {
-      return {
-        'horizontal': 'right',
-        'vertical': 'bottom'
-      }[this.props.orientation];
+      var orientation = this.props.orientation;
+      if (orientation === 'horizontal') return 'right';
+      if (orientation === 'vertical') return 'bottom';
     },
 
     _sizeKey: function () {
-      return {
-        horizontal: 'clientWidth',
-        vertical: 'clientHeight'
-      }[this.props.orientation];
+      var orientation = this.props.orientation;
+      if (orientation === 'horizontal') return 'clientWidth';
+      if (orientation === 'vertical') return 'clientHeight';
     },
 
     _trimAlignValue: function (val, props) {
@@ -450,38 +447,44 @@
       return parseFloat(alignValue.toFixed(5));
     },
 
-    _renderHandle: function (styles) {
-      return function (child, i) {
-        var className = this.props.handleClassName + ' ' +
-          (this.props.handleClassName + '-' + i) + ' ' +
-          (this.state.index === i ? this.props.handleActiveClassName : '');
+    _renderHandle: function (style, child, i) {
+      var className = this.props.handleClassName + ' ' +
+        (this.props.handleClassName + '-' + i) + ' ' +
+        (this.state.index === i ? this.props.handleActiveClassName : '');
 
-        return (
-          React.createElement('div', {
-              ref: 'handle' + i,
-              key: 'handle' + i,
-              className: className,
-              style: styles[i],
-              onMouseDown: this._createOnMouseDown(i),
-              onTouchStart: this._createOnTouchStart(i)
-            },
-            child
-          )
-        );
-      }.bind(this);
+      return (
+        React.createElement('div', {
+            ref: 'handle' + i,
+            key: 'handle' + i,
+            className: className,
+            style: style,
+            onMouseDown: this._createOnMouseDown(i),
+            onTouchStart: this._createOnTouchStart(i)
+          },
+          child
+        )
+      );
     },
 
     _renderHandles: function (offset) {
-      var styles = offset.map(this._buildHandleStyle);
-
-      if (React.Children.count(this.props.children) > 0) {
-        return React.Children.map(this.props.children, this._renderHandle(styles));
-      } else {
-        var renderHandle = this._renderHandle(styles);
-        return offset.map(function (offset, i) {
-          return renderHandle(null, i);
-        }, this);
+      var styles = this.state.tempArray;
+      var l = offset.length;
+      for (var i = 0; i < l; i++) {
+        styles[i] = this._buildHandleStyle(offset[i], i);
       }
+
+      var res = this.state.tempArray;
+      var renderHandle = this._renderHandle;
+      if (React.Children.count(this.props.children) > 0) {
+        React.Children.forEach(this.props.children, function (child, i) {
+          res[i] = renderHandle(styles[i], child, i);
+        });
+      } else {
+        for (i = 0; i < l; i++) {
+          res[i] = renderHandle(styles[i], null, i);
+        }
+      }
+      return res;
     },
 
     _renderBar: function (i, offsetFrom, offsetTo) {
@@ -546,16 +549,24 @@
     },
 
     render: function () {
-      var offset = this.state.value.map(this._calcOffset);
+      var state = this.state;
+      var props = this.props;
 
-      var bars = this.props.withBars ? this._renderBars(offset) : null;
+      var offset = state.tempArray;
+      var value = state.value;
+      var l = value.length;
+      for (var i = 0; i < l; i++) {
+        offset[i] = this._calcOffset(value[i], i);
+      }
+
+      var bars = props.withBars ? this._renderBars(offset) : null;
       var handles = this._renderHandles(offset);
 
       return (
         React.createElement('div', {
             ref: 'slider',
             style: {position: 'relative'},
-            className: this.props.className + (this.props.disabled ? ' disabled' : ''),
+            className: props.className + (props.disabled ? ' disabled' : ''),
             onMouseDown: this._onSliderMouseDown,
             onTouchStart: this._onSliderTouchStart
           },
