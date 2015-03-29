@@ -59,29 +59,35 @@ The minimum value of the slider.
 
 ##### max {number} default: 100
 
-The maximum value of the slider
+The maximum value of the slider.
 
 ##### step {number} default: 1
 
-Value to be added or subtracted on each step the slider makes. Must be greater than zero.
-```max - min``` should be evenly divisible by the step value.
+Value to be added or subtracted on each step the slider makes.
+Must be greater than zero.
+`max - min` should be evenly divisible by the step value.
 
-##### defaultValue {number|array\<number\>} default: 0
+##### minDistance {number} default: 0
 
-Determines the initial positions of the handles.
-Also determines the number of handles.
+The minimal distance between any pair of handles.
+Zero means they can sit on top of each other.
+
+##### defaultValue {oneOfType([number, arrayOf(number)])} default: 0
+
+Determines the initial positions of the handles and the number of handles if the component has no children.
 
 If a number is passed a slider with one handle will be rendered.
 If an array is passed each value will determine the position of one handle.
 The values in the array must be sorted.
+If the component has children, the length of the array must match the number of children.
 
-##### value {number|array\<number\>}
+##### value {oneOfType([number, arrayOf(number)])} default: 0
 
 Like `defaultValue` but for [controlled components](http://facebook.github.io/react/docs/forms.html#controlled-components).
 
-##### orientation {string} default: 'horizontal'
+##### orientation {oneOf(['horizontal', 'vertical'])} default: 'horizontal'
 
-Determines whether the slider moves horizontally (from left to right) or vertically (from top to bottom). Can be one of: **horizontal**, **vertical**.
+Determines whether the slider moves horizontally (from left to right) or vertically (from top to bottom).
 
 ##### className {string} default: 'slider'
 
@@ -97,10 +103,9 @@ e.g. `handle-0`, `handle-1`, ...
 
 The css class set on the handle that is currently being moved.
 
-##### minDistance {number} default: 0
+##### withBars {boolean} default: false
 
-Sets the minimal distance between any pair of handles.
-Zero means they can sit on top of each other.
+If `true` bars between the handles will be rendered.
 
 ##### barClassName {string} default: 'bar'
 
@@ -108,31 +113,33 @@ The css class set on the bars between the handles.
 In addition bar fragment will receive a numbered css class of the form `${barClassName}-${i}`,
 e.g. `bar-0`, `bar-1`, ...
 
-##### withBars {boolean} default: false
+##### pearling {bool} default: false
 
-If `true` bars between the handles will be rendered.
+If `true` the active handle will push other handles within the constraints of `min`, `max`, `step` and `minDistance`.
 
-##### pearling {boolean} default: false
-
-If `true` the handles behave like pearls on a pearl necklace.
-
-##### disabled {boolean} default: false
+##### disabled {bool} default: false
 
 If `true` the handles can't be moved.
 
-##### onChange {function}
+##### snapDragDisabled {bool} default: false
 
-Callback called on every value change. Example:
+Disables handle move when clicking the slider bar.
 
-```javascript
-function onChange(value) {
-  console.log('New slider value: ' + value);
-}
-```
+##### invert {bool} default: false
 
-##### onChanged {function}
+Inverts the slider.
 
-Callback called only after dragging/touching has ended or when a new value is set by clicking on the slider.
+##### onBeforeChange {func}
+
+Callback called before starting to move a handle.
+
+##### onChange {func}
+
+Callback called on every value change.
+
+##### onAfterChange {func}
+
+Callback called only after moving a handle has ended or when a new value is set by clicking on the slider.
 
 ### Methods
 

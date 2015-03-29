@@ -6,8 +6,8 @@
 
     <title>React Slider Example</title>
 
-    <script src="../node_modules/react/dist/react.js"></script>
-    <script src="../react-slider.js"></script>
+    <script src="node_modules/react/dist/react.js"></script>
+    <script src="react-slider.js"></script>
 
     <style>
         body {
@@ -115,15 +115,14 @@
         },
 
         render: function () {
-            return ReactSlider({
+            return ReactSlider(
+                    React.__spread({
                         className: this.props.orientation + '-slider',
-                        orientation: this.props.orientation,
-                        withBars: this.props.withBars,
                         pearling: true,
+                        minDistance: 10,
                         value: this.state.value,
-                        onChange: this.onChange,
-                        minDistance: 10
-                    },
+                        onChange: this.onChange
+                    }, this.props),
                     map(this.state.value, function (value, i) {
                         return React.createElement('div', {key: i}, value);
                     })
@@ -132,11 +131,13 @@
     }));
 
     React.render(Demo({defaultValue: 0, orientation: 'horizontal'}), document.getElementById('horizontal-1'));
+
     React.render(Demo({
         defaultValue: [0, 100],
         orientation: 'horizontal',
         withBars: true
     }), document.getElementById('horizontal-2'));
+
     React.render(Demo({
         defaultValue: [0, 50, 100],
         orientation: 'horizontal',
@@ -146,7 +147,8 @@
     React.render(Demo({
         defaultValue: [0, 50, 100],
         orientation: 'vertical',
-        withBars: true
+        withBars: true,
+        invert: true
     }), document.getElementById('vertical'));
 </script>
 </body>

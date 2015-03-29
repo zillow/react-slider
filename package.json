@@ -1,6 +1,6 @@
 {
   "name": "react-slider",
-  "version": "0.3.4",
+  "version": "0.4.0",
   "description": "Slider component for React",
   "main": "react-slider.js",
   "scripts": {
@@ -22,7 +22,7 @@
     "email": "f.klampfer@gmail.com"
   }],
   "license": "MIT",
-  "devDependencies": {
-    "react": "^0.12.1"
+  "peerDependencies": {
+    "react": ">=0.12.1"
   }
 }
