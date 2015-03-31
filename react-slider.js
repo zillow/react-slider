@@ -39,7 +39,7 @@
   }
 
   function ensureArray(x) {
-    return Array.isArray(x) ? x : [x];
+    return x == null ? [] : Array.isArray(x) ? x : [x];
   }
 
   function undoEnsureArray(x) {
@@ -231,7 +231,7 @@
       var count = React.Children.count(this.props.children);
       switch (count) {
         case 0:
-          return value != null ? value : defaultValue;
+          return value.length > 0 ? value : defaultValue;
         case value.length:
           return value;
         case defaultValue.length:

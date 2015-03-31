@@ -1,0 +1,95 @@
+0 info it worked if it ends with ok
+1 verbose cli [ 'node', '/usr/local/bin/npm', 'publish', '.' ]
+2 info using npm@2.5.1
+3 info using node@v0.12.0
+4 verbose node symlink /usr/local/bin/node
+5 verbose publish [ '.' ]
+6 silly cache add args [ '.', null ]
+7 verbose cache add spec .
+8 silly cache add parsed spec { raw: '.',
+8 silly cache add   scope: null,
+8 silly cache add   name: null,
+8 silly cache add   rawSpec: '.',
+8 silly cache add   spec: '/Users/cell303/react-slider',
+8 silly cache add   type: 'directory' }
+9 verbose addLocalDirectory /Users/cell303/.npm/react-slider/0.4.1/package.tgz not in flight; packing
+10 verbose tar pack [ '/Users/cell303/.npm/react-slider/0.4.1/package.tgz',
+10 verbose tar pack   '/Users/cell303/react-slider' ]
+11 verbose tarball /Users/cell303/.npm/react-slider/0.4.1/package.tgz
+12 verbose folder /Users/cell303/react-slider
+13 info prepublish react-slider@0.4.1
+14 verbose addLocalTarball adding from inside cache /Users/cell303/.npm/react-slider/0.4.1/package.tgz
+15 silly cache afterAdd react-slider@0.4.1
+16 verbose afterAdd /Users/cell303/.npm/react-slider/0.4.1/package/package.json not in flight; writing
+17 verbose afterAdd /Users/cell303/.npm/react-slider/0.4.1/package/package.json written
+18 silly publish { name: 'react-slider',
+18 silly publish   version: '0.4.1',
+18 silly publish   description: 'Slider component for React',
+18 silly publish   main: 'react-slider.js',
+18 silly publish   keywords: [ 'react-component', 'react', 'slider', 'component' ],
+18 silly publish   author: { name: 'Michał Powaga', email: 'michalpowaga13@gmail.com' },
+18 silly publish   contributors: [ { name: 'Florian Klampfer', email: 'f.klampfer@gmail.com' } ],
+18 silly publish   license: 'MIT',
+18 silly publish   scripts: { test: 'echo "Error: no test specified" && exit 1' },
+18 silly publish   repository:
+18 silly publish    { type: 'git',
+18 silly publish      url: 'https://github.com/mpowaga/react-slider.git' },
+18 silly publish   peerDependencies: { react: '>=0.12.1' },
+18 silly publish   readme: '# React Slider\n\nCSS agnostic slider component for React.\n\nSee demo: [https://cell303.github.io/react-slider](https://cell303.github.io/react-slider/)\n\n### Important Note\n\nThis is an alpha release. Use with caution and hope.\n\n### Installation\n\n```sh\nnpm install react-slider\n```\n\n### Overview\n\n#### Single slider:\n\nSimilar to `<input type="range" defaultValue={50} />`\n\n```javascript\nReact.render(<ReactSlider defaultValue={50} />, document.body);\n```\n\n#### Double slider (with bars between the handles):\n\n```javascript\nReact.render(<ReactSlider defaultValue={[0, 100]} withBars />, document.body);\n```\n\n#### Multi slider:\n\n```javascript\nReact.render(<ReactSlider defaultValue={[0, 33, 67, 100]} withBars />, document.body);\n```\n\n#### Provide custom handles:\n\n```javascript\nReact.render(\n  <ReactSlider withBars>\n    <div className="my-handle">1</div>\n    <div className="my-handle">2</div>\n    <div className="my-handle">3</div>\n  </ReactSlider>,\n  document.body\n);\n```\n\nNow you can style it as you want. Checkout the ```examples``` directory to see how.\n\n### Properties\n\n##### min {number} default: 0\n\nThe minimum value of the slider.\n\n##### max {number} default: 100\n\nThe maximum value of the slider.\n\n##### step {number} default: 1\n\nValue to be added or subtracted on each step the slider makes.\nMust be greater than zero.\n`max - min` should be evenly divisible by the step value.\n\n##### minDistance {number} default: 0\n\nThe minimal distance between any pair of handles.\nZero means they can sit on top of each other.\n\n##### defaultValue {oneOfType([number, arrayOf(number)])} default: 0\n\nDetermines the initial positions of the handles and the number of handles if the component has no children.\n\nIf a number is passed a slider with one handle will be rendered.\nIf an array is passed each value will determine the position of one handle.\nThe values in the array must be sorted.\nIf the component has children, the length of the array must match the number of children.\n\n##### value {oneOfType([number, arrayOf(number)])} default: 0\n\nLike `defaultValue` but for [controlled components](http://facebook.github.io/react/docs/forms.html#controlled-components).\n\n##### orientation {oneOf([\'horizontal\', \'vertical\'])} default: \'horizontal\'\n\nDetermines whether the slider moves horizontally (from left to right) or vertically (from top to bottom).\n\n##### className {string} default: \'slider\'\n\nThe css class set on the slider node.\n\n##### handleClassName {string} default: \'handle\'\n\nThe css class set on each handle node.\nIn addition each handle will receive a numbered css class of the form `${handleClassName}-${i}`,\ne.g. `handle-0`, `handle-1`, ...\n\n##### handleActiveClassName {string} default: \'active\'\n\nThe css class set on the handle that is currently being moved.\n\n##### withBars {boolean} default: false\n\nIf `true` bars between the handles will be rendered.\n\n##### barClassName {string} default: \'bar\'\n\nThe css class set on the bars between the handles.\nIn addition bar fragment will receive a numbered css class of the form `${barClassName}-${i}`,\ne.g. `bar-0`, `bar-1`, ...\n\n##### pearling {bool} default: false\n\nIf `true` the active handle will push other handles within the constraints of `min`, `max`, `step` and `minDistance`.\n\n##### disabled {bool} default: false\n\nIf `true` the handles can\'t be moved.\n\n##### snapDragDisabled {bool} default: false\n\nDisables handle move when clicking the slider bar.\n\n##### invert {bool} default: false\n\nInverts the slider.\n\n##### onBeforeChange {func}\n\nCallback called before starting to move a handle.\n\n##### onChange {func}\n\nCallback called on every value change.\n\n##### onAfterChange {func}\n\nCallback called only after moving a handle has ended or when a new value is set by clicking on the slider.\n\n### Methods\n\n##### getValue\n\nReturns the current value of the slider, which is a number in the case of a single slider,\nor an array of numbers in case of a multi slider.\n\n### License\n\nSee the [License](LICENSE) file.\n',
+18 silly publish   readmeFilename: 'README.md',
+18 silly publish   gitHead: '5c611c464b3f9848dc987f8c1d81a51644961f3d',
+18 silly publish   bugs: { url: 'https://github.com/mpowaga/react-slider/issues' },
+18 silly publish   homepage: 'https://github.com/mpowaga/react-slider',
+18 silly publish   _id: 'react-slider@0.4.1',
+18 silly publish   _shasum: '7774a2e1b7d398eb7a483a059ba8d56a476cf894',
+18 silly publish   _from: '.' }
+19 silly mapToRegistry name react-slider
+20 silly mapToRegistry using default registry
+21 silly mapToRegistry registry https://registry.npmjs.org/
+22 silly mapToRegistry uri https://registry.npmjs.org/react-slider
+23 verbose publish registryBase https://registry.npmjs.org/
+24 silly publish uploading /Users/cell303/.npm/react-slider/0.4.1/package.tgz
+25 verbose request uri https://registry.npmjs.org/react-slider
+26 verbose request sending authorization for write operation
+27 info attempt registry request try #1 at 15:17:03
+28 verbose request id df9841f1983a1aec
+29 http request PUT https://registry.npmjs.org/react-slider
+30 http 401 https://registry.npmjs.org/react-slider
+31 verbose headers { date: 'Tue, 31 Mar 2015 13:17:04 GMT',
+31 verbose headers   server: 'Apache',
+31 verbose headers   'content-type': 'application/json',
+31 verbose headers   'cache-control': 'max-age=60',
+31 verbose headers   'content-length': '38',
+31 verbose headers   'accept-ranges': 'bytes',
+31 verbose headers   via: '1.1 varnish',
+31 verbose headers   'x-served-by': 'cache-ams4147-AMS',
+31 verbose headers   'x-cache': 'MISS',
+31 verbose headers   'x-cache-hits': '0',
+31 verbose headers   'x-timer': 'S1427807823.716740,VS0,VE964',
+31 verbose headers   'keep-alive': 'timeout=10, max=50',
+31 verbose headers   connection: 'Keep-Alive' }
+32 verbose request invalidating /Users/cell303/.npm/registry.npmjs.org/react-slider on PUT
+33 error publish Failed PUT 401
+34 verbose stack Error: Request was not authorized : react-slider
+34 verbose stack     at CachingRegistryClient.<anonymous> (/usr/local/lib/node_modules/npm/node_modules/npm-registry-client/lib/request.js:254:14)
+34 verbose stack     at Request._callback (/usr/local/lib/node_modules/npm/node_modules/npm-registry-client/lib/request.js:178:14)
+34 verbose stack     at Request.self.callback (/usr/local/lib/node_modules/npm/node_modules/request/request.js:344:22)
+34 verbose stack     at Request.emit (events.js:110:17)
+34 verbose stack     at Request.<anonymous> (/usr/local/lib/node_modules/npm/node_modules/request/request.js:1239:14)
+34 verbose stack     at Request.emit (events.js:129:20)
+34 verbose stack     at IncomingMessage.<anonymous> (/usr/local/lib/node_modules/npm/node_modules/request/request.js:1187:12)
+34 verbose stack     at IncomingMessage.emit (events.js:129:20)
+34 verbose stack     at _stream_readable.js:908:16
+34 verbose stack     at process._tickCallback (node.js:355:11)
+35 verbose statusCode 401
+36 verbose pkgid react-slider
+37 verbose cwd /Users/cell303/react-slider
+38 error Darwin 14.3.0
+39 error argv "node" "/usr/local/bin/npm" "publish" "."
+40 error node v0.12.0
+41 error npm  v2.5.1
+42 error code E401
+43 error Request was not authorized : react-slider
+44 error If you need help, you may report this error at:
+44 error     <http://github.com/npm/npm/issues>
+45 verbose exit [ 1, true ]
