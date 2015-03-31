@@ -141,6 +141,10 @@ Callback called on every value change.
 
 Callback called only after moving a handle has ended or when a new value is set by clicking on the slider.
 
+##### onSliderClick {func}
+
+Callback called when the the slider is clicked (handle or bars). Receives the value at the clicked position as argument.
+
 ### Methods
 
 ##### getValue

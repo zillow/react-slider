@@ -25,7 +25,6 @@
     e.cancelBubble = true;
   }
 
-
   /**
    * Spreads `count` values equally between `min` and `max`.
    */
@@ -166,7 +165,13 @@
       /**
        * Callback called only after moving a handle has ended.
        */
-      onAfterChange: React.PropTypes.func
+      onAfterChange: React.PropTypes.func,
+
+      /**
+       *  Callback called when the the slider is clicked (handle or bars).
+       *  Receives the value at the clicked position as argument.
+       */
+      onSliderClick: React.PropTypes.func
     },
 
     getDefaultProps: function () {
@@ -326,15 +331,19 @@
       return closestIndex;
     },
 
-    // Snaps the nearest handle to the value corresponding to `position` and calls `callback` with that handle's index.
-    _forceValueFromPosition: function (position, callback) {
+    _calcOffsetFromPosition: function (position) {
       var pixelOffset = position - this.state.sliderStart;
       if (this.props.invert) pixelOffset = this.state.sliderLength - pixelOffset;
       pixelOffset -= (this.state.handleSize / 2);
+      return pixelOffset;
+    },
 
+    // Snaps the nearest handle to the value corresponding to `position` and calls `callback` with that handle's index.
+    _forceValueFromPosition: function (position, callback) {
+      var pixelOffset = this._calcOffsetFromPosition(position);
       var closestIndex = this._getClosestIndex(pixelOffset);
-
       var nextValue = this._trimAlignValue(this._calcValue(pixelOffset));
+
       var value = this.state.value;
       value[closestIndex] = nextValue;
 
@@ -409,7 +418,9 @@
     _start: function (i, position) {
       if (document.activeElement) document.activeElement.blur();
 
-      this._fireEvent('onBeforeChange');
+      this.hasMoved = false;
+
+      this._fireChangeEvent('onBeforeChange');
 
       var zIndices = this.state.zIndices;
       zIndices.splice(zIndices.indexOf(i), 1); // remove wherever the element is
@@ -433,7 +444,7 @@
 
     _onEnd: function (eventMap) {
       this._removeHandlers(eventMap);
-      this.setState({index: -1}, this._fireEvent.bind(this, 'onAfterChange'));
+      this.setState({index: -1}, this._fireChangeEvent.bind(this, 'onAfterChange'));
     },
 
     _onMouseMove: function (e) {
@@ -463,6 +474,8 @@
     },
 
     _move: function (position) {
+      this.hasMoved = true;
+
       var props = this.props;
       var state = this.state;
       var index = state.index;
@@ -514,7 +527,7 @@
       // Normally you would use `shouldComponentUpdate`, but since the slider is a low-level component,
       // the extra complexity might be worth the extra performance.
       if (newValue !== oldValue) {
-        this.setState({value: value}, this._fireEvent.bind(this, 'onChange'));
+        this.setState({value: value}, this._fireChangeEvent.bind(this, 'onChange'));
       }
     },
 
@@ -678,17 +691,31 @@
     },
 
     _onSliderMouseDown: function (e) {
-      if (this.props.disabled || this.props.snapDragDisabled) return;
-      var position = this._getMousePosition(e);
-      this._forceValueFromPosition(position[0], function (i) {
-        this._fireEvent('onChange');
-        this._start(i, position[0]);
-        this._addHandlers(this._getMouseEventMap());
-      }.bind(this));
+      if (this.props.disabled) return;
+      this.hasMoved = false;
+      if (!this.props.snapDragDisabled) {
+        var position = this._getMousePosition(e);
+        this._forceValueFromPosition(position[0], function (i) {
+          this._fireChangeEvent('onChange');
+          this._start(i, position[0]);
+          this._addHandlers(this._getMouseEventMap());
+        }.bind(this));
+      }
+
       pauseEvent(e);
     },
 
-    _fireEvent: function (event) {
+    _onSliderClick: function (e) {
+      if (this.props.disabled) return;
+
+      if (this.props.onSliderClick && !this.hasMoved) {
+        var position = this._getMousePosition(e);
+        var valueAtPos = this._trimAlignValue(this._calcValue(this._calcOffsetFromPosition(position[0])));
+        this.props.onSliderClick(valueAtPos);
+      }
+    },
+
+    _fireChangeEvent: function (event) {
       if (this.props[event]) {
         this.props[event](undoEnsureArray(this.state.value));
       }
@@ -713,7 +740,8 @@
             ref: 'slider',
             style: {position: 'relative'},
             className: props.className + (props.disabled ? ' disabled' : ''),
-            onMouseDown: this._onSliderMouseDown
+            onMouseDown: this._onSliderMouseDown,
+            onClick: this._onSliderClick
           },
           bars,
           handles
