@@ -49,7 +49,7 @@ React.render(
 );
 ```
 
-Now you can style it as you want. Checkout the ```examples``` directory to see how.
+Now you can style it as you want. Checkout the `index.html` example to see how.
 
 ### Properties
 
