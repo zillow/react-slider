@@ -226,6 +226,8 @@
       for (var i = 0; i < value.length; i++) {
         this.state.value[i] = this._trimAlignValue(value[i], newProps);
       }
+      if (this.state.value.length > value.length)
+        this.state.value.length = value.length;
     },
 
     // Check if the arity of `value` or `defaultValue` matches the number of children (= number of custom handles).
