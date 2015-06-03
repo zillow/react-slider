@@ -352,8 +352,13 @@
       var closestIndex = this._getClosestIndex(pixelOffset);
       var nextValue = this._trimAlignValue(this._calcValue(pixelOffset));
 
-      var value = this.state.value;
+      var value = this.state.value.slice(); // Clone this.state.value since we'll modify it temporarily
       value[closestIndex] = nextValue;
+
+      // Prevents the slider from shrinking below `props.minDistance`
+      for (var i = 0; i < value.length - 1; i += 1) {
+        if (value[i + 1] - value[i] < this.props.minDistance) return;
+      }
 
       this.setState({value: value}, callback.bind(this, closestIndex));
     },
