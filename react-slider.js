@@ -271,21 +271,24 @@
     },
 
     _handleResize: function () {
-      var slider = this.refs.slider.getDOMNode();
-      var handle = this.refs.handle0.getDOMNode();
-      var rect = slider.getBoundingClientRect();
+      // setTimeout of 0 gives element enough time to have assumed its new size if it is being resized
+      window.setTimeout(function() {
+        var slider = this.refs.slider.getDOMNode();
+        var handle = this.refs.handle0.getDOMNode();
+        var rect = slider.getBoundingClientRect();
 
-      var size = this._sizeKey();
+        var size = this._sizeKey();
 
-      var sliderMax = rect[this._posMaxKey()];
-      var sliderMin = rect[this._posMinKey()];
+        var sliderMax = rect[this._posMaxKey()];
+        var sliderMin = rect[this._posMinKey()];
 
-      this.setState({
-        upperBound: slider[size] - handle[size],
-        sliderLength: Math.abs(sliderMax - sliderMin),
-        handleSize: handle[size],
-        sliderStart: this.props.invert ? sliderMax : sliderMin
-      });
+        this.setState({
+          upperBound: slider[size] - handle[size],
+          sliderLength: Math.abs(sliderMax - sliderMin),
+          handleSize: handle[size],
+          sliderStart: this.props.invert ? sliderMax : sliderMin
+        });
+      }.bind(this), 0);
     },
 
     // calculates the offset of a handle in pixels based on its value.
