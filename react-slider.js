@@ -355,7 +355,7 @@
       var value = this.state.value;
       value[closestIndex] = nextValue;
 
-      this.setState({value: value}, callback.bind(this, closestIndex));
+      this.setState({value: value, index: closestIndex}, callback.bind(this, closestIndex));
     },
 
     _getMousePosition: function (e) {
