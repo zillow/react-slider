@@ -240,6 +240,7 @@
     // If no custom handles are provided, just returns `value` if present and `defaultValue` otherwise.
     // If custom handles are present but neither `value` nor `defaultValue` are applicable the handles are spread out
     // equally.
+    // TODO: better name? better solution?
     _or: function (value, defaultValue) {
       var count = React.Children.count(this.props.children);
       switch (count) {
@@ -500,7 +501,7 @@
       var index = state.index;
 
       var value = state.value;
-      var l = value.length;
+      var length = value.length;
       var oldValue = value[index];
 
       var diffPosition = position - state.startPosition;
@@ -521,7 +522,7 @@
           }
         }
 
-        if (index < l - 1) {
+        if (index < length - 1) {
           var valueAfter = value[index + 1];
           if (newValue > valueAfter - minDistance) {
             newValue = valueAfter - minDistance;
@@ -532,14 +533,14 @@
       value[index] = newValue;
 
       // if "pearling" is enabled, let the current handle push the pre- and succeeding handles.
-      if (props.pearling && l > 1) {
+      if (props.pearling && length > 1) {
         if (newValue > oldValue) {
-          this._pushSucceeding(l, value, minDistance, index);
-          this._trimSucceeding(l, value, minDistance, props.max);
+          this._pushSucceeding(value, minDistance, index);
+          this._trimSucceeding(length, value, minDistance, props.max);
         }
         else if (newValue < oldValue) {
-          this._pushPreceding(l, value, minDistance, index);
-          this._trimPreceding(l, value, minDistance, props.min);
+          this._pushPreceding(value, minDistance, index);
+          this._trimPreceding(length, value, minDistance, props.min);
         }
       }
 
@@ -550,7 +551,7 @@
       }
     },
 
-    _pushSucceeding: function (l, value, minDistance, index) {
+    _pushSucceeding: function (value, minDistance, index) {
       var i, padding;
       for (i = index, padding = value[i] + minDistance;
            value[i + 1] != null && padding > value[i + 1];
@@ -559,16 +560,16 @@
       }
     },
 
-    _trimSucceeding: function (l, nextValue, minDistance, max) {
-      for (var i = 0; i < l; i++) {
+    _trimSucceeding: function (length, nextValue, minDistance, max) {
+      for (var i = 0; i < length; i++) {
         var padding = max - i * minDistance;
-        if (nextValue[l - 1 - i] > padding) {
-          nextValue[l - 1 - i] = padding;
+        if (nextValue[length - 1 - i] > padding) {
+          nextValue[length - 1 - i] = padding;
         }
       }
     },
 
-    _pushPreceding: function (l, value, minDistance, index) {
+    _pushPreceding: function (value, minDistance, index) {
       var i, padding;
       for (i = index, padding = value[i] - minDistance;
            value[i - 1] != null && padding < value[i - 1];
@@ -577,8 +578,8 @@
       }
     },
 
-    _trimPreceding: function (l, nextValue, minDistance, min) {
-      for (var i = 0; i < l; i++) {
+    _trimPreceding: function (length, nextValue, minDistance, min) {
+      for (var i = 0; i < length; i++) {
         var padding = min + i * minDistance;
         if (nextValue[i] < padding) {
           nextValue[i] = padding;
@@ -662,10 +663,10 @@
     },
 
     _renderHandles: function (offset) {
-      var l = offset.length;
+      var length = offset.length;
 
       var styles = this.tempArray;
-      for (var i = 0; i < l; i++) {
+      for (var i = 0; i < length; i++) {
         styles[i] = this._buildHandleStyle(offset[i], i);
       }
 
@@ -676,7 +677,7 @@
           res[i] = renderHandle(styles[i], child, i);
         });
       } else {
-        for (i = 0; i < l; i++) {
+        for (i = 0; i < length; i++) {
           res[i] = renderHandle(styles[i], null, i);
         }
       }
