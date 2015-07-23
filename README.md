@@ -2,7 +2,7 @@
 
 CSS agnostic slider component for React.
 
-See demo: [https://cell303.github.io/react-slider](https://cell303.github.io/react-slider/)
+See demo: [https://qwtel.github.io/react-slider](https://cell303.github.io/react-slider/)
 
 ### Important Note
 
