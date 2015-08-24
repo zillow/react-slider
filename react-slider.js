@@ -45,6 +45,10 @@
     return x != null && x.length === 1 ? x[0] : x;
   }
 
+  var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+
+  function _objectWithoutProperties(obj, keys) { var target = {}; for (var i in obj) { if (keys.indexOf(i) >= 0) continue; if (!Object.prototype.hasOwnProperty.call(obj, i)) continue; target[i] = obj[i]; } return target; }
+
   // undoEnsureArray(ensureArray(x)) === x
 
   var ReactSlider = React.createClass({
@@ -743,7 +747,12 @@
 
     render: function () {
       var state = this.state;
-      var props = this.props;
+      var _props = this.props;
+      var withBars = _props.withBars;
+      var className = _props.className;
+      var disabled = _props.disabled;
+
+      var others = _objectWithoutProperties(_props, ['withBars', 'className', 'disabled']);
 
       var offset = this.tempArray;
       var value = state.value;
@@ -752,17 +761,17 @@
         offset[i] = this._calcOffset(value[i], i);
       }
 
-      var bars = props.withBars ? this._renderBars(offset) : null;
+      var bars = withBars ? this._renderBars(offset) : null;
       var handles = this._renderHandles(offset);
 
       return (
-        React.createElement('div', {
+        React.createElement('div', _extends({
             ref: 'slider',
             style: {position: 'relative'},
-            className: props.className + (props.disabled ? ' disabled' : ''),
+            className: className + (disabled ? ' disabled' : ''),
             onMouseDown: this._onSliderMouseDown,
             onClick: this._onSliderClick
-          },
+          }, others),
           bars,
           handles
         )
