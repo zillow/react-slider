@@ -277,16 +277,15 @@
       this.resizeTimeout = window.setTimeout(function() {
         var slider = this.refs.slider.getDOMNode();
         var handle = this.refs.handle0.getDOMNode();
-        var rect = slider.getBoundingClientRect();
-
+        var direction = this.props.orientation === 'vertical' ? 'Top' : 'Left';
         var size = this._sizeKey();
 
-        var sliderMax = rect[this._posMaxKey()];
-        var sliderMin = rect[this._posMinKey()];
+        var sliderMin = slider['offset' + direction] + slider['client' + direction];
+        var sliderMax = sliderMin + slider[size];
 
         this.setState({
           upperBound: slider[size] - handle[size],
-          sliderLength: Math.abs(sliderMax - sliderMin),
+          sliderLength: slider[size],
           handleSize: handle[size],
           sliderStart: this.props.invert ? sliderMax : sliderMin
         });
