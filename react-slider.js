@@ -74,6 +74,11 @@
        * Must be positive, but zero means they can sit on top of each other.
        */
       minDistance: React.PropTypes.number,
+      /**
+       * The maximum distance between any pair of handles.
+       * Must be positive, but zero means that distance not limited
+       */
+      maxDistance: React.PropTypes.number,
 
       /**
        * Determines the initial positions of the handles and the number of handles if the component has no children.
@@ -180,6 +185,7 @@
         max: 100,
         step: 1,
         minDistance: 0,
+        maxDistance: 0,
         defaultValue: 0,
         orientation: 'horizontal',
         className: 'slider',
@@ -512,15 +518,20 @@
       var newValue = this._trimAlignValue(state.startValue + diffValue);
 
       var minDistance = props.minDistance;
+	  var maxDistance = props.maxDistance;
 
       // if "pearling" (= handles pushing each other) is disabled,
-      // prevent the handle from getting closer than `minDistance` to the previous or next handle.
+      // prevent the handle from getting closer than `minDistance` to the previous or next handle
+	  // and getting further than 'maxDistance'
       if (!props.pearling) {
         if (index > 0) {
           var valueBefore = value[index - 1];
           if (newValue < valueBefore + minDistance) {
             newValue = valueBefore + minDistance;
           }
+		  if (maxDistance && newValue > valueBefore + maxDistance) {
+		    newValue = valueBefore + maxDistance;
+		  }
         }
 
         if (index < length - 1) {
@@ -528,6 +539,9 @@
           if (newValue > valueAfter - minDistance) {
             newValue = valueAfter - minDistance;
           }
+		  if (maxDistance && newValue < valueAfter - maxDistance) {
+            newValue = valueAfter - maxDistance;
+		  }
         }
       }
 
@@ -536,11 +550,11 @@
       // if "pearling" is enabled, let the current handle push the pre- and succeeding handles.
       if (props.pearling && length > 1) {
         if (newValue > oldValue) {
-          this._pushSucceeding(value, minDistance, index);
+          this._pushSucceeding(value, minDistance, maxDistance, index);
           this._trimSucceeding(length, value, minDistance, props.max);
         }
         else if (newValue < oldValue) {
-          this._pushPreceding(value, minDistance, index);
+          this._pushPreceding(value, minDistance, maxDistance, index);
           this._trimPreceding(length, value, minDistance, props.min);
         }
       }
@@ -552,13 +566,20 @@
       }
     },
 
-    _pushSucceeding: function (value, minDistance, index) {
+    _pushSucceeding: function (value, minDistance, maxDistance, index) {
       var i, padding;
       for (i = index, padding = value[i] + minDistance;
            value[i + 1] != null && padding > value[i + 1];
            i++, padding = value[i] + minDistance) {
         value[i + 1] = this._alignValue(padding);
       }
+	  if (maxDistance) {
+	     for (i = index, padding = value[i] - maxDistance;
+           value[i - 1] != null && padding > value[i - 1];
+           i--, padding = value[i] - maxDistance) {
+		   value[i - 1] = this._alignValue(padding);
+		 }	  
+	  }
     },
 
     _trimSucceeding: function (length, nextValue, minDistance, max) {
@@ -570,13 +591,20 @@
       }
     },
 
-    _pushPreceding: function (value, minDistance, index) {
+    _pushPreceding: function (value, minDistance, maxDistance, index) {
       var i, padding;
       for (i = index, padding = value[i] - minDistance;
            value[i - 1] != null && padding < value[i - 1];
            i--, padding = value[i] - minDistance) {
         value[i - 1] = this._alignValue(padding);
       }
+	  if (maxDistance) {
+	     for (i = index, padding = value[i] + maxDistance;
+           value[i + 1] != null && padding < value[i + 1];
+           i++, padding = value[i] + maxDistance) {
+		   value[i + 1] = this._alignValue(padding);
+		 }	  
+	  }
     },
 
     _trimPreceding: function (length, nextValue, minDistance, min) {
