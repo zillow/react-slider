@@ -1,6 +1,6 @@
 {
   "name": "react-slider",
-  "version": "0.5.1",
+  "version": "0.6.0",
   "description": "Slider component for React",
   "main": "react-slider.js",
   "keywords": [
@@ -23,6 +23,6 @@
     "url": "https://github.com/mpowaga/react-slider.git"
   },
   "peerDependencies": {
-    "react": ">=0.12.1"
+    "react": ">=0.14"
   }
 }
