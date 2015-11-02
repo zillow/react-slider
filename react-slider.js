@@ -218,7 +218,7 @@
     // Keep the internal `value` consistent with an outside `value` if present.
     // This basically allows the slider to be a controlled component.
     componentWillReceiveProps: function (newProps) {
-      var value = this._or(ensureArray(newProps.value), this.state.value);
+      var value = this._or(ensureArray(newProps.value), this.state.value, newProps.children);
 
       // ensure the array keeps the same size as `value`
       this.tempArray = value.slice();
@@ -241,8 +241,9 @@
     // If custom handles are present but neither `value` nor `defaultValue` are applicable the handles are spread out
     // equally.
     // TODO: better name? better solution?
-    _or: function (value, defaultValue) {
-      var count = React.Children.count(this.props.children);
+    _or: function (value, defaultValue, children) {
+      children = children || this.props.children;
+      var count = React.Children.count(children);
       switch (count) {
         case 0:
           return value.length > 0 ? value : defaultValue;
