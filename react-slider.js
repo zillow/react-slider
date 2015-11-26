@@ -64,7 +64,7 @@
 
       /**
        * Value to be added or subtracted on each step the slider makes.
-       * Or function that compute the step for current value
+       * Or function to compute the step for current value.
        * Must be greater than zero.
        * `max - min` should be evenly divisible by the step value.
        */

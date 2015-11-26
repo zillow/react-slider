@@ -61,9 +61,10 @@ The minimum value of the slider.
 
 The maximum value of the slider.
 
-##### step {number} default: 1
+##### step {oneOfType([number, func])} default: 1
 
 Value to be added or subtracted on each step the slider makes.
+Or function to compute the step for current value.
 Must be greater than zero.
 `max - min` should be evenly divisible by the step value.
 
