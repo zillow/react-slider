@@ -64,10 +64,14 @@
 
       /**
        * Value to be added or subtracted on each step the slider makes.
+       * Or function that compute the step for current value
        * Must be greater than zero.
        * `max - min` should be evenly divisible by the step value.
        */
-      step: React.PropTypes.number,
+      step: React.PropTypes.oneOfType([
+        React.PropTypes.number,
+        React.PropTypes.func
+      ]),
 
       /**
        * The minimal distance between any pair of handles.
@@ -634,11 +638,15 @@
     _alignValue: function (val, props) {
       props = props || this.props;
 
-      var valModStep = (val - props.min) % props.step;
+      var step = (typeof props.step === 'function') ?
+        props.step(val) :
+        props.step;
+
+      var valModStep = (val - props.min) % step;
       var alignValue = val - valModStep;
 
-      if (Math.abs(valModStep) * 2 >= props.step) {
-        alignValue += (valModStep > 0) ? props.step : (-props.step);
+      if (Math.abs(valModStep) * 2 >= step) {
+        alignValue += (valModStep > 0) ? step : (-step);
       }
 
       return parseFloat(alignValue.toFixed(5));
