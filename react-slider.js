@@ -153,6 +153,11 @@
       invert: React.PropTypes.bool,
 
       /**
+       * Forces the component to trigger resize to adjust to the containers size.
+       */
+      forceResize: React.PropTypes.bool,
+
+      /**
        * Callback called before starting to move a handle.
        */
       onBeforeChange: React.PropTypes.func,
@@ -234,7 +239,7 @@
 
       // If an upperBound has not yet been determined (due to the component being hidden
       // during the mount event, or during the last resize), then calculate it now
-      if (this.state.upperBound === 0) {
+      if (this.state.upperBound === 0 || newProps.forceResize) {
         this._handleResize();
       }
     },
