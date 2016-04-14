@@ -1,3 +1,10 @@
+/*to add:
+ * https://github.com/mpowaga/react-slider/pull/58/files
+ * https://github.com/mpowaga/react-slider/pull/55/files
+ * https://github.com/mpowaga/react-slider/pull/57/files
+ * https://github.com/mpowaga/react-slider/pull/39/files
+ */
+
 (function(root, factory) {
   if (typeof define === 'function' && define.amd) {
     define(['react'], factory);
@@ -839,10 +846,10 @@ function _objectWithoutProperties(obj, keys) {
 
       return (
        React.createElement('div', _extends({
-        ref: 'slider', ref: 'slider',
-        style: {position: 'relative'}, style: {position: 'relative'},
-        className: _props.className + (_props.disabled ? ' disabled' : ''), className: className + (disabled ? ' disabled' : ''),
-        onMouseDown: this._onSliderMouseDown, onMouseDown: this._onSliderMouseDown,
+        ref: 'slider',
+        style: {position: 'relative'},
+        className: className + (disabled ? ' disabled' : ''),
+        onMouseDown: this._onSliderMouseDown,
         onClick: this._onSliderClick
       }, others),
           bars,
