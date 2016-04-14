@@ -8,6 +8,7 @@
   }
 }(this, function (React) {
 
+
   /**
    * To prevent text selection while dragging.
    * http://stackoverflow.com/questions/5429827/how-can-i-prevent-text-element-selection-with-cursor-drag
@@ -666,6 +667,7 @@
         (this.props.handleClassName + '-' + i) + ' ' +
         (this.state.index === i ? this.props.handleActiveClassName : '');
 
+        console.log("handleClassName:", className);
       return (
         React.createElement('div', {
             ref: 'handle' + i,
@@ -703,6 +705,7 @@
     },
 
     _renderBar: function (i, offsetFrom, offsetTo) {
+      console.log("barClassName:", this.props.barClassName)
       return (
         React.createElement('div', {
           key: 'bar' + i,
@@ -772,6 +775,8 @@
 
       var bars = props.withBars ? this._renderBars(offset) : null;
       var handles = this._renderHandles(offset);
+
+      console.log("main className:", props.className);
 
       return (
         React.createElement('div', {

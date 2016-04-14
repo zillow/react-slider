@@ -6,84 +6,69 @@
 
     <title>React Slider Example</title>
 
-    <script src="node_modules/react/dist/react.js"></script>
-    <script src="react-slider.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/react/15.0.1/react.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/react/15.0.1/react-dom.js"></script>
+    <script src="./react-slider.js"></script>
 
     <style>
-        body {
-            -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
-        }
+     .horizontal-slider {
+     width: 100%;
+     max-width: 500px;
+     height: 50px;
+   }
 
-        .horizontal-slider {
-            width: 100%;
-            max-width: 500px;
-            height: 50px;
-            border: 1px solid grey;
-        }
+   .vertical-slider {
+     height: 380px;
+     width: 50px;
+     border: 1px solid grey;
+   }
 
-        .vertical-slider {
-            height: 380px;
-            width: 50px;
-            border: 1px solid grey;
-        }
+   .handle {
+    width:40px;
+    height: 40px;
+     font-size: 0.9em;
+     text-align: center;
+     background-color: black;
+     color: white;
+     cursor: pointer;
+     border-radius:40px;
+   }
 
-        .handle {
-            font-size: 0.9em;
-            text-align: center;
-            background-color: black;
-            color: white;
-            cursor: pointer;
-        }
+   .handle.active {
+     background-color: grey;
+   }
 
-        .handle.active {
-            background-color: grey;
-        }
+   .bar {
+     position: relative;
+     background: #ddd;
+   }
 
-        .bar {
-            position: relative;
-            background: #ddd;
-        }
+   .horizontal-slider .bar {
+     top: 20px;
+     height: 10px;
+   }
 
-        .bar.bar-1 {
-            background: #f00;
-        }
+   .horizontal-slider .handle {
+     top: 1px;
+     width: 50px;
+     height: 48px;
+     line-height: 48px;
+   }
 
-        .bar.bar-2 {
-            background: #0f0;
-        }
+   .vertical-slider .handle {
+     left: 1px;
+     width: 48px;
+     line-height: 50px;
+   }
 
-        .horizontal-slider .bar {
-            top: 20px;
-            height: 10px;
-        }
+   .vertical-slider .bar {
+     left: 20px;
+     width: 10px;
+   }
 
-        .horizontal-slider .handle {
-            top: 1px;
-            width: 50px;
-            height: 48px;
-            line-height: 48px;
-        }
-
-        .vertical-slider .handle {
-            left: 1px;
-            width: 48px;
-            line-height: 50px;
-        }
-
-        .vertical-slider .bar {
-            left: 20px;
-            width: 10px;
-        }
-
-        #horizontal-0,
-        #horizontal-1, #horizontal-2, #horizontal-3,
-        #vertical {
-            margin: 20px 10px;
-        }
-
-        #horizontal-2 .bar.bar-2 {
-            background: #ddd;
-        }
+   #vertical {
+     margin: 20px 10px;
+   }
 
     </style>
 </head>
@@ -95,9 +80,8 @@
 <div id="vertical"></div>
 
 <script>
-    React.initializeTouchEvents(true);
 
-    var ReactSlider = React.createFactory(ReactSlider);
+    var slider = React.createFactory(ReactSlider);
 
     function map(v, f, context) {
         return (v && v.map) ? v.map(f, context) : f.call(context, v, 0);
@@ -115,8 +99,8 @@
         },
 
         render: function () {
-            return ReactSlider(
-                    React.__spread({
+            return slider(
+                    Object.assign({
                         className: this.props.orientation + '-slider',
                         pearling: true,
                         minDistance: 10,
@@ -130,21 +114,21 @@
         }
     }));
 
-    React.render(Demo({defaultValue: 0, orientation: 'horizontal'}), document.getElementById('horizontal-1'));
+    ReactDOM.render(Demo({defaultValue: 0, orientation: 'horizontal'}), document.getElementById('horizontal-1'));
 
-    React.render(Demo({
+    ReactDOM.render(Demo({
         defaultValue: [0, 100],
         orientation: 'horizontal',
         withBars: true
     }), document.getElementById('horizontal-2'));
 
-    React.render(Demo({
+    ReactDOM.render(Demo({
         defaultValue: [0, 50, 100],
         orientation: 'horizontal',
         withBars: true
     }), document.getElementById('horizontal-3'));
 
-    React.render(Demo({
+    ReactDOM.render(Demo({
         defaultValue: [0, 50, 100],
         orientation: 'vertical',
         withBars: true,
