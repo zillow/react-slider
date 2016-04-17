@@ -1,155 +1,136 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
+  <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-
     <title>React Slider Example</title>
-
-    <script src="node_modules/react/dist/react.js"></script>
-    <script src="react-slider.js"></script>
-
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/react/15.0.1/react.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/react/15.0.1/react-dom.js"></script>
+    <script src="./react-slider.js"></script>
     <style>
-        body {
-            -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
-        }
+      .horizontal-slider {
+        width: 100%;
+        max-width: 500px;
+        height: 50px;
+      }
 
-        .horizontal-slider {
-            width: 100%;
-            max-width: 500px;
-            height: 50px;
-            border: 1px solid grey;
-        }
+      .vertical-slider {
+        height: 380px;
+        width: 50px;
+        border: 1px solid grey;
+      }
 
-        .vertical-slider {
-            height: 380px;
-            width: 50px;
-            border: 1px solid grey;
-        }
+      .handle {
+        width:40px;
+        height: 40px;
+        font-size: 0.9em;
+        text-align: center;
+        background-color: black;
+        color: white;
+        cursor: pointer;
+        border-radius:40px;
+      }
 
-        .handle {
-            font-size: 0.9em;
-            text-align: center;
-            background-color: black;
-            color: white;
-            cursor: pointer;
-        }
+      .handle.active {
+        background: red; /* For browsers that do not support gradients */
+        background: -webkit-radial-gradient(black, gray); /* Safari 5.1 to 6.0 */
+        background: -o-radial-gradient(black, gray); /* For Opera 11.6 to 12.0 */
+        background: -moz-radial-gradient(black, gray); /* For Firefox 3.6 to 15 */
+        background: radial-gradient(black, gray); /* Standard syntax */
+      }
 
-        .handle.active {
-            background-color: grey;
-        }
+      .bar {
+        position: relative;
+        background: #ddd;
+        border-radius:5px;
+      }
 
-        .bar {
-            position: relative;
-            background: #ddd;
-        }
+      .horizontal-slider .bar {
+        top: 20px;
+        height: 10px;
+      }
 
-        .bar.bar-1 {
-            background: #f00;
-        }
+      .horizontal-slider .handle {
+        top: 1px;
+        width: 50px;
+        height: 48px;
+        line-height: 48px;
+      }
 
-        .bar.bar-2 {
-            background: #0f0;
-        }
+      .vertical-slider .handle {
+        left: 1px;
+        width: 48px;
+        line-height: 50px;
+      }
 
-        .horizontal-slider .bar {
-            top: 20px;
-            height: 10px;
-        }
+      .vertical-slider .bar {
+        left: 20px;
+        width: 10px;
+      }
 
-        .horizontal-slider .handle {
-            top: 1px;
-            width: 50px;
-            height: 48px;
-            line-height: 48px;
-        }
-
-        .vertical-slider .handle {
-            left: 1px;
-            width: 48px;
-            line-height: 50px;
-        }
-
-        .vertical-slider .bar {
-            left: 20px;
-            width: 10px;
-        }
-
-        #horizontal-0,
-        #horizontal-1, #horizontal-2, #horizontal-3,
-        #vertical {
-            margin: 20px 10px;
-        }
-
-        #horizontal-2 .bar.bar-2 {
-            background: #ddd;
-        }
+      #vertical {
+        margin: 20px 10px;
+      }
 
     </style>
-</head>
-<body>
-<div id="horizontal-0"></div>
-<div id="horizontal-1"></div>
-<div id="horizontal-2"></div>
-<div id="horizontal-3"></div>
-<div id="vertical"></div>
+  </head>
+  <body>
+    <div id="horizontal-0"></div>
+    <div id="horizontal-1"></div>
+    <div id="horizontal-2"></div>
+    <div id="vertical"></div>
 
-<script>
-    React.initializeTouchEvents(true);
+    <script>
 
-    var ReactSlider = React.createFactory(ReactSlider);
+      // <ReactSlider defaultValue={0} orientation='horizontal'/>
+      ReactDOM.render(
+        React.createElement(ReactSlider, {
+          defaultValue: 0, 
+          orientation: 'horizontal',
+          onValueChange: logValue,
+          valueOnSlider: true
+        }),
+        document.getElementById('horizontal-0')
+      );
 
-    function map(v, f, context) {
-        return (v && v.map) ? v.map(f, context) : f.call(context, v, 0);
-    }
+      ReactDOM.render(
+        React.createElement(ReactSlider, {
+          defaultValue: [0, 100],
+          orientation: 'horizontal',
+          withBars: true,
+          pearling: true,
+          minDistance: 10,
+          onValueChange: logValue
+        }),
+        document.getElementById('horizontal-1')
+      );
 
-    var Demo = React.createFactory(React.createClass({
-        displayName: 'Demo',
+      ReactDOM.render(
+        React.createElement(ReactSlider, {
+          defaultValue: [0, 50, 100],
+          orientation: 'horizontal',
+          withBars: true,
+          onValueChange: logValue
+        }),
+        document.getElementById('horizontal-2')
+      );
 
-        getInitialState: function () {
-            return {value: this.props.defaultValue}
-        },
+      ReactDOM.render(
+        React.createElement(ReactSlider, {
+          defaultValue: [0, 50, 100],
+          orientation: 'vertical',
+          withBars: true,
+          invert: true,
+          onValueChange: logValue
+        }),
+        document.getElementById('vertical')
+      );
 
-        onChange: function (value) {
-            this.setState({value: value});
-        },
 
-        render: function () {
-            return ReactSlider(
-                    React.__spread({
-                        className: this.props.orientation + '-slider',
-                        pearling: true,
-                        minDistance: 10,
-                        value: this.state.value,
-                        onChange: this.onChange
-                    }, this.props),
-                    map(this.state.value, function (value, i) {
-                        return React.createElement('div', {key: i}, value);
-                    })
-            );
-        }
-    }));
+      function logValue(e){
+        console.log(e)
+      }
 
-    React.render(Demo({defaultValue: 0, orientation: 'horizontal'}), document.getElementById('horizontal-1'));
-
-    React.render(Demo({
-        defaultValue: [0, 100],
-        orientation: 'horizontal',
-        withBars: true
-    }), document.getElementById('horizontal-2'));
-
-    React.render(Demo({
-        defaultValue: [0, 50, 100],
-        orientation: 'horizontal',
-        withBars: true
-    }), document.getElementById('horizontal-3'));
-
-    React.render(Demo({
-        defaultValue: [0, 50, 100],
-        orientation: 'vertical',
-        withBars: true,
-        invert: true
-    }), document.getElementById('vertical'));
-</script>
-</body>
+    </script>
+  </body>
 </html>
