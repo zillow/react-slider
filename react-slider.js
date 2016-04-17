@@ -15,7 +15,6 @@
   }
 }(this, function(React) {
 
-
   /**
    * To prevent text selection while dragging.
    * http://stackoverflow.com/questions/5429827/how-can-i-prevent-text-element-selection-with-cursor-drag
@@ -29,30 +28,30 @@
     return false;
   }
 
-  function stopPropagation(e) {
-    if (e.stopPropagation) e.stopPropagation();
-    e.cancelBubble = true;
-  }
+function stopPropagation(e) {
+  if (e.stopPropagation) e.stopPropagation();
+  e.cancelBubble = true;
+}
 
-  /**
-   * Spreads `count` values equally between `min` and `max`.
-   */
-  function linspace(min, max, count) {
-    var range = (max - min) / (count - 1);
-    var res = [];
-    for (var i = 0; i < count; i++) {
-      res.push(min + range * i);
-    }
-    return res;
+/**
+ * Spreads `count` values equally between `min` and `max`.
+ */
+function linspace(min, max, count) {
+  var range = (max - min) / (count - 1);
+  var res = [];
+  for (var i = 0; i < count; i++) {
+    res.push(min + range * i);
   }
+  return res;
+}
 
-  function ensureArray(x) {
-    return x == null ? [] : Array.isArray(x) ? x : [x];
-  }
+function ensureArray(x) {
+  return x == null ? [] : Array.isArray(x) ? x : [x];
+}
 
-  function undoEnsureArray(x) {
-    return x != null && x.length === 1 ? x[0] : x;
-  }
+function undoEnsureArray(x) {
+  return x != null && x.length === 1 ? x[0] : x;
+}
 
 
 var _extends = Object.assign || function(target) {
@@ -859,5 +858,33 @@ function _objectWithoutProperties(obj, keys) {
     }
   });
 
-  return ReactSlider;
+  return class ReactSliderComp extends React.Component{
+    constructor(props) {
+      super(props);
+      this.state = {value: props.defaultValue}
+    }
+
+    onChange(value) {
+      this.setState({value: value});
+      console.log(value)
+    }
+
+    render() {
+      return (React.createElement(
+        ReactSlider,
+        Object.assign({
+          className: this.props.orientation + '-slider',
+          value: this.state.value,
+          onChange: this.onChange.bind(this)
+        }, this.props),
+        map(this.state.value, function (value, i) {
+          return React.createElement('div', {key: i}, value);
+        }))
+      );
+    }
+  }
+
+  function map(v, f, context) {
+      return (v && v.map) ? v.map(f, context) : f.call(context, v, 0);
+  }
 }));
