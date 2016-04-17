@@ -867,16 +867,27 @@ function _objectWithoutProperties(obj, keys) {
     }
 
     render() {
-      return (React.createElement(
-        ReactSlider,
-        Object.assign({
-          className: this.props.orientation + '-slider',
-          value: this.state.value,
-          onChange: this.onChange.bind(this)
-        }, this.props),
-        map(this.state.value, function (value, i) {
-          return React.createElement('div', {key: i}, value);
-        }))
+      return (
+        this.props.valueOnSlider === true
+        ? React.createElement(
+            ReactSlider,
+            Object.assign({
+              className: this.props.orientation + '-slider',
+              value: this.state.value,
+              onChange: this.onChange.bind(this)
+            }, this.props),
+            map(this.state.value, function (value, i) {
+              return React.createElement('div', {key: i}, value);
+            })
+          )
+        : React.createElement(
+            ReactSlider,
+            Object.assign({
+              className: this.props.orientation + '-slider',
+              value: this.state.value,
+              onChange: this.onChange.bind(this)
+            }, this.props)
+          )
       );
     }
   }

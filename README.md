@@ -4,10 +4,6 @@ CSS agnostic slider component for React.
 
 See demo: [https://mpowaga.github.io/react-slider/](https://mpowaga.github.io/react-slider/)
 
-### Important Note
-
-This is an alpha release. Use with caution and hope.
-
 ### Installation
 
 ```sh
@@ -52,6 +48,10 @@ React.render(
 Now you can style it as you want. Checkout the `index.html` example to see how.
 
 ### Properties
+
+##### valueOnSlider {boolean}
+
+Displays the current value on the slider handle when true.
 
 ##### min {number} default: 0
 
@@ -133,7 +133,7 @@ Inverts the slider.
 
 Callback called before starting to move a handle.
 
-##### onChange {func}
+##### onValueChange {func}
 
 Callback called on every value change.
 
