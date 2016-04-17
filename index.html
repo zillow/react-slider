@@ -86,7 +86,8 @@
       ReactDOM.render(
         React.createElement(ReactSlider, {
           defaultValue: 0, 
-          orientation: 'horizontal'
+          orientation: 'horizontal',
+          onValueChange: logValue
         }),
         document.getElementById('horizontal-0')
       );
@@ -98,6 +99,7 @@
           withBars: true,
           pearling: true,
           minDistance: 10,
+          onValueChange: logValue
         }),
         document.getElementById('horizontal-1')
       );
@@ -106,7 +108,8 @@
         React.createElement(ReactSlider, {
           defaultValue: [0, 50, 100],
           orientation: 'horizontal',
-          withBars: true
+          withBars: true,
+          onValueChange: logValue
         }),
         document.getElementById('horizontal-2')
       );
@@ -116,10 +119,17 @@
           defaultValue: [0, 50, 100],
           orientation: 'vertical',
           withBars: true,
-          invert: true
+          invert: true,
+          onValueChange: logValue
         }),
         document.getElementById('vertical')
       );
+
+
+      function logValue(e){
+        console.log(e)
+      }
+
     </script>
   </body>
 </html>

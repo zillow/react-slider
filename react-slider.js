@@ -863,6 +863,7 @@ function _objectWithoutProperties(obj, keys) {
 
     onChange(value) {
       this.setState({value: value});
+      this.props.onValueChange(value);
     }
 
     render() {
