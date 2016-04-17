@@ -729,7 +729,6 @@ function _objectWithoutProperties(obj, keys) {
         (this.props.handleClassName + '-' + i) + ' ' +
         (this.state.index === i ? this.props.handleActiveClassName : '');
 
-        console.log("handleClassName:", className);
       return (
         React.createElement('div', {
             ref: 'handle' + i,
@@ -841,8 +840,6 @@ function _objectWithoutProperties(obj, keys) {
       var bars = withBars ? this._renderBars(offset) : null;
       var handles = this._renderHandles(offset);
 
-      console.log("main className:", props.className);
-
       return (
        React.createElement('div', _extends({
         ref: 'slider',
@@ -866,7 +863,6 @@ function _objectWithoutProperties(obj, keys) {
 
     onChange(value) {
       this.setState({value: value});
-      console.log(value)
     }
 
     render() {
