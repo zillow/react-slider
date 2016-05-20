@@ -93,6 +93,14 @@ Determines whether the slider moves horizontally (from left to right) or vertica
 
 The css class set on the slider node.
 
+##### handleOddStyle {object} default: {}
+
+The css styles set on `handle-1`, `handle-3`, `handle-5`, ... node.
+
+##### handleEvenStyle {object} default: {}
+
+The css styles set on `handle-0`, `handle-2`, `handle-4`, ... node.
+
 ##### handleClassName {string} default: 'handle'
 
 The css class set on each handle node.

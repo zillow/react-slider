@@ -107,6 +107,16 @@
       className: React.PropTypes.string,
 
       /**
+       * The css styles set on `handle-1`, `handle-3`, `handle-5`, ... node.
+       */
+      handleOddStyle: React.PropTypes.object,
+
+      /**
+       * The css styles set on `handle-0`, `handle-2`, `handle-4`, ... node.
+       */
+      handleEvenStyle: React.PropTypes.object,
+
+      /**
        * The css class set on each handle node.
        *
        * In addition each handle will receive a numbered css class of the form `${handleClassName}-${i}`,
@@ -183,6 +193,8 @@
         defaultValue: 0,
         orientation: 'horizontal',
         className: 'slider',
+        handleOddStyle: {},
+        handleEvenStyle: {},
         handleClassName: 'handle',
         handleActiveClassName: 'active',
         barClassName: 'bar',
@@ -323,11 +335,14 @@
     },
 
     _buildHandleStyle: function (offset, i) {
-      var style = {
-        position: 'absolute',
-        willChange: this.state.index >= 0 ? this._posMinKey() : '',
-        zIndex: this.state.zIndices.indexOf(i) + 1
-      };
+      var style = Object.assign(
+        {
+          position: 'absolute',
+          willChange: this.state.index >= 0 ? this._posMinKey() : '',
+          zIndex: this.state.zIndices.indexOf(i) + 1
+        },
+        !(i % 2) ? this.props.handleEvenStyle : this.props.handleOddStyle
+      );
       style[this._posMinKey()] = offset + 'px';
       return style;
     },
