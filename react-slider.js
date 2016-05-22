@@ -74,6 +74,12 @@
        * Must be positive, but zero means they can sit on top of each other.
        */
       minDistance: React.PropTypes.number,
+      
+      /**
+       * The maximum distance between any pair of handles.
+       * Must be positive or zero, zero means maxDistance is disabled.
+       */
+      maxDistance: React.PropTypes.number,
 
       /**
        * Determines the initial positions of the handles and the number of handles if the component has no children.
@@ -136,6 +142,14 @@
        * within the constraints of `min`, `max`, `step` and `minDistance`.
        */
       pearling: React.PropTypes.bool,
+      
+      /**
+       * If `true` the active handle will pull other handles
+       * within the constraints of `min`, `max`, `step` and `maxDistance`.
+       * 
+       * Enabling requires `maxDistance` to be greater than zero.
+       */
+      cohesion: React.PropTypes.bool,
 
       /**
        * If `true` the handles can't be moved.
@@ -180,6 +194,7 @@
         max: 100,
         step: 1,
         minDistance: 0,
+        maxDistance: 0,
         defaultValue: 0,
         orientation: 'horizontal',
         className: 'slider',
@@ -188,6 +203,7 @@
         barClassName: 'bar',
         withBars: false,
         pearling: false,
+        cohesion: false,
         disabled: false,
         snapDragDisabled: false,
         invert: false
@@ -529,6 +545,7 @@
       var newValue = this._trimAlignValue(state.startValue + diffValue);
 
       var minDistance = props.minDistance;
+      var maxDistance = props.maxDistance;
 
       // if "pearling" (= handles pushing each other) is disabled,
       // prevent the handle from getting closer than `minDistance` to the previous or next handle.
@@ -547,7 +564,25 @@
           }
         }
       }
+      
+      // if maxDistance is enabled and "cohesion" (= handles pulling each other) is disabled,
+      // prevent the handle from getting further than `maxDistance` to the previous or next handle.
+      if (maxDistance && !props.cohesion) {
+        if (index > 0) {
+          var valueBefore = value[index - 1];
+          if (newValue > valueBefore + maxDistance) {
+            newValue = valueBefore + maxDistance;
+          }
+        }
 
+        if (index < length - 1) {
+          var valueAfter = value[index + 1];
+          if (newValue < valueAfter - maxDistance) {
+            newValue = valueAfter - maxDistance;
+          }
+        }
+      }
+      
       value[index] = newValue;
 
       // if "pearling" is enabled, let the current handle push the pre- and succeeding handles.
@@ -559,6 +594,16 @@
         else if (newValue < oldValue) {
           this._pushPreceding(value, minDistance, index);
           this._trimPreceding(length, value, minDistance, props.min);
+        }
+      }
+      
+      // if "cohesion" is enabled, let the current handle pull the pre- and succeeding handles.
+      if (maxDistance && props.cohesion && length > 1) {
+        if (newValue > oldValue) {
+          this._pullPreceding(value, maxDistance, index);
+        }
+        else if (newValue < oldValue) {
+          this._pullSucceeding(value, maxDistance, index);
         }
       }
 
@@ -577,6 +622,15 @@
         value[i + 1] = this._alignValue(padding);
       }
     },
+    
+    _pullSucceeding: function (value, maxDistance, index) {
+      var i, cohesionLimit;
+      for (i = index, cohesionLimit = value[i] + maxDistance;
+           value[i + 1] != null && cohesionLimit < value[i + 1];
+           i++, cohesionLimit = value[i] + maxDistance) {
+        value[i + 1] = this._alignValue(cohesionLimit);
+      }
+    },
 
     _trimSucceeding: function (length, nextValue, minDistance, max) {
       for (var i = 0; i < length; i++) {
@@ -593,6 +647,15 @@
            value[i - 1] != null && padding < value[i - 1];
            i--, padding = value[i] - minDistance) {
         value[i - 1] = this._alignValue(padding);
+      }
+    },
+    
+    _pullPreceding: function (value, maxDistance, index) {
+      var i, cohesionLimit;
+      for (i = index, cohesionLimit = value[i] - maxDistance;
+           value[i - 1] != null && cohesionLimit > value[i - 1];
+           i--, cohesionLimit = value[i] - maxDistance) {
+        value[i - 1] = this._alignValue(cohesionLimit);
       }
     },
 

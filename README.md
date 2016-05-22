@@ -72,6 +72,12 @@ Must be greater than zero.
 The minimal distance between any pair of handles.
 Zero means they can sit on top of each other.
 
+##### maxDistance {number} default: 0
+
+The maximum distance between any pair of handles.
+Must be positive or zero.
+Zero disables this feature.
+
 ##### defaultValue {oneOfType([number, arrayOf(number)])} default: 0
 
 Determines the initial positions of the handles and the number of handles if the component has no children.
@@ -116,6 +122,11 @@ e.g. `bar-0`, `bar-1`, ...
 ##### pearling {bool} default: false
 
 If `true` the active handle will push other handles within the constraints of `min`, `max`, `step` and `minDistance`.
+
+##### cohesion {bool} default: false
+
+If `true` the active handle will pull other handles within the constraints of `min`, `max`, `step` and `maxDistance`.
+Enabling requires `maxDistance` to be greater than zero.
 
 ##### disabled {bool} default: false
 
