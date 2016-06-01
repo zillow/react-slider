@@ -388,6 +388,7 @@
     _forceValueFromPosition: function (position, callback) {
       var pixelOffset = this._calcOffsetFromPosition(position);
       var closestIndex = this._getClosestIndex(pixelOffset);
+      var oldValue = this.state.value[closestIndex];
       var nextValue = this._trimAlignValue(this._calcValue(pixelOffset));
 
       var value = this.state.value.slice(); // Clone this.state.value since we'll modify it temporarily
@@ -398,6 +399,16 @@
         if (value[i + 1] - value[i] < this.props.minDistance) return;
       }
 
+      // if "cohesion" is enabled, let the current handle pull the pre- and succeeding handles.
+      if (this.props.maxDistance && this.props.cohesion && value.length > 1) {
+        if (nextValue > oldValue) {
+          this._pullPreceding(value, this.props.maxDistance, closestIndex);
+        }
+        else if (nextValue < oldValue) {
+          this._pullSucceeding(value, this.props.maxDistance, closestIndex);
+        }
+      }
+      
       this.setState({value: value}, callback.bind(this, closestIndex));
     },
 
