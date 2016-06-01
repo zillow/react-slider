@@ -200,6 +200,9 @@
       // reused throughout the component to store results of iterations over `value`
       this.tempArray = value.slice();
 
+      // array for storing resize timeouts ids
+      this.pendingResizeTimeouts = [];
+
       var zIndices = [];
       for (var i = 0; i < value.length; i++) {
         value[i] = this._trimAlignValue(value[i], this.props);
@@ -265,7 +268,7 @@
     },
 
     componentWillUnmount: function () {
-      clearTimeout(this.resizeTimeout)
+      this._clearPendingResizeTimeouts();
       window.removeEventListener('resize', this._handleResize);
     },
 
@@ -275,7 +278,10 @@
 
     _handleResize: function () {
       // setTimeout of 0 gives element enough time to have assumed its new size if it is being resized
-      this.resizeTimeout = window.setTimeout(function() {
+      var resizeTimeout = window.setTimeout(function() {
+        // drop this timeout from pendingResizeTimeouts to reduce memory usage
+        this.pendingResizeTimeouts.shift();
+
         var slider = this.refs.slider;
         var handle = this.refs.handle0;
         var rect = slider.getBoundingClientRect();
@@ -292,6 +298,17 @@
           sliderStart: this.props.invert ? sliderMax : sliderMin
         });
       }.bind(this), 0);
+
+      this.pendingResizeTimeouts.push(resizeTimeout);
+    },
+
+    // clear all pending timeouts to avoid error messages after unmounting
+    _clearPendingResizeTimeouts: function() {
+      do {
+        var nextTimeout = this.pendingResizeTimeouts.shift();
+
+        clearTimeout(nextTimeout);
+      } while (this.pendingResizeTimeouts.length);
     },
 
     // calculates the offset of a handle in pixels based on its value.
