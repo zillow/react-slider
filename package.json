@@ -10,10 +10,16 @@
     "component"
   ],
   "author": "Michał Powaga <michalpowaga13@gmail.com>",
-  "contributors": [{
-    "name": "Florian Klampfer",
-    "email": "f.klampfer@gmail.com"
-  }],
+  "contributors": [
+    {
+      "name": "Florian Klampfer",
+      "email": "f.klampfer@gmail.com"
+    },
+    {
+      "name": "James Brauman",
+      "email": "james.22au@gmail.com"
+    }
+  ],
   "license": "MIT",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
