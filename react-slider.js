@@ -309,7 +309,11 @@
 
     // calculates the offset of a handle in pixels based on its value.
     _calcOffset: function (value) {
-      var ratio = (value - this.props.min) / (this.props.max - this.props.min);
+      var range = this.props.max - this.props.min;
+      if (range === 0) {
+        return 0;
+      }
+      var ratio = (value - this.props.min) / range;
       return ratio * this.state.upperBound;
     },
 
