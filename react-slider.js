@@ -137,7 +137,10 @@
       /**
        * If `true` the handles can't be moved.
        */
-      disabled: React.PropTypes.bool,
+      disabled: React.PropTypes.oneOfType([
+        React.PropTypes.bool,
+        React.PropTypes.arrayOf(React.PropTypes.bool)
+      ]),
 
       /**
        * Disables handle move when clicking the slider bar
@@ -307,6 +310,13 @@
       } while (this.pendingResizeTimeouts.length);
     },
 
+    // check if this handler separate disanled
+    _checkIfHandlerDisabled: function(i) {
+      if (!Array.isArray(this.props.disabled)) return false;
+      if (this.props.disabled[i]) return true;
+      return false;
+    },
+
     // calculates the offset of a handle in pixels based on its value.
     _calcOffset: function (value) {
       var range = this.props.max - this.props.min;
@@ -353,7 +363,7 @@
       for (var i = 0; i < l; i++) {
         var offset = this._calcOffset(value[i]);
         var dist = Math.abs(pixelOffset - offset);
-        if (dist < minDist) {
+        if (dist < minDist && !this._checkIfHandlerDisabled(i)) {
           minDist = dist;
           closestIndex = i;
         }
@@ -418,7 +428,8 @@
     // create the `mousedown` handler for the i-th handle
     _createOnMouseDown: function (i) {
       return function (e) {
-        if (this.props.disabled) return;
+        if (this.props.disabled === true) return;
+        if (this._checkIfHandlerDisabled(i)) return;
         var position = this._getMousePosition(e);
         this._start(i, position[0]);
         this._addHandlers(this._getMouseEventMap());
@@ -429,7 +440,8 @@
     // create the `touchstart` handler for the i-th handle
     _createOnTouchStart: function (i) {
       return function (e) {
-        if (this.props.disabled || e.touches.length > 1) return;
+        if (this.props.disabled === true || e.touches.length > 1) return;
+        if (this._checkIfHandlerDisabled(i)) return;
         var position = this._getTouchPosition(e);
         this.startPosition = position;
         this.isScrolling = undefined; // don't know yet if the user is trying to scroll
@@ -730,7 +742,7 @@
     },
 
     _onSliderMouseDown: function (e) {
-      if (this.props.disabled) return;
+      if (this.props.disabled === true) return;
       this.hasMoved = false;
       if (!this.props.snapDragDisabled) {
         var position = this._getMousePosition(e);
@@ -745,7 +757,7 @@
     },
 
     _onSliderClick: function (e) {
-      if (this.props.disabled) return;
+      if (this.props.disabled === true) return;
 
       if (this.props.onSliderClick && !this.hasMoved) {
         var position = this._getMousePosition(e);
@@ -778,7 +790,7 @@
         React.createElement('div', {
             ref: 'slider',
             style: {position: 'relative'},
-            className: props.className + (props.disabled ? ' disabled' : ''),
+            className: props.className + (props.disabled === true ? ' disabled' : ''),
             onMouseDown: this._onSliderMouseDown,
             onClick: this._onSliderClick
           },
