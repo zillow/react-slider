@@ -744,6 +744,24 @@
       pauseEvent(e);
     },
 
+    _onSliderTouchStart: function (e) {
+      if (this.props.disabled) return;
+      this.hasMoved = false;
+      if (!this.props.snapDragDisabled && !this.props.disabled && e.touches.length === 1) {
+        var position = this._getTouchPosition(e);
+        this.startPosition = position;
+        this.isScrolling = undefined; // don't know yet if the user is trying to scroll
+        this._forceValueFromPosition(position[0], function (i) {
+          this._fireChangeEvent('onChange');
+          this._start(i, position[0]);
+          this._addHandlers(this._getTouchEventMap());
+        }.bind(this));
+        stopPropagation(e);
+      }
+
+      pauseEvent(e);
+    },
+
     _onSliderClick: function (e) {
       if (this.props.disabled) return;
 
@@ -780,6 +798,7 @@
             style: {position: 'relative'},
             className: props.className + (props.disabled ? ' disabled' : ''),
             onMouseDown: this._onSliderMouseDown,
+            onTouchStart: this._onSliderTouchStart,
             onClick: this._onSliderClick
           },
           bars,
