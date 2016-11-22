@@ -453,7 +453,10 @@
 
     _start: function (i, position) {
       // if activeElement is body window will lost focus in IE9
-      if (document.activeElement && document.activeElement != document.body) {
+      if (document.activeElement
+        && document.activeElement != document.body
+        && typeof document.activeElement.blur === 'function'
+      ) {
         document.activeElement.blur();
       }
 
