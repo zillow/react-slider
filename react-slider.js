@@ -454,7 +454,13 @@
     _start: function (i, position) {
       // if activeElement is body window will lost focus in IE9
       if (document.activeElement && document.activeElement != document.body) {
-        document.activeElement.blur();
+        //But you can't focus or blur svg elements in IE11, so just try
+        try{
+          document.activeElement.blur();
+        } catch(e){
+          //ignore
+        }
+
       }
 
       this.hasMoved = false;
