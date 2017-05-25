@@ -67,6 +67,11 @@
       step: PropTypes.number,
 
       /**
+       * Show or don't show tick-marks at step points.
+       */
+      ticks: React.PropTypes.bool,
+
+      /**
        * The minimal distance between any pair of handles.
        * Must be positive, but zero means they can sit on top of each other.
        */
@@ -662,6 +667,34 @@
       return parseFloat(alignValue.toFixed(5));
     },
 
+    _renderTicks: function () {
+
+        var ticks = [];
+        var numberOfTicks = ((this.props.max - this.props.min) / this.props.step) - 1;
+        var offsetOfTick =  (100 / (numberOfTicks + 1));
+        var tempTickOffset = '';
+        for (var i = 0; i < numberOfTicks; i++) {
+          tempTickOffset = ((i+1) * offsetOfTick) + '%';
+          ticks.push(
+            React.createElement('div', {
+                style: {
+                  left: tempTickOffset,
+                  width: '1px',
+                  height: '100%',
+                  display: 'inline',
+                  position: 'absolute',
+                  zIndex: '1',
+                  background: 'rgba(0,0,0,0.1)'
+                },
+                className: 'tick',
+              }
+            )
+          );
+        }
+
+        return ticks;
+      },
+
     _renderHandle: function (style, child, i) {
       var className = this.props.handleClassName + ' ' +
         (this.props.handleClassName + '-' + i) + ' ' +
@@ -773,6 +806,7 @@
 
       var bars = props.withBars ? this._renderBars(offset) : null;
       var handles = this._renderHandles(offset);
+      var ticks = props.ticks ? this._renderTicks() : null;
 
       return (
         React.createElement('div', {
@@ -782,6 +816,7 @@
             onMouseDown: this._onSliderMouseDown,
             onClick: this._onSliderClick
           },
+          ticks,
           bars,
           handles
         )
