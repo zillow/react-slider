@@ -7,6 +7,9 @@
     <title>React Slider Example</title>
 
     <script src="node_modules/react/dist/react.js"></script>
+    <script src="node_modules/react-dom/dist/react-dom.js"></script>
+    <script src="node_modules/create-react-class/create-react-class.js"></script>
+    <script src="node_modules/prop-types/prop-types.js"></script>
     <script src="react-slider.js"></script>
 
     <style>
@@ -101,7 +104,7 @@
         return (v && v.map) ? v.map(f, context) : f.call(context, v, 0);
     }
 
-    var Demo = React.createFactory(React.createClass({
+    var Demo = React.createFactory(createReactClass({
         displayName: 'Demo',
 
         getInitialState: function () {
@@ -128,21 +131,21 @@
         }
     }));
 
-    React.render(Demo({defaultValue: 0, orientation: 'horizontal'}), document.getElementById('horizontal-1'));
+    ReactDOM.render(Demo({defaultValue: 0, orientation: 'horizontal'}), document.getElementById('horizontal-1'));
 
-    React.render(Demo({
+    ReactDOM.render(Demo({
         defaultValue: [0, 100],
         orientation: 'horizontal',
         withBars: true
     }), document.getElementById('horizontal-2'));
 
-    React.render(Demo({
+    ReactDOM.render(Demo({
         defaultValue: [0, 50, 100],
         orientation: 'horizontal',
         withBars: true
     }), document.getElementById('horizontal-3'));
 
-    React.render(Demo({
+    ReactDOM.render(Demo({
         defaultValue: [0, 50, 100],
         orientation: 'vertical',
         withBars: true,
