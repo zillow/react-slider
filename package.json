@@ -1,15 +1,8 @@
 {
   "name": "react-slider",
-  "version": "0.3.2",
+  "version": "0.8.0",
   "description": "Slider component for React",
   "main": "react-slider.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/mpowaga/react-slider.git"
-  },
   "keywords": [
     "react-component",
     "react",
@@ -17,12 +10,27 @@
     "component"
   ],
   "author": "Michał Powaga <michalpowaga13@gmail.com>",
-  "contributors": [{
-    "name": "Florian Klampfer",
-    "email": "f.klampfer@gmail.com"
-  }],
+  "contributors": [
+    {
+      "name": "Florian Klampfer",
+      "email": "f.klampfer@gmail.com"
+    },
+    {
+      "name": "James Brauman",
+      "email": "james.22au@gmail.com"
+    }
+  ],
   "license": "MIT",
-  "devDependencies": {
-    "react": "^0.12.1"
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/mpowaga/react-slider.git"
+  },
+  "peerDependencies": {
+    "react": ">=0.14 || ^15.4",
+    "prop-types": "^15.4",
+    "create-react-class": "^15.4"
   }
 }
