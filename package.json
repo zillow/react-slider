@@ -1,5 +1,5 @@
 {
-  "name": "react-slider",
+  "name": "react-slider-mod",
   "version": "0.8.0",
   "description": "Slider component for React",
   "main": "react-slider.js",
@@ -26,7 +26,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/mpowaga/react-slider.git"
+    "url": "https://github.com/vibhas77/react-slider.git"
   },
   "peerDependencies": {
     "react": ">=0.14 || ^15.4",

@@ -168,7 +168,11 @@
        *  Callback called when the the slider is clicked (handle or bars).
        *  Receives the value at the clicked position as argument.
        */
-      onSliderClick: PropTypes.func
+      onSliderClick: PropTypes.func,
+
+      barColour: React.PropTypes.array,
+
+      barHeight: React.PropTypes.string
     },
 
     getDefaultProps: function () {
@@ -704,12 +708,19 @@
     },
 
     _renderBar: function (i, offsetFrom, offsetTo) {
+
+      const styleColour = this._buildBarStyle(offsetFrom, this.state.upperBound - offsetTo);
+      if (this.props.barColour && this.props.barColour.length) {
+        styleColour.height = this.props.barHeight;
+        styleColour.backgroundColor = this.props.barColour[i];
+      }
+
       return (
         React.createElement('div', {
           key: 'bar' + i,
           ref: 'bar' + i,
           className: this.props.barClassName + ' ' + this.props.barClassName + '-' + i,
-          style: this._buildBarStyle(offsetFrom, this.state.upperBound - offsetTo)
+          style: styleColour,
         })
       );
     },
