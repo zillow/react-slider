@@ -678,7 +678,7 @@
             onTouchStart: this._createOnTouchStart(i)
           },
           React.cloneElement(child, {
-            value: values[i],
+            value: values[i] || values,
           })
         )
       );
