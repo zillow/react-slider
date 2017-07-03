@@ -663,7 +663,7 @@
     },
 
     _renderHandle: function (style, child, i) {
-      var values = this.getValues();
+      var values = this.getValue();
       var className = this.props.handleClassName + ' ' +
         (this.props.handleClassName + '-' + i) + ' ' +
         (this.state.index === i ? this.props.handleActiveClassName : '');
