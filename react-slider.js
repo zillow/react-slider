@@ -663,6 +663,7 @@
     },
 
     _renderHandle: function (style, child, i) {
+      var values = this.getValues();
       var className = this.props.handleClassName + ' ' +
         (this.props.handleClassName + '-' + i) + ' ' +
         (this.state.index === i ? this.props.handleActiveClassName : '');
@@ -676,7 +677,9 @@
             onMouseDown: this._createOnMouseDown(i),
             onTouchStart: this._createOnTouchStart(i)
           },
-          child
+          React.cloneElement(child, {
+            value: values[i],
+          })
         )
       );
     },
