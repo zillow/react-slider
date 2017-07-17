@@ -735,8 +735,8 @@
       if (!this.props.snapDragDisabled) {
         var position = this._getMousePosition(e);
         this._forceValueFromPosition(position[0], function (i) {
-          this._fireChangeEvent('onChange');
           this._start(i, position[0]);
+          this._fireChangeEvent('onChange');
           this._addHandlers(this._getMouseEventMap());
         }.bind(this));
       }
