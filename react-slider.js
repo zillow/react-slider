@@ -469,8 +469,8 @@
     },
 
     _start: function (i, position) {
-      var activeEl = document.activeElement
-      var handleRef = this.refs['handle' + i]
+      var activeEl = document.activeElement;
+      var handleRef = this.refs['handle' + i];
       // if activeElement is body window will lost focus in IE9
       if (activeEl && activeEl != document.body && activeEl != handleRef) {
         activeEl.blur && activeEl.blur();
@@ -566,7 +566,7 @@
 
     _moveDownOneStep: function () {
       var oldValue = this.state.value[this.state.index];
-      var newValue = oldValue - this.props.step
+      var newValue = oldValue - this.props.step;
       this._move(Math.max(newValue, this.props.min));
     },
 
