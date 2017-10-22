@@ -232,7 +232,7 @@
       // If an upperBound has not yet been determined (due to the component being hidden
       // during the mount event, or during the last resize), then calculate it now
       if (this.state.upperBound === 0) {
-        this._handleResize();
+        this._setSizes();
       }
     },
 
@@ -260,7 +260,7 @@
 
     componentDidMount: function () {
       window.addEventListener('resize', this._handleResize);
-      this._handleResize();
+      this._setSizes();
     },
 
     componentWillUnmount: function () {
@@ -277,25 +277,29 @@
       var resizeTimeout = window.setTimeout(function() {
         // drop this timeout from pendingResizeTimeouts to reduce memory usage
         this.pendingResizeTimeouts.shift();
-
-        var slider = this.refs.slider;
-        var handle = this.refs.handle0;
-        var rect = slider.getBoundingClientRect();
-
-        var size = this._sizeKey();
-
-        var sliderMax = rect[this._posMaxKey()];
-        var sliderMin = rect[this._posMinKey()];
-
-        this.setState({
-          upperBound: slider[size] - handle[size],
-          sliderLength: Math.abs(sliderMax - sliderMin),
-          handleSize: handle[size],
-          sliderStart: this.props.invert ? sliderMax : sliderMin
-        });
+        this._setSizes();
       }.bind(this), 0);
 
       this.pendingResizeTimeouts.push(resizeTimeout);
+    },
+
+    // calculates and updates the sizes and positions
+    _setSizes: function() {
+      var slider = this.refs.slider;
+      var handle = this.refs.handle0;
+      var rect = slider.getBoundingClientRect();
+
+      var size = this._sizeKey();
+
+      var sliderMax = rect[this._posMaxKey()];
+      var sliderMin = rect[this._posMinKey()];
+
+      this.setState({
+        upperBound: slider[size] - handle[size],
+        sliderLength: Math.abs(sliderMax - sliderMin),
+        handleSize: handle[size],
+        sliderStart: this.props.invert ? sliderMax : sliderMin
+      });
     },
 
     // clear all pending timeouts to avoid error messages after unmounting
