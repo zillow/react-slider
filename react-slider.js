@@ -191,6 +191,12 @@
       };
     },
 
+    _handles: [],
+
+    _bars: [],
+
+    _slider: null,
+
     getInitialState: function () {
       var value = this._or(ensureArray(this.props.value), ensureArray(this.props.defaultValue));
 
@@ -278,8 +284,8 @@
         // drop this timeout from pendingResizeTimeouts to reduce memory usage
         this.pendingResizeTimeouts.shift();
 
-        var slider = this.refs.slider;
-        var handle = this.refs.handle0;
+        var slider = this._slider;
+        var handle = this._handles[0];
         var rect = slider.getBoundingClientRect();
 
         var size = this._sizeKey();
@@ -470,7 +476,7 @@
 
     _start: function (i, position) {
       var activeEl = document.activeElement;
-      var handleRef = this.refs['handle' + i];
+      var handleRef = this._handles[i];
       // if activeElement is body window will lost focus in IE9
       if (activeEl && activeEl != document.body && activeEl != handleRef) {
         activeEl.blur && activeEl.blur();
@@ -732,7 +738,7 @@
 
       return (
         React.createElement('div', {
-            ref: 'handle' + i,
+            ref: (handle) => { this._handles.push(handle); },
             key: 'handle' + i,
             className: className,
             style: style,
@@ -776,7 +782,7 @@
       return (
         React.createElement('div', {
           key: 'bar' + i,
-          ref: 'bar' + i,
+          ref: (bar) => this._bars.push(bar),
           className: this.props.barClassName + ' ' + this.props.barClassName + '-' + i,
           style: this._buildBarStyle(offsetFrom, this.state.upperBound - offsetTo)
         })
@@ -845,7 +851,7 @@
 
       return (
         React.createElement('div', {
-            ref: 'slider',
+            ref: (slider) => this._slider = slider,
             style: {position: 'relative'},
             className: props.className + (props.disabled ? ' disabled' : ''),
             onMouseDown: this._onSliderMouseDown,
