@@ -736,24 +736,14 @@
         (this.props.handleClassName + '-' + i) + ' ' +
         (this.state.index === i ? this.props.handleActiveClassName : '');
 
-      return (
-        React.createElement('div', {
-            ref: (handle) => { this._handles.push(handle); },
-            key: 'handle' + i,
-            className: className,
-            style: style,
-            onMouseDown: this._createOnMouseDown(i),
-            onTouchStart: this._createOnTouchStart(i),
-            onFocus: this._createOnKeyDown(i),
-            tabIndex: 0,
-            role: "slider",
-            "aria-valuenow": this.state.value[i],
-            "aria-valuemin": this.props.min,
-            "aria-valuemax": this.props.max,
-          },
-          child
-        )
-      );
+        return (
+            <div ref={(handle) => this._handles.push(handle)} key={`handle${i}`} className={className} style={style}
+                 onMouseDown={this._createOnMouseDown(i)} onTouchStart={this._createOnTouchStart}
+                 onFocus={this._createOnKeyDown(i)} tabindex="0" role={"slider"} aria-valuenow={this.state.value[i]}
+                 aria-valuemin={this.props.min} aria-valuemax={this.props.max}>
+                {child}
+            </div>
+        );
     },
 
     _renderHandles: function (offset) {
@@ -779,14 +769,12 @@
     },
 
     _renderBar: function (i, offsetFrom, offsetTo) {
-      return (
-        React.createElement('div', {
-          key: 'bar' + i,
-          ref: (bar) => this._bars.push(bar),
-          className: this.props.barClassName + ' ' + this.props.barClassName + '-' + i,
-          style: this._buildBarStyle(offsetFrom, this.state.upperBound - offsetTo)
-        })
-      );
+        return (
+            <div key={`bar${i}`} ref={(bar) => this._bars.push(bar)}
+                 className={`${this.props.barClassName} ${this.props.barClassName}-${i}`}
+                 style={this._buildBarStyle(offsetFrom, this.state.upperBound - offsetTo)}>
+            </div>
+        );
     },
 
     _renderBars: function (offset) {
@@ -836,31 +824,25 @@
     },
 
     render: function () {
-      var state = this.state;
       var props = this.props;
 
       var offset = this.tempArray;
-      var value = state.value;
-      var l = value.length;
-      for (var i = 0; i < l; i++) {
+      var value = this.state.value;
+      for (var i = 0; i < value.length; i++) {
         offset[i] = this._calcOffset(value[i], i);
       }
 
       var bars = props.withBars ? this._renderBars(offset) : null;
       var handles = this._renderHandles(offset);
 
-      return (
-        React.createElement('div', {
-            ref: (slider) => this._slider = slider,
-            style: {position: 'relative'},
-            className: props.className + (props.disabled ? ' disabled' : ''),
-            onMouseDown: this._onSliderMouseDown,
-            onClick: this._onSliderClick
-          },
-          bars,
-          handles
-        )
-      );
+        return (
+            <div ref={(slider) => this._slider = slider} style={{ position: 'relative' }}
+                 className={`${props.className}${props.disabled ? ' disabled' : ''}`}
+                 onMouseDown={this._onSliderMouseDown} onClick={this._onSliderClick}>
+                {bars}
+                {handles}
+            </div>
+        );
     }
   });
 
