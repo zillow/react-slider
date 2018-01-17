@@ -191,11 +191,14 @@
       };
     },
 
+    _handles: [],
+
+    _bars: [],
+
+    _slider: null,
+
     getInitialState: function () {
       var value = this._or(ensureArray(this.props.value), ensureArray(this.props.defaultValue));
-
-      // reused throughout the component to store results of iterations over `value`
-      this.tempArray = value.slice();
 
       // array for storing resize timeouts ids
       this.pendingResizeTimeouts = [];
@@ -219,9 +222,6 @@
     // This basically allows the slider to be a controlled component.
     componentWillReceiveProps: function (newProps) {
       var value = this._or(ensureArray(newProps.value), this.state.value);
-
-      // ensure the array keeps the same size as `value`
-      this.tempArray = value.slice();
 
       for (var i = 0; i < value.length; i++) {
         this.state.value[i] = this._trimAlignValue(value[i], newProps);
@@ -278,8 +278,8 @@
         // drop this timeout from pendingResizeTimeouts to reduce memory usage
         this.pendingResizeTimeouts.shift();
 
-        var slider = this.refs.slider;
-        var handle = this.refs.handle0;
+        var slider = this._slider;
+        var handle = this._handles[0];
         var rect = slider.getBoundingClientRect();
 
         var size = this._sizeKey();
@@ -470,7 +470,7 @@
 
     _start: function (i, position) {
       var activeEl = document.activeElement;
-      var handleRef = this.refs['handle' + i];
+      var handleRef = this._handles[i];
       // if activeElement is body window will lost focus in IE9
       if (activeEl && activeEl != document.body && activeEl != handleRef) {
         activeEl.blur && activeEl.blur();
@@ -730,35 +730,25 @@
         (this.props.handleClassName + '-' + i) + ' ' +
         (this.state.index === i ? this.props.handleActiveClassName : '');
 
-      return (
-        React.createElement('div', {
-            ref: 'handle' + i,
-            key: 'handle' + i,
-            className: className,
-            style: style,
-            onMouseDown: this._createOnMouseDown(i),
-            onTouchStart: this._createOnTouchStart(i),
-            onFocus: this._createOnKeyDown(i),
-            tabIndex: 0,
-            role: "slider",
-            "aria-valuenow": this.state.value[i],
-            "aria-valuemin": this.props.min,
-            "aria-valuemax": this.props.max,
-          },
-          child
-        )
-      );
+        return (
+            <div ref={(handle) => this._handles.push(handle)} key={`handle${i}`} className={className} style={style}
+                 onMouseDown={this._createOnMouseDown(i)} onTouchStart={this._createOnTouchStart}
+                 onFocus={this._createOnKeyDown(i)} tabindex="0" role={"slider"} aria-valuenow={this.state.value[i]}
+                 aria-valuemin={this.props.min} aria-valuemax={this.props.max}>
+                {child}
+            </div>
+        );
     },
 
     _renderHandles: function (offset) {
       var length = offset.length;
 
-      var styles = this.tempArray;
+      var styles = new Array(length);
       for (var i = 0; i < length; i++) {
         styles[i] = this._buildHandleStyle(offset[i], i);
       }
 
-      var res = this.tempArray;
+      var res = new Array(length);
       var renderHandle = this._renderHandle;
       if (React.Children.count(this.props.children) > 0) {
         React.Children.forEach(this.props.children, function (child, i) {
@@ -773,14 +763,12 @@
     },
 
     _renderBar: function (i, offsetFrom, offsetTo) {
-      return (
-        React.createElement('div', {
-          key: 'bar' + i,
-          ref: 'bar' + i,
-          className: this.props.barClassName + ' ' + this.props.barClassName + '-' + i,
-          style: this._buildBarStyle(offsetFrom, this.state.upperBound - offsetTo)
-        })
-      );
+        return (
+            <div key={`bar${i}`} ref={(bar) => this._bars.push(bar)}
+                 className={`${this.props.barClassName} ${this.props.barClassName}-${i}`}
+                 style={this._buildBarStyle(offsetFrom, this.state.upperBound - offsetTo)}>
+            </div>
+        );
     },
 
     _renderBars: function (offset) {
@@ -833,9 +821,9 @@
       var state = this.state;
       var props = this.props;
 
-      var offset = this.tempArray;
       var value = state.value;
       var l = value.length;
+      var offset = new Array(l);
       for (var i = 0; i < l; i++) {
         offset[i] = this._calcOffset(value[i], i);
       }
@@ -843,18 +831,14 @@
       var bars = props.withBars ? this._renderBars(offset) : null;
       var handles = this._renderHandles(offset);
 
-      return (
-        React.createElement('div', {
-            ref: 'slider',
-            style: {position: 'relative'},
-            className: props.className + (props.disabled ? ' disabled' : ''),
-            onMouseDown: this._onSliderMouseDown,
-            onClick: this._onSliderClick
-          },
-          bars,
-          handles
-        )
-      );
+        return (
+            <div ref={(slider) => this._slider = slider} style={{ position: 'relative' }}
+                 className={`${props.className}${props.disabled ? ' disabled' : ''}`}
+                 onMouseDown={this._onSliderMouseDown} onClick={this._onSliderClick}>
+                {bars}
+                {handles}
+            </div>
+        );
     }
   });
 
