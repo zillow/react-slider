@@ -6,8 +6,8 @@
 
     <title>React Slider Example</title>
 
-    <script src="node_modules/react/dist/react.js"></script>
-    <script src="node_modules/react-dom/dist/react-dom.js"></script>
+    <script src="node_modules/react/umd/react.production.min.js"></script>
+    <script src="node_modules/react-dom/umd/react-dom.production.min.js"></script>
     <script src="node_modules/create-react-class/create-react-class.js"></script>
     <script src="node_modules/prop-types/prop-types.js"></script>
     <script src="react-slider.js"></script>
@@ -117,7 +117,7 @@
 
         render: function () {
             return ReactSlider(
-                    React.__spread({
+                    Object.assign({}, this.props, {
                         className: this.props.orientation + '-slider',
                         pearling: true,
                         minDistance: 10,
