@@ -401,6 +401,13 @@
       ];
     },
 
+    _getKeyDownEventMap: function () {
+      return {
+        'keydown': this._onKeyDown,
+        'focusout': this._onBlur
+      }
+    },
+
     _getMouseEventMap: function () {
       return {
         'mousemove': this._onMouseMove,
@@ -413,6 +420,16 @@
         'touchmove': this._onTouchMove,
         'touchend': this._onTouchEnd
       }
+    },
+
+    // create the `keydown` handler for the i-th handle
+    _createOnKeyDown: function (i) {
+      return function (e) {
+        if (this.props.disabled) return;
+        this._start(i);
+        this._addHandlers(this._getKeyDownEventMap());
+        pauseEvent(e);
+      }.bind(this);
     },
 
     // create the `mousedown` handler for the i-th handle
@@ -452,9 +469,11 @@
     },
 
     _start: function (i, position) {
+      var activeEl = document.activeElement;
+      var handleRef = this.refs['handle' + i];
       // if activeElement is body window will lost focus in IE9
-      if (document.activeElement && document.activeElement != document.body) {
-        document.activeElement.blur && document.activeElement.blur();
+      if (activeEl && activeEl != document.body && activeEl != handleRef) {
+        activeEl.blur && activeEl.blur();
       }
 
       this.hasMoved = false;
@@ -481,6 +500,10 @@
       this._onEnd(this._getTouchEventMap());
     },
 
+    _onBlur: function () {
+      this._onEnd(this._getKeyDownEventMap());
+    },
+
     _onEnd: function (eventMap) {
       this._removeHandlers(eventMap);
       this.setState({index: -1}, this._fireChangeEvent.bind(this, 'onAfterChange'));
@@ -488,7 +511,9 @@
 
     _onMouseMove: function (e) {
       var position = this._getMousePosition(e);
-      this._move(position[0]);
+      var diffPosition = this._getDiffPosition(position[0]);
+      var newValue = this._getValueFromPosition(diffPosition);
+      this._move(newValue);
     },
 
     _onTouchMove: function (e) {
@@ -509,10 +534,54 @@
 
       pauseEvent(e);
 
-      this._move(position[0]);
+      var diffPosition = this._getDiffPosition(position[0]);
+      var newValue = this._getValueFromPosition(diffPosition);
+
+      this._move(newValue);
     },
 
-    _move: function (position) {
+    _onKeyDown: function (e) {
+      if (e.ctrlKey || e.shiftKey || e.altKey) return;
+      switch (e.key) {
+        case "ArrowLeft":
+        case "ArrowUp":
+          return this._moveDownOneStep();
+        case "ArrowRight":
+        case "ArrowDown":
+          return this._moveUpOneStep();
+        case "Home":
+          return this._move(this.props.min);
+        case "End":
+          return this._move(this.props.max);
+        default:
+          return;
+      }
+    },
+
+    _moveUpOneStep: function () {
+      var oldValue = this.state.value[this.state.index];
+      var newValue = oldValue + this.props.step;
+      this._move(Math.min(newValue, this.props.max));
+    },
+
+    _moveDownOneStep: function () {
+      var oldValue = this.state.value[this.state.index];
+      var newValue = oldValue - this.props.step;
+      this._move(Math.max(newValue, this.props.min));
+    },
+
+    _getValueFromPosition: function (position) {
+      var diffValue = position / (this.state.sliderLength - this.state.handleSize) * (this.props.max - this.props.min);
+      return this._trimAlignValue(this.state.startValue + diffValue);
+    },
+
+    _getDiffPosition: function (position) {
+      var diffPosition = position - this.state.startPosition;
+      if (this.props.invert) diffPosition *= -1;
+      return diffPosition;
+    },
+
+    _move: function (newValue) {
       this.hasMoved = true;
 
       var props = this.props;
@@ -522,12 +591,6 @@
       var value = state.value;
       var length = value.length;
       var oldValue = value[index];
-
-      var diffPosition = position - state.startPosition;
-      if (props.invert) diffPosition *= -1;
-
-      var diffValue = diffPosition / (state.sliderLength - state.handleSize) * (props.max - props.min);
-      var newValue = this._trimAlignValue(state.startValue + diffValue);
 
       var minDistance = props.minDistance;
 
@@ -674,7 +737,13 @@
             className: className,
             style: style,
             onMouseDown: this._createOnMouseDown(i),
-            onTouchStart: this._createOnTouchStart(i)
+            onTouchStart: this._createOnTouchStart(i),
+            onFocus: this._createOnKeyDown(i),
+            tabIndex: 0,
+            role: "slider",
+            "aria-valuenow": this.state.value[i],
+            "aria-valuemin": this.props.min,
+            "aria-valuemax": this.props.max,
           },
           child
         )
@@ -689,7 +758,7 @@
         styles[i] = this._buildHandleStyle(offset[i], i);
       }
 
-      var res = this.tempArray;
+      var res = [];
       var renderHandle = this._renderHandle;
       if (React.Children.count(this.props.children) > 0) {
         React.Children.forEach(this.props.children, function (child, i) {
