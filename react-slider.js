@@ -545,9 +545,11 @@
       switch (e.key) {
         case "ArrowLeft":
         case "ArrowUp":
+          e.preventDefault();
           return this._moveDownOneStep();
         case "ArrowRight":
         case "ArrowDown":
+          e.preventDefault();
           return this._moveUpOneStep();
         case "Home":
           return this._move(this.props.min);
