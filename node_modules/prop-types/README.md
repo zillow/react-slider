@@ -20,15 +20,31 @@ import PropTypes from 'prop-types'; // ES6
 var PropTypes = require('prop-types'); // ES5 with npm
 ```
 
-If you prefer a `<script>` tag, you can get it from `window.PropTypes` global:
+### CDN
 
+If you prefer to exclude `prop-types` from your application and use it 
+globally via `window.PropTypes`, the `prop-types` package provides 
+single-file distributions, which are hosted on the following CDNs:
+
+* [**unpkg**](https://unpkg.com/prop-types/)
 ```html
 <!-- development version -->
-<script src="https://unpkg.com/prop-types/prop-types.js"></script>
+<script src="https://unpkg.com/prop-types@15.6/prop-types.js"></script>
 
 <!-- production version -->
-<script src="https://unpkg.com/prop-types/prop-types.min.js"></script>
+<script src="https://unpkg.com/prop-types@15.6/prop-types.min.js"></script>
 ```
+
+* [**cdnjs**](https://cdnjs.com/libraries/prop-types)
+```html
+<!-- development version -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prop-types/15.6.0/prop-types.js"></script>
+
+<!-- production version -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prop-types/15.6.0/prop-types.min.js"></script>
+```
+
+To load a specific version of `prop-types` replace `15.6.0` with the version number. 
 
 ## Usage
 
@@ -37,7 +53,7 @@ commonly used with React components.
 Here is an example of using PropTypes with a React component, which also
 documents the different validators provided:
 
-```jsx
+```js
 import React from 'react';
 import PropTypes from 'prop-types';
 
@@ -133,6 +149,8 @@ Refer to the [React documentation](https://facebook.github.io/react/docs/typeche
 
 Check out [Migrating from React.PropTypes](https://facebook.github.io/react/blog/2017/04/07/react-v15.5.0.html#migrating-from-react.proptypes) for details on how to migrate to `prop-types` from `React.PropTypes`.
 
+Note that this blog posts **mentions a codemod script that performs the conversion automatically**.
+
 There are also important notes below.
 
 ## How to Depend on This Package?
@@ -161,7 +179,7 @@ For libraries, we *also* recommend leaving it in `dependencies`:
 
 Make sure that the version range uses a caret (`^`) and thus is broad enough for npm to efficiently deduplicate packages.
 
-For UMD bundles of your comoponents, make sure you **don’t** include `PropTypes` in the build. Usually this is done by marking it as an external (the specifics depend on your bundler), just like you do with React.
+For UMD bundles of your components, make sure you **don’t** include `PropTypes` in the build. Usually this is done by marking it as an external (the specifics depend on your bundler), just like you do with React.
 
 ## Compatibility
 
@@ -230,7 +248,7 @@ See below for more info.
 
 **You might also see this error** if you’re calling a `PropTypes` validator from your own custom `PropTypes` validator. In this case, the fix is to make sure that you are passing *all* of the arguments to the inner function. There is a more in-depth explanation of how to fix it [on this page](https://facebook.github.io/react/warnings/dont-call-proptypes.html#fixing-the-false-positive-in-third-party-proptypes). Alternatively, you can temporarily keep using `React.PropTypes` until React 16, as it would still only warn in this case.
 
-If you use a bundler like Browserify or Webpack, don’t forget to [follow these instructions](https://facebook.github.io/react/docs/installation.html#development-and-production-versions) to correctly bundle your application in development or production mode. Otherwise you’ll ship unnecessary code to your users.
+If you use a bundler like Browserify or Webpack, don’t forget to [follow these instructions](https://reactjs.org/docs/optimizing-performance.html#use-the-production-build) to correctly bundle your application in development or production mode. Otherwise you’ll ship unnecessary code to your users.
 
 ## PropTypes.checkPropTypes
 
@@ -241,7 +259,7 @@ you are using PropTypes without React then you may want to manually call
 ```js
 const myPropTypes = {
   name: PropTypes.string,
-  age: PropTypes. number,
+  age: PropTypes.number,
   // ... define your prop validations
 };
 

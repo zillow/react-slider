@@ -2,16 +2,6 @@
 
 Object.defineProperty(exports, '__esModule', { value: true });
 
-function _interopDefault (ex) { return (ex && (typeof ex === 'object') && 'default' in ex) ? ex['default'] : ex; }
-
-var url = require('url');
-var http = require('http');
-var https = require('https');
-var zlib = require('zlib');
-var Stream = require('stream');
-var Stream__default = _interopDefault(Stream);
-var encoding = require('encoding');
-
 // Based on https://github.com/tmpvar/jsdom/blob/aa85b2abf07766ff7bf5c1f6daafb3726f2f2db5/lib/jsdom/living/blob.js
 // (MIT licensed)
 
@@ -45,13 +35,13 @@ class Blob {
 				if (element instanceof Buffer) {
 					buffer = element;
 				} else if (ArrayBuffer.isView(element)) {
-					buffer = new Buffer(new Uint8Array(element.buffer, element.byteOffset, element.byteLength));
+					buffer = Buffer.from(element.buffer, element.byteOffset, element.byteLength);
 				} else if (element instanceof ArrayBuffer) {
-					buffer = new Buffer(new Uint8Array(element));
+					buffer = Buffer.from(element);
 				} else if (element instanceof Blob) {
 					buffer = element[BUFFER];
 				} else {
-					buffer = new Buffer(typeof element === 'string' ? element : String(element));
+					buffer = Buffer.from(typeof element === 'string' ? element : String(element));
 				}
 				buffers.push(buffer);
 			}
@@ -153,7 +143,19 @@ FetchError.prototype.name = 'FetchError';
  * Body interface provides common methods for Request and Response
  */
 
+const Stream = require('stream');
+
+var _require$1 = require('stream');
+
+const PassThrough$1 = _require$1.PassThrough;
+
+
 const DISTURBED = Symbol('disturbed');
+
+let convert;
+try {
+	convert = require('encoding').convert;
+} catch (e) {}
 
 /**
  * Body class
@@ -177,11 +179,13 @@ function Body(body) {
 		body = null;
 	} else if (typeof body === 'string') {
 		// body is string
+	} else if (isURLSearchParams(body)) {
+		// body is a URLSearchParams
 	} else if (body instanceof Blob) {
 		// body is blob
 	} else if (Buffer.isBuffer(body)) {
 		// body is buffer
-	} else if (body instanceof Stream__default) {
+	} else if (body instanceof Stream) {
 		// body is stream
 	} else {
 		// none of the above
@@ -234,8 +238,14 @@ Body.prototype = {
   * @return  Promise
   */
 	json() {
+		var _this = this;
+
 		return consumeBody.call(this).then(function (buffer) {
-			return JSON.parse(buffer.toString());
+			try {
+				return JSON.parse(buffer.toString());
+			} catch (err) {
+				return Body.Promise.reject(new FetchError(`invalid json response body at ${_this.url} reason: ${err.message}`, 'invalid-json'));
+			}
 		});
 	},
 
@@ -266,10 +276,10 @@ Body.prototype = {
   * @return  Promise
   */
 	textConverted() {
-		var _this = this;
+		var _this2 = this;
 
 		return consumeBody.call(this).then(function (buffer) {
-			return convertBody(buffer, _this.headers);
+			return convertBody(buffer, _this2.headers);
 		});
 	}
 
@@ -291,7 +301,7 @@ Body.mixIn = function (proto) {
  * @return  Promise
  */
 function consumeBody(body) {
-	var _this2 = this;
+	var _this3 = this;
 
 	if (this[DISTURBED]) {
 		return Body.Promise.reject(new Error(`body used already for: ${this.url}`));
@@ -301,12 +311,12 @@ function consumeBody(body) {
 
 	// body is null
 	if (this.body === null) {
-		return Body.Promise.resolve(new Buffer(0));
+		return Body.Promise.resolve(Buffer.alloc(0));
 	}
 
 	// body is string
 	if (typeof this.body === 'string') {
-		return Body.Promise.resolve(new Buffer(this.body));
+		return Body.Promise.resolve(Buffer.from(this.body));
 	}
 
 	// body is blob
@@ -320,8 +330,8 @@ function consumeBody(body) {
 	}
 
 	// istanbul ignore if: should never happen
-	if (!(this.body instanceof Stream__default)) {
-		return Body.Promise.resolve(new Buffer(0));
+	if (!(this.body instanceof Stream)) {
+		return Body.Promise.resolve(Buffer.alloc(0));
 	}
 
 	// body is stream
@@ -330,30 +340,30 @@ function consumeBody(body) {
 	let accumBytes = 0;
 	let abort = false;
 
-	return new Body.Promise(function (resolve$$1, reject) {
+	return new Body.Promise(function (resolve, reject) {
 		let resTimeout;
 
 		// allow timeout on slow response body
-		if (_this2.timeout) {
+		if (_this3.timeout) {
 			resTimeout = setTimeout(function () {
 				abort = true;
-				reject(new FetchError(`Response timeout while trying to fetch ${_this2.url} (over ${_this2.timeout}ms)`, 'body-timeout'));
-			}, _this2.timeout);
+				reject(new FetchError(`Response timeout while trying to fetch ${_this3.url} (over ${_this3.timeout}ms)`, 'body-timeout'));
+			}, _this3.timeout);
 		}
 
 		// handle stream error, such as incorrect content-encoding
-		_this2.body.on('error', function (err) {
-			reject(new FetchError(`Invalid response body while trying to fetch ${_this2.url}: ${err.message}`, 'system', err));
+		_this3.body.on('error', function (err) {
+			reject(new FetchError(`Invalid response body while trying to fetch ${_this3.url}: ${err.message}`, 'system', err));
 		});
 
-		_this2.body.on('data', function (chunk) {
+		_this3.body.on('data', function (chunk) {
 			if (abort || chunk === null) {
 				return;
 			}
 
-			if (_this2.size && accumBytes + chunk.length > _this2.size) {
+			if (_this3.size && accumBytes + chunk.length > _this3.size) {
 				abort = true;
-				reject(new FetchError(`content size at ${_this2.url} over limit: ${_this2.size}`, 'max-size'));
+				reject(new FetchError(`content size at ${_this3.url} over limit: ${_this3.size}`, 'max-size'));
 				return;
 			}
 
@@ -361,13 +371,13 @@ function consumeBody(body) {
 			accum.push(chunk);
 		});
 
-		_this2.body.on('end', function () {
+		_this3.body.on('end', function () {
 			if (abort) {
 				return;
 			}
 
 			clearTimeout(resTimeout);
-			resolve$$1(Buffer.concat(accum));
+			resolve(Buffer.concat(accum));
 		});
 	});
 }
@@ -381,6 +391,10 @@ function consumeBody(body) {
  * @return  String
  */
 function convertBody(buffer, headers) {
+	if (typeof convert !== 'function') {
+		throw new Error('The package `encoding` must be installed to use the textConverted() function');
+	}
+
 	const ct = headers.get('content-type');
 	let charset = 'utf-8';
 	let res, str;
@@ -424,7 +438,24 @@ function convertBody(buffer, headers) {
 	}
 
 	// turn raw buffers into a single utf-8 buffer
-	return encoding.convert(buffer, 'UTF-8', charset).toString();
+	return convert(buffer, 'UTF-8', charset).toString();
+}
+
+/**
+ * Detect a URLSearchParams object
+ * ref: https://github.com/bitinn/node-fetch/issues/296#issuecomment-307598143
+ *
+ * @param   Object  obj     Object to detect by type or brand
+ * @return  String
+ */
+function isURLSearchParams(obj) {
+	// Duck-typing as a necessary condition.
+	if (typeof obj !== 'object' || typeof obj.append !== 'function' || typeof obj.delete !== 'function' || typeof obj.get !== 'function' || typeof obj.getAll !== 'function' || typeof obj.has !== 'function' || typeof obj.set !== 'function') {
+		return false;
+	}
+
+	// Brand-checking and more duck-typing as optional condition.
+	return obj.constructor.name === 'URLSearchParams' || Object.prototype.toString.call(obj) === '[object URLSearchParams]' || typeof obj.sort === 'function';
 }
 
 /**
@@ -444,10 +475,10 @@ function clone(instance) {
 
 	// check that body is a stream and not form-data object
 	// note: we can't clone the form-data object without having it as a dependency
-	if (body instanceof Stream__default && typeof body.getBoundary !== 'function') {
+	if (body instanceof Stream && typeof body.getBoundary !== 'function') {
 		// tee instance body
-		p1 = new Stream.PassThrough();
-		p2 = new Stream.PassThrough();
+		p1 = new PassThrough$1();
+		p2 = new PassThrough$1();
 		body.pipe(p1);
 		body.pipe(p2);
 		// set instance body to teed body and return the other teed body
@@ -479,6 +510,9 @@ function extractContentType(instance) {
 	} else if (typeof body === 'string') {
 		// body is string
 		return 'text/plain;charset=UTF-8';
+	} else if (isURLSearchParams(body)) {
+		// body is a URLSearchParams
+		return 'application/x-www-form-urlencoded;charset=UTF-8';
 	} else if (body instanceof Blob) {
 		// body is blob
 		return body.type || null;
@@ -506,6 +540,9 @@ function getTotalBytes(instance) {
 	} else if (typeof body === 'string') {
 		// body is string
 		return Buffer.byteLength(body);
+	} else if (isURLSearchParams(body)) {
+		// body is URLSearchParams
+		return Buffer.byteLength(String(body));
 	} else if (body instanceof Blob) {
 		// body is blob
 		return body.size;
@@ -537,6 +574,10 @@ function writeToStream(dest, instance) {
 	} else if (typeof body === 'string') {
 		// body is string
 		dest.write(body);
+		dest.end();
+	} else if (isURLSearchParams(body)) {
+		// body is URLSearchParams
+		dest.write(Buffer.from(String(body)));
 		dest.end();
 	} else if (body instanceof Blob) {
 		// body is blob
@@ -944,6 +985,10 @@ Object.defineProperty(HeadersIteratorPrototype, Symbol.toStringTag, {
  * Response class provides content decoding
  */
 
+var _require$2 = require('http');
+
+const STATUS_CODES = _require$2.STATUS_CODES;
+
 /**
  * Response class
  *
@@ -951,6 +996,7 @@ Object.defineProperty(HeadersIteratorPrototype, Symbol.toStringTag, {
  * @param   Object  opts  Response options
  * @return  Void
  */
+
 class Response {
 	constructor() {
 		let body = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : null;
@@ -960,7 +1006,7 @@ class Response {
 
 		this.url = opts.url;
 		this.status = opts.status || 200;
-		this.statusText = opts.statusText || http.STATUS_CODES[this.status];
+		this.statusText = opts.statusText || STATUS_CODES[this.status];
 
 		this.headers = new Headers(opts.headers);
 
@@ -1011,6 +1057,12 @@ Object.defineProperty(Response.prototype, Symbol.toStringTag, {
  * Request class contains server only options
  */
 
+var _require$3 = require('url');
+
+const format_url = _require$3.format;
+const parse_url = _require$3.parse;
+
+
 const PARSED_URL = Symbol('url');
 
 /**
@@ -1032,14 +1084,14 @@ class Request {
 				// in order to support Node.js' Url objects; though WHATWG's URL objects
 				// will fall into this branch also (since their `toString()` will return
 				// `href` property anyway)
-				parsedURL = url.parse(input.href);
+				parsedURL = parse_url(input.href);
 			} else {
 				// coerce input to a string before attempting to parse
-				parsedURL = url.parse(`${input}`);
+				parsedURL = parse_url(`${input}`);
 			}
 			input = {};
 		} else {
-			parsedURL = url.parse(input.url);
+			parsedURL = parse_url(input.url);
 		}
 
 		let method = init.method || input.method || 'GET';
@@ -1083,7 +1135,7 @@ class Request {
 	}
 
 	get url() {
-		return url.format(this[PARSED_URL]);
+		return format_url(this[PARSED_URL]);
 	}
 
 	/**
@@ -1167,6 +1219,19 @@ function getNodeRequestOptions(request) {
  * a request API compatible with window.fetch
  */
 
+const http = require('http');
+const https = require('https');
+
+var _require = require('stream');
+
+const PassThrough = _require.PassThrough;
+
+var _require2 = require('url');
+
+const resolve_url = _require2.resolve;
+
+const zlib = require('zlib');
+
 /**
  * Fetch function
  *
@@ -1174,7 +1239,7 @@ function getNodeRequestOptions(request) {
  * @param   Object   opts  Fetch options
  * @return  Promise
  */
-function fetch(url$$1, opts) {
+function fetch(url, opts) {
 
 	// allow custom promise
 	if (!fetch.Promise) {
@@ -1184,9 +1249,9 @@ function fetch(url$$1, opts) {
 	Body.Promise = fetch.Promise;
 
 	// wrap http.request into fetch
-	return new fetch.Promise(function (resolve$$1, reject) {
+	return new fetch.Promise(function (resolve, reject) {
 		// build request object
-		const request = new Request(url$$1, opts);
+		const request = new Request(url, opts);
 		const options = getNodeRequestOptions(request);
 
 		const send = (options.protocol === 'https:' ? https : http).request;
@@ -1243,7 +1308,7 @@ function fetch(url$$1, opts) {
 
 				request.counter++;
 
-				resolve$$1(fetch(url.resolve(request.url, res.headers.location), request));
+				resolve(fetch(resolve_url(request.url, res.headers.location), request));
 				return;
 			}
 
@@ -1259,11 +1324,11 @@ function fetch(url$$1, opts) {
 				}
 			}
 			if (request.redirect === 'manual' && headers.has('location')) {
-				headers.set('location', url.resolve(request.url, headers.get('location')));
+				headers.set('location', resolve_url(request.url, headers.get('location')));
 			}
 
 			// prepare response
-			let body = res.pipe(new Stream.PassThrough());
+			let body = res.pipe(new PassThrough());
 			const response_options = {
 				url: request.url,
 				status: res.statusCode,
@@ -1285,7 +1350,7 @@ function fetch(url$$1, opts) {
 			// 4. no content response (204)
 			// 5. content not modified response (304)
 			if (!request.compress || request.method === 'HEAD' || codings === null || res.statusCode === 204 || res.statusCode === 304) {
-				resolve$$1(new Response(body, response_options));
+				resolve(new Response(body, response_options));
 				return;
 			}
 
@@ -1302,7 +1367,7 @@ function fetch(url$$1, opts) {
 			// for gzip
 			if (codings == 'gzip' || codings == 'x-gzip') {
 				body = body.pipe(zlib.createGunzip(zlibOptions));
-				resolve$$1(new Response(body, response_options));
+				resolve(new Response(body, response_options));
 				return;
 			}
 
@@ -1310,7 +1375,7 @@ function fetch(url$$1, opts) {
 			if (codings == 'deflate' || codings == 'x-deflate') {
 				// handle the infamous raw deflate response from old servers
 				// a hack for old IIS and Apache servers
-				const raw = res.pipe(new Stream.PassThrough());
+				const raw = res.pipe(new PassThrough());
 				raw.once('data', function (chunk) {
 					// see http://stackoverflow.com/questions/37519828
 					if ((chunk[0] & 0x0F) === 0x08) {
@@ -1318,13 +1383,13 @@ function fetch(url$$1, opts) {
 					} else {
 						body = body.pipe(zlib.createInflateRaw());
 					}
-					resolve$$1(new Response(body, response_options));
+					resolve(new Response(body, response_options));
 				});
 				return;
 			}
 
 			// otherwise, use response as-is
-			resolve$$1(new Response(body, response_options));
+			resolve(new Response(body, response_options));
 		});
 
 		writeToStream(req, request);
