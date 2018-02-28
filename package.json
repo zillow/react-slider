@@ -1,6 +1,6 @@
 {
   "name": "react-slider",
-  "version": "0.9.0",
+  "version": "0.10.0",
   "description": "Slider component for React",
   "main": "react-slider.js",
   "keywords": [
@@ -29,8 +29,8 @@
     "url": "https://github.com/mpowaga/react-slider.git"
   },
   "peerDependencies": {
-    "react": ">=0.14 || ^15.4",
-    "prop-types": "^15.4",
-    "create-react-class": "^15.4"
+    "react": "^16.2",
+    "prop-types": "^15.6",
+    "create-react-class": "^15.6"
   }
 }
