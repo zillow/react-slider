@@ -129,6 +129,10 @@ Disables handle move when clicking the slider bar.
 
 Inverts the slider.
 
+##### forceResize {bool} default: false
+
+Forces the component to trigger resize to adjust to the containers size
+
 ##### onBeforeChange {func}
 
 Callback called before starting to move a handle.
