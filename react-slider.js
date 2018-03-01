@@ -232,7 +232,7 @@
       // If an upperBound has not yet been determined (due to the component being hidden
       // during the mount event, or during the last resize), then calculate it now
       if (this.state.upperBound === 0) {
-        this._handleResize();
+        this._resize();
       }
     },
 
@@ -260,7 +260,7 @@
 
     componentDidMount: function () {
       window.addEventListener('resize', this._handleResize);
-      this._handleResize();
+      this._resize();
     },
 
     componentWillUnmount: function () {
@@ -272,13 +272,8 @@
       return undoEnsureArray(this.state.value);
     },
 
-    _handleResize: function () {
-      // setTimeout of 0 gives element enough time to have assumed its new size if it is being resized
-      var resizeTimeout = window.setTimeout(function() {
-        // drop this timeout from pendingResizeTimeouts to reduce memory usage
-        this.pendingResizeTimeouts.shift();
-
-        var slider = this.refs.slider;
+    _resize: function () {
+      var slider = this.refs.slider;
         var handle = this.refs.handle0;
         var rect = slider.getBoundingClientRect();
 
@@ -293,6 +288,14 @@
           handleSize: handle[size],
           sliderStart: this.props.invert ? sliderMax : sliderMin
         });
+    },
+
+    _handleResize: function () {
+      // setTimeout of 0 gives element enough time to have assumed its new size if it is being resized
+      var resizeTimeout = window.setTimeout(function() {
+        // drop this timeout from pendingResizeTimeouts to reduce memory usage
+        this.pendingResizeTimeouts.shift();
+        this._resize();
       }.bind(this), 0);
 
       this.pendingResizeTimeouts.push(resizeTimeout);
@@ -545,9 +548,11 @@
       switch (e.key) {
         case "ArrowLeft":
         case "ArrowUp":
+          e.preventDefault();
           return this._moveDownOneStep();
         case "ArrowRight":
         case "ArrowDown":
+          e.preventDefault();
           return this._moveUpOneStep();
         case "Home":
           return this._move(this.props.min);
