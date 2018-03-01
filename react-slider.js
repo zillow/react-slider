@@ -617,24 +617,24 @@
         }
       }
 
-      value[index] = newValue;
+      var updatedValue = value.map(function (v, idx) { return idx === index ? newValue : v });
 
       // if "pearling" is enabled, let the current handle push the pre- and succeeding handles.
       if (props.pearling && length > 1) {
         if (newValue > oldValue) {
-          this._pushSucceeding(value, minDistance, index);
-          this._trimSucceeding(length, value, minDistance, props.max);
+          this._pushSucceeding(updatedValue, minDistance, index);
+          this._trimSucceeding(length, updatedValue, minDistance, props.max);
         }
         else if (newValue < oldValue) {
-          this._pushPreceding(value, minDistance, index);
-          this._trimPreceding(length, value, minDistance, props.min);
+          this._pushPreceding(updatedValue, minDistance, index);
+          this._trimPreceding(length, updatedValue, minDistance, props.min);
         }
       }
 
       // Normally you would use `shouldComponentUpdate`, but since the slider is a low-level component,
       // the extra complexity might be worth the extra performance.
       if (newValue !== oldValue) {
-        this.setState({value: value}, this._fireChangeEvent.bind(this, 'onChange'));
+        this.setState({value: updatedValue}, this._fireChangeEvent.bind(this, 'onChange'));
       }
     },
 
