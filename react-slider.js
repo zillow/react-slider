@@ -749,8 +749,8 @@
             "aria-valuenow": this.state.value[i],
             "aria-valuemin": this.props.min,
             "aria-valuemax": this.props.max,
-            "aria-label": this.props.ariaLabel && i < this.props.ariaLabel.length ? this.props.ariaLabel[i] : "",
-            "aria-valuetext": this.props.ariaValuetext ? this.props.ariaValuetext : "",
+            "aria-label": this.props.ariaLabel && i < this.props.ariaLabel.length ? this.props.ariaLabel[i] : undefined,
+            "aria-valuetext": this.props.ariaValuetext,
           },
           child
         )
