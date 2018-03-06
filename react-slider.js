@@ -734,6 +734,9 @@
       var className = this.props.handleClassName + ' ' +
         (this.props.handleClassName + '-' + i) + ' ' +
         (this.state.index === i ? this.props.handleActiveClassName : '');
+      var ariaLabelArray = this.props.ariaLabel && this.props.ariaLabel.constructor === Array
+        ? this.props.ariaLabel
+        : undefined;
 
       return (
         React.createElement('div', {
@@ -749,7 +752,9 @@
             "aria-valuenow": this.state.value[i],
             "aria-valuemin": this.props.min,
             "aria-valuemax": this.props.max,
-            "aria-label": this.props.ariaLabel && i < this.props.ariaLabel.length ? this.props.ariaLabel[i] : undefined,
+            "aria-label": ariaLabelArray && i < this.props.ariaLabel.length
+              ? ariaLabelArray[i]
+              : this.props.ariaLabel,
             "aria-valuetext": this.props.ariaValuetext,
           },
           child

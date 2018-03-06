@@ -28,8 +28,9 @@
     "type": "git",
     "url": "https://github.com/mpowaga/react-slider.git"
   },
-  "peerDependencies": {
+  "dependencies": {
     "react": "^16.2",
+    "react-dom": "^16.2",
     "prop-types": "^15.6",
     "create-react-class": "^15.6"
   }

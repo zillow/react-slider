@@ -131,25 +131,33 @@
         }
     }));
 
-    ReactDOM.render(Demo({defaultValue: 0, orientation: 'horizontal'}), document.getElementById('horizontal-1'));
+    ReactDOM.render(Demo({
+        defaultValue: 0,
+        orientation: 'horizontal',
+        ariaLabel: 'This is a single handle',
+    }), document.getElementById('horizontal-1'));
 
     ReactDOM.render(Demo({
         defaultValue: [0, 100],
         orientation: 'horizontal',
-        withBars: true
+        withBars: true,
+        ariaLabel: ['Lower handle', 'Upper handle'],
+        ariaValuetext: 'Some arbitrary value',
     }), document.getElementById('horizontal-2'));
 
     ReactDOM.render(Demo({
         defaultValue: [0, 50, 100],
         orientation: 'horizontal',
-        withBars: true
+        withBars: true,
+        ariaLabel: ['Leftmost handle', 'Middle handle', 'Rightmost handle'],
     }), document.getElementById('horizontal-3'));
 
     ReactDOM.render(Demo({
         defaultValue: [0, 50, 100],
         orientation: 'vertical',
         withBars: true,
-        invert: true
+        invert: true,
+        ariaLabel: ['Lowest handle', 'Middle handle', 'Top handle'],
     }), document.getElementById('vertical'));
 </script>
 </body>
