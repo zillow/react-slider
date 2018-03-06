@@ -165,18 +165,3 @@ or an array of numbers in case of a multi slider.
 ### License
 
 See the [License](LICENSE) file.
-
-### Developers
-
-##### Setup
-
-`npm install`
-
-##### Run
-
-To run you can use e.g. live-server or some other tool to serve up the files in your browser.
-
-```
-npm install -g live-server
-live-server
-```
