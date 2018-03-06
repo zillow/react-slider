@@ -738,9 +738,6 @@
       var className = this.props.handleClassName + ' ' +
         (this.props.handleClassName + '-' + i) + ' ' +
         (this.state.index === i ? this.props.handleActiveClassName : '');
-      var ariaLabelArray = this.props.ariaLabel && this.props.ariaLabel.constructor === Array
-        ? this.props.ariaLabel
-        : undefined;
 
       return (
         React.createElement('div', {
