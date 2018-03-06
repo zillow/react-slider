@@ -145,13 +145,13 @@ Callback called only after moving a handle has ended or when a new value is set 
 
 Callback called when the the slider is clicked (handle or bars). Receives the value at the clicked position as argument.
 
-##### ariaLabel {oneOfType([string, arrayOf(string)])} default: ''
+##### ariaLabel {oneOfType([string, arrayOf(string)])}
 
 aria-label for screen-readers to apply to the handles.
 Use an array for more than one handle.
 The length of the array must match the number of handles in the value array.
 
-##### ariaValuetext {string} default: ''
+##### ariaValuetext {string}
 
 aria-valuetext for screen-readers
 
