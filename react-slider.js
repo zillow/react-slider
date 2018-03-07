@@ -42,6 +42,10 @@
     return x != null && x.length === 1 ? x[0] : x;
   }
 
+  var isArray = Array.isArray || function(x) {
+    return Object.prototype.toString.call(x) === '[object Array]';
+  };
+
   // undoEnsureArray(ensureArray(x)) === x
 
   var ReactSlider = createReactClass({
@@ -749,6 +753,8 @@
             "aria-valuenow": this.state.value[i],
             "aria-valuemin": this.props.min,
             "aria-valuemax": this.props.max,
+            "aria-label": isArray(this.props.ariaLabel) ? this.props.ariaLabel[i] : this.props.ariaLabel,
+            "aria-valuetext": this.props.ariaValuetext,
           },
           child
         )
