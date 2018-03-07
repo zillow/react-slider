@@ -4,10 +4,6 @@ CSS agnostic slider component for React.
 
 See demo: [https://mpowaga.github.io/react-slider/](https://mpowaga.github.io/react-slider/)
 
-### Important Note
-
-This is an alpha release. Use with caution and hope.
-
 ### Installation
 
 ```sh
