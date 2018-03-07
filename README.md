@@ -4,10 +4,6 @@ CSS agnostic slider component for React.
 
 See demo: [https://mpowaga.github.io/react-slider/](https://mpowaga.github.io/react-slider/)
 
-### Important Note
-
-This is an alpha release. Use with caution and hope.
-
 ### Installation
 
 ```sh
@@ -144,6 +140,16 @@ Callback called only after moving a handle has ended or when a new value is set 
 ##### onSliderClick {func}
 
 Callback called when the the slider is clicked (handle or bars). Receives the value at the clicked position as argument.
+
+##### ariaLabel {oneOfType([string, arrayOf(string)])}
+
+aria-label for screen-readers to apply to the handles.
+Use an array for more than one handle.
+The length of the array must match the number of handles in the value array.
+
+##### ariaValuetext {string}
+
+aria-valuetext for screen-readers
 
 ### Methods
 
