@@ -277,8 +277,8 @@
     },
 
     _resize: function () {
-      var slider = this.refs.slider;
-        var handle = this.refs.handle0;
+      var slider = this.slider;
+        var handle = this.handle0;
         var rect = slider.getBoundingClientRect();
 
         var size = this._sizeKey();
@@ -477,7 +477,7 @@
 
     _start: function (i, position) {
       var activeEl = document.activeElement;
-      var handleRef = this.refs['handle' + i];
+      var handleRef = this['handle' + i];
       // if activeElement is body window will lost focus in IE9
       if (activeEl && activeEl != document.body && activeEl != handleRef) {
         activeEl.blur && activeEl.blur();
@@ -741,7 +741,7 @@
 
       return (
         React.createElement('div', {
-            ref: 'handle' + i,
+            ref: r => (this['handle' + i] = r),
             key: 'handle' + i,
             className: className,
             style: style,
@@ -787,7 +787,7 @@
       return (
         React.createElement('div', {
           key: 'bar' + i,
-          ref: 'bar' + i,
+          ref: r => (this['bar' + i] = r),
           className: this.props.barClassName + ' ' + this.props.barClassName + '-' + i,
           style: this._buildBarStyle(offsetFrom, this.state.upperBound - offsetTo)
         })
@@ -856,7 +856,7 @@
 
       return (
         React.createElement('div', {
-            ref: 'slider',
+            ref: r => (this.slider = r),
             style: {position: 'relative'},
             className: props.className + (props.disabled ? ' disabled' : ''),
             onMouseDown: this._onSliderMouseDown,
