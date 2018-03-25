@@ -491,11 +491,13 @@
       zIndices.splice(zIndices.indexOf(i), 1); // remove wherever the element is
       zIndices.push(i); // add to end
 
-      this.setState({
-        startValue: this.state.value[i],
-        startPosition: position,
-        index: i,
-        zIndices: zIndices
+      this.setState(function (prevState) {
+        return {
+          startValue: this.state.value[i],
+          startPosition: position !== undefined ? position : prevState.startPosition,
+          index: i,
+          zIndices: zIndices
+        };
       });
     },
 
