@@ -737,13 +737,16 @@
     },
 
     _renderHandle: function (style, child, i) {
+      var self = this;
       var className = this.props.handleClassName + ' ' +
         (this.props.handleClassName + '-' + i) + ' ' +
         (this.state.index === i ? this.props.handleActiveClassName : '');
 
       return (
         React.createElement('div', {
-            ref: r => (this['handle' + i] = r),
+            ref: function (r) {
+              self['handle' + i] = r;
+            },
             key: 'handle' + i,
             className: className,
             style: style,
@@ -786,10 +789,13 @@
     },
 
     _renderBar: function (i, offsetFrom, offsetTo) {
+      var self = this;
       return (
         React.createElement('div', {
           key: 'bar' + i,
-          ref: r => (this['bar' + i] = r),
+          ref: function (r) {
+            self['bar' + i] = r;
+          },
           className: this.props.barClassName + ' ' + this.props.barClassName + '-' + i,
           style: this._buildBarStyle(offsetFrom, this.state.upperBound - offsetTo)
         })
@@ -843,6 +849,7 @@
     },
 
     render: function () {
+      var self = this;
       var state = this.state;
       var props = this.props;
 
@@ -858,7 +865,9 @@
 
       return (
         React.createElement('div', {
-            ref: r => (this.slider = r),
+            ref: function (r) {
+              self.slider = r;
+            },
             style: {position: 'relative'},
             className: props.className + (props.disabled ? ' disabled' : ''),
             onMouseDown: this._onSliderMouseDown,
