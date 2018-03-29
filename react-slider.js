@@ -278,20 +278,20 @@
 
     _resize: function () {
       var slider = this.slider;
-        var handle = this.handle0;
-        var rect = slider.getBoundingClientRect();
+      var handle = this.handle0;
+      var rect = slider.getBoundingClientRect();
 
-        var size = this._sizeKey();
+      var size = this._sizeKey();
 
-        var sliderMax = rect[this._posMaxKey()];
-        var sliderMin = rect[this._posMinKey()];
+      var sliderMax = rect[this._posMaxKey()];
+      var sliderMin = rect[this._posMinKey()];
 
-        this.setState({
-          upperBound: slider[size] - handle[size],
-          sliderLength: Math.abs(sliderMax - sliderMin),
-          handleSize: handle[size],
-          sliderStart: this.props.invert ? sliderMax : sliderMin
-        });
+      this.setState({
+        upperBound: slider[size] - handle[size],
+        sliderLength: Math.abs(sliderMax - sliderMin),
+        handleSize: handle[size],
+        sliderStart: this.props.invert ? sliderMax : sliderMin
+      });
     },
 
     _handleResize: function () {
