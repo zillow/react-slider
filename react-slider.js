@@ -172,7 +172,13 @@
        *  Callback called when the the slider is clicked (handle or bars).
        *  Receives the value at the clicked position as argument.
        */
-      onSliderClick: PropTypes.func
+      onSliderClick: PropTypes.func,
+
+      /**
+       *  Forces a resize on every prop change
+       *  Useful if your handles are a dynamic size
+       */
+      resizeOnPropChange: PropTypes.bool
     },
 
     getDefaultProps: function () {
@@ -233,9 +239,12 @@
       if (this.state.value.length > value.length)
         this.state.value.length = value.length;
 
-      // If an upperBound has not yet been determined (due to the component being hidden
-      // during the mount event, or during the last resize), then calculate it now
-      if (this.state.upperBound === 0) {
+      
+      if (newProps.resizeOnPropChange) {
+        this._handleResize();
+        // If an upperBound has not yet been determined (due to the component being hidden
+        // during the mount event, or during the last resize), then calculate it now
+      } else if (this.state.upperBound === 0) {
         this._resize();
       }
     },
