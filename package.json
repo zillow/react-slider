@@ -22,7 +22,7 @@
   ],
   "license": "MIT",
   "scripts": {
-    "dev": "webpack-dev-server --hot --inline --colors --progress --open",
+    "dev": "webpack-dev-server --hot --inline --colors --progress --open --content-base example/",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
