@@ -63,12 +63,10 @@ body {
     width: 10px;
 }
 
-#horizontal-0,
-#horizontal-1, #horizontal-2, #horizontal-3,
-#vertical {
+.slider-container {
     margin: 20px 10px;
 }
 
-#horizontal-2 .bar.bar-2 {
+.example-2 .bar.bar-2 {
     background: #ddd;
 }

@@ -20,15 +20,22 @@ export default class ExampleSlider extends React.Component {
     }
 
     render() {
+        let containerClassNames = 'slider-container';
+        if (this.props.containerClassName) {
+            containerClassNames += ` ${this.props.containerClassName}`;
+        }
+
         return (
-            <Slider className={`${this.props.orientation}-slider`}
-                    pearling={true}
-                    minDistance={10}
-                    value={this.state.value}
-                    onChange={this.onChange.bind(this)}
-                    {...this.props}>
-                {this.generateHandles()}
-            </Slider>
+            <div className={containerClassNames}>
+                <Slider className={`${this.props.orientation}-slider`}
+                        pearling={true}
+                        minDistance={10}
+                        value={this.state.value}
+                        onChange={this.onChange.bind(this)}
+                        {...this.props}>
+                    {this.generateHandles()}
+                </Slider>
+            </div>
         )
     }
 }
