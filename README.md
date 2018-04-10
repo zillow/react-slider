@@ -10,6 +10,13 @@ See demo: [https://mpowaga.github.io/react-slider/](https://mpowaga.github.io/re
 npm install react-slider
 ```
 
+### Running test harness
+This repository comes with a hot-reloading test harness that you can use for examples or for testing changes when contributing. To run it:
+
+- Clone this repo
+- Run `npm install` (or `yarn`)
+- Run `npm run dev` (or `yarn dev`)
+
 ### Overview
 
 #### Single slider:
