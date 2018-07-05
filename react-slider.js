@@ -287,7 +287,7 @@
       var sliderMin = rect[this._posMinKey()];
 
       this.setState({
-        upperBound: slider[size] - handle[size],
+        upperBound: this._calcUpperBound(),
         sliderLength: Math.abs(sliderMax - sliderMin),
         handleSize: handle[size],
         sliderStart: this.props.invert ? sliderMax : sliderMin
@@ -330,13 +330,23 @@
       return ratio * (this.props.max - this.props.min) + this.props.min;
     },
 
+    _calcUpperBound: function () {
+      var slider = this.slider;
+      var handle = this.handle0;
+
+      var size = this._sizeKey();
+
+      return slider[size] - handle[size];
+    },
+
     _buildHandleStyle: function (offset, i) {
       var style = {
         position: 'absolute',
         willChange: this.state.index >= 0 ? this._posMinKey() : '',
         zIndex: this.state.zIndices.indexOf(i) + 1
       };
-      style[this._posMinKey()] = offset + 'px';
+      var pos = this.state.upperBound === 0 ? 0 : (offset * 100 / this.state.upperBound);
+      style[this._posMinKey()] = pos + '%';
       return style;
     },
 
@@ -345,8 +355,8 @@
         position: 'absolute',
         willChange: this.state.index >= 0 ? this._posMinKey() + ',' + this._posMaxKey() : ''
       };
-      obj[this._posMinKey()] = min;
-      obj[this._posMaxKey()] = max;
+      obj[this._posMinKey()] = min + '%';
+      obj[this._posMaxKey()] = max + '%';
       return obj;
     },
 
@@ -394,17 +404,25 @@
     },
 
     _getMousePosition: function (e) {
+      var rect = this.slider.getBoundingClientRect();
+      // The ratio of last resize to real size.
+      var ratio = this.state.upperBound / this._calcUpperBound();
+
       return [
-        e['page' + this._axisKey()],
-        e['page' + this._orthogonalAxisKey()]
+        e['page' + this._axisKey()] * ratio,
+        e['page' + this._orthogonalAxisKey()] * ratio
       ];
     },
 
     _getTouchPosition: function (e) {
+      var rect = this.slider.getBoundingClientRect();
+      // The ratio of last resize to real size.
+      var ratio = this.state.upperBound / this._calcUpperBound();
+
       var touch = e.touches[0];
       return [
-        touch['page' + this._axisKey()],
-        touch['page' + this._orthogonalAxisKey()]
+        touch['page' + this._axisKey()] * ratio,
+        touch['page' + this._orthogonalAxisKey()] * ratio
       ];
     },
 
@@ -790,6 +808,11 @@
 
     _renderBar: function (i, offsetFrom, offsetTo) {
       var self = this;
+      var upperBound = this.state.upperBound;
+
+      var relFrom = upperBound === 0 ? 0 : (offsetFrom * 100 / upperBound);
+      var relTo = upperBound === 0 ? 100 : (100 - offsetTo * 100 / upperBound);
+
       return (
         React.createElement('div', {
           key: 'bar' + i,
@@ -797,7 +820,7 @@
             self['bar' + i] = r;
           },
           className: this.props.barClassName + ' ' + this.props.barClassName + '-' + i,
-          style: this._buildBarStyle(offsetFrom, this.state.upperBound - offsetTo)
+          style: this._buildBarStyle(relFrom, relTo)
         })
       );
     },
