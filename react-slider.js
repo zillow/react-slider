@@ -46,6 +46,51 @@
     return Object.prototype.toString.call(x) === '[object Array]';
   };
 
+  // Check if the arity of `value` or `defaultValue` matches the number of children (= number of custom handles).
+  // If no custom handles are provided, just returns `value` if present and `defaultValue` otherwise.
+  // If custom handles are present but neither `value` nor `defaultValue` are applicable the handles are spread out
+  // equally.
+  // TODO: better name? better solution?
+  function or(value, defaultValue, props) {
+    var count = React.Children.count(props.children);
+    switch (count) {
+      case 0:
+        return value.length > 0 ? value : defaultValue;
+      case value.length:
+        return value;
+      case defaultValue.length:
+        return defaultValue;
+      default:
+        if (value.length !== count || defaultValue.length !== count) {
+          console.warn(ReactSlider.constructor.displayName + ": Number of values does not match number of children.");
+        }
+        return linspace(props.min, props.max, count);
+    }
+  }
+
+  function trimAlignValue(val, props) {
+    return alignValue(trimValue(val, props), props);
+  }
+
+  function trimValue(val, props) {
+    if (val <= props.min) val = props.min;
+    if (val >= props.max) val = props.max;
+
+    return val;
+  }
+
+  function alignValue(val, props) {
+    var valModStep = (val - props.min) % props.step;
+    var alignValue = val - valModStep;
+
+    if (Math.abs(valModStep) * 2 >= props.step) {
+      alignValue += (valModStep > 0) ? props.step : (-props.step);
+    }
+
+    return parseFloat(alignValue.toFixed(5));
+  }
+
+
   // undoEnsureArray(ensureArray(x)) === x
 
   var ReactSlider = createReactClass({
@@ -196,7 +241,7 @@
     },
 
     getInitialState: function () {
-      var value = this._or(ensureArray(this.props.value), ensureArray(this.props.defaultValue));
+      var value = or(ensureArray(this.props.value), ensureArray(this.props.defaultValue), this.props);
 
       // reused throughout the component to store results of iterations over `value`
       this.tempArray = value.slice();
@@ -206,7 +251,7 @@
 
       var zIndices = [];
       for (var i = 0; i < value.length; i++) {
-        value[i] = this._trimAlignValue(value[i], this.props);
+        value[i] = trimAlignValue(value[i], this.props);
         zIndices.push(i);
       }
 
@@ -215,50 +260,16 @@
         upperBound: 0,
         sliderLength: 0,
         value: value,
-        zIndices: zIndices
+        zIndices: zIndices,
+        prevProps: this.props,
       };
     },
 
-    // Keep the internal `value` consistent with an outside `value` if present.
-    // This basically allows the slider to be a controlled component.
-    componentWillReceiveProps: function (newProps) {
-      var value = this._or(ensureArray(newProps.value), this.state.value);
-
-      // ensure the array keeps the same size as `value`
-      this.tempArray = value.slice();
-
-      for (var i = 0; i < value.length; i++) {
-        this.state.value[i] = this._trimAlignValue(value[i], newProps);
-      }
-      if (this.state.value.length > value.length)
-        this.state.value.length = value.length;
-
+    componentDidUpdate: function () {
       // If an upperBound has not yet been determined (due to the component being hidden
       // during the mount event, or during the last resize), then calculate it now
       if (this.state.upperBound === 0) {
         this._resize();
-      }
-    },
-
-    // Check if the arity of `value` or `defaultValue` matches the number of children (= number of custom handles).
-    // If no custom handles are provided, just returns `value` if present and `defaultValue` otherwise.
-    // If custom handles are present but neither `value` nor `defaultValue` are applicable the handles are spread out
-    // equally.
-    // TODO: better name? better solution?
-    _or: function (value, defaultValue) {
-      var count = React.Children.count(this.props.children);
-      switch (count) {
-        case 0:
-          return value.length > 0 ? value : defaultValue;
-        case value.length:
-          return value;
-        case defaultValue.length:
-          return defaultValue;
-        default:
-          if (value.length !== count || defaultValue.length !== count) {
-            console.warn(this.constructor.displayName + ": Number of values does not match number of children.");
-          }
-          return linspace(this.props.min, this.props.max, count);
       }
     },
 
@@ -380,7 +391,7 @@
     _forceValueFromPosition: function (position, callback) {
       var pixelOffset = this._calcOffsetFromPosition(position);
       var closestIndex = this._getClosestIndex(pixelOffset);
-      var nextValue = this._trimAlignValue(this._calcValue(pixelOffset));
+      var nextValue = trimAlignValue(this._calcValue(pixelOffset), this.props);
 
       var value = this.state.value.slice(); // Clone this.state.value since we'll modify it temporarily
       value[closestIndex] = nextValue;
@@ -583,7 +594,7 @@
 
     _getValueFromPosition: function (position) {
       var diffValue = position / (this.state.sliderLength - this.state.handleSize) * (this.props.max - this.props.min);
-      return this._trimAlignValue(this.state.startValue + diffValue);
+      return trimAlignValue(this.state.startValue + diffValue, this.props);
     },
 
     _getDiffPosition: function (position) {
@@ -710,32 +721,6 @@
       if (orientation === 'vertical') return 'clientHeight';
     },
 
-    _trimAlignValue: function (val, props) {
-      return this._alignValue(this._trimValue(val, props), props);
-    },
-
-    _trimValue: function (val, props) {
-      props = props || this.props;
-
-      if (val <= props.min) val = props.min;
-      if (val >= props.max) val = props.max;
-
-      return val;
-    },
-
-    _alignValue: function (val, props) {
-      props = props || this.props;
-
-      var valModStep = (val - props.min) % props.step;
-      var alignValue = val - valModStep;
-
-      if (Math.abs(valModStep) * 2 >= props.step) {
-        alignValue += (valModStep > 0) ? props.step : (-props.step);
-      }
-
-      return parseFloat(alignValue.toFixed(5));
-    },
-
     _renderHandle: function (style, child, i) {
       var self = this;
       var className = this.props.handleClassName + ' ' +
@@ -837,7 +822,7 @@
 
       if (this.props.onSliderClick && !this.hasMoved) {
         var position = this._getMousePosition(e);
-        var valueAtPos = this._trimAlignValue(this._calcValue(this._calcOffsetFromPosition(position[0])));
+        var valueAtPos = trimAlignValue(this._calcValue(this._calcOffsetFromPosition(position[0])), this.props);
         this.props.onSliderClick(valueAtPos);
       }
     },
@@ -879,6 +864,26 @@
       );
     }
   });
+
+  // Keep the internal `value` consistent with an outside `value` if present.
+  // This basically allows the slider to be a controlled component.
+  ReactSlider.getDerivedStateFromProps = function (props, state) {
+    if (state.prevProps !== props) {
+      var value = or(ensureArray(props.value), state.value, props);
+
+      // ensure the array keeps the same size as `value`
+      this.tempArray = value.slice();
+
+      for (var i = 0; i < value.length; i++) {
+        state.value[ i ] = trimAlignValue(value[ i ], props);
+      }
+      if (state.value.length > value.length) {
+        state.value.length = value.length;
+      }
+      return { prevProps: props };
+    }
+    return null;
+  };
 
   return ReactSlider;
 }));
