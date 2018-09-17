@@ -333,18 +333,22 @@
     _buildHandleStyle: function (offset, i) {
       var style = {
         position: 'absolute',
-        willChange: this.state.index >= 0 ? this._posMinKey() : '',
         zIndex: this.state.zIndices.indexOf(i) + 1
       };
+      if (this.state.index >= 0 ) {
+        style.willChange = this._posMinKey();
+      }
       style[this._posMinKey()] = offset + 'px';
       return style;
     },
 
     _buildBarStyle: function (min, max) {
       var obj = {
-        position: 'absolute',
-        willChange: this.state.index >= 0 ? this._posMinKey() + ',' + this._posMaxKey() : ''
+        position: 'absolute'
       };
+      if (this.state.index >= 0 ) {
+        obj.willChange = this._posMinKey() + ',' + this._posMaxKey();
+      }
       obj[this._posMinKey()] = min;
       obj[this._posMaxKey()] = max;
       return obj;
