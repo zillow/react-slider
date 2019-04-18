@@ -553,11 +553,11 @@
       if (e.ctrlKey || e.shiftKey || e.altKey) return;
       switch (e.key) {
         case "ArrowLeft":
-        case "ArrowUp":
+        case "ArrowDown":
           e.preventDefault();
           return this._moveDownOneStep();
         case "ArrowRight":
-        case "ArrowDown":
+        case "ArrowUp":
           e.preventDefault();
           return this._moveUpOneStep();
         case "Home":
