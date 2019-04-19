@@ -1,0 +1,3 @@
+{
+  "extends": ["plugin:zillow/recommended", "plugin:zillow/jest"]
+}
