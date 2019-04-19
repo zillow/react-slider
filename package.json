@@ -1,5 +1,5 @@
 {
-  "name": "@zillow/react-slider",
+  "name": "@zillowgroup/react-slider",
   "version": "1.0.0",
   "description": "Slider component for React",
   "main": "lib/index.js",

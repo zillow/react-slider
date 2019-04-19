@@ -3,12 +3,12 @@ const { createStyleguideConfig } = require('create-react-styleguide');
 
 module.exports = createStyleguideConfig({
     getComponentPathLine() {
-        return `import ReactSlider from '@zillow/react-slider'`;
+        return `import ReactSlider from '@zillowgroup/react-slider'`;
     },
     styleguideComponents: {
         Wrapper: path.join(__dirname, 'src/styleguidist/ThemeWrapper'),
     },
-    title: '@zillow/react-slider',
+    title: '@zillowgroup/react-slider',
 }, {
     packageSection: false,
     componentsSection: false,

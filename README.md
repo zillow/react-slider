@@ -7,7 +7,7 @@ See demo: [https://zillow.github.io/react-slider/](https://zillow.github.io/reac
 ### Installation
 
 ```sh
-npm install react-slider
+npm install @zillowgroup/react-slider
 ```
 
 ### Overview
