@@ -25,3 +25,7 @@
 - `npm run build` will build the component for publishing to npm and also bundle the demo app.
 
 - `npm run clean` will delete built resources.
+
+## Deploying
+
+- `npm run deploy` will deploy the living style guide documentation to GitHub pages.
