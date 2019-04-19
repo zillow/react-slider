@@ -1,2 +1,7 @@
+/coverage
+/es
+/lib
+/styleguide
 node_modules
 .idea
+npm-debug.log*

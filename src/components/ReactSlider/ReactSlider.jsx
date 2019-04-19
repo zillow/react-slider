@@ -1,12 +1,8 @@
-(function (root, factory) {
-  if (typeof define === 'function' && define.amd) {
-    define(['react','prop-types','create-react-class'], factory);
-  } else if (typeof exports === 'object') {
-    module.exports = factory(require('react'),require('prop-types'),require('create-react-class'));
-  } else {
-    root.ReactSlider = factory(root.React,root.PropTypes,root.createReactClass);
-  }
-}(this, function (React, PropTypes, createReactClass) {
+/* eslint-disable */
+
+import React from 'react';
+import PropTypes from 'prop-types';
+import createReactClass from 'create-react-class';
 
   /**
    * To prevent text selection while dragging.
@@ -263,13 +259,17 @@
     },
 
     componentDidMount: function () {
-      window.addEventListener('resize', this._handleResize);
-      this._resize();
+      if (typeof window !== 'undefined') {
+         window.addEventListener('resize', this._handleResize);
+         this._resize();
+      }
     },
 
     componentWillUnmount: function () {
       this._clearPendingResizeTimeouts();
-      window.removeEventListener('resize', this._handleResize);
+      if (typeof window !== 'undefined') {
+        window.removeEventListener('resize', this._handleResize);
+      }
     },
 
     getValue: function () {
@@ -880,5 +880,4 @@
     }
   });
 
-  return ReactSlider;
-}));
+export default ReactSlider;
