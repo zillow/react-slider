@@ -1,5 +1,7 @@
 # React Slider
 
+[![npm version](https://badge.fury.io/js/%40zillowgroup%2Freact-slider.svg)](https://badge.fury.io/js/%40zillowgroup%2Freact-slider)
+
 CSS agnostic slider component for React.
 
 See demo: [https://zillow.github.io/react-slider/](https://zillow.github.io/react-slider/)
