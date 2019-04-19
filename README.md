@@ -1,5 +1,7 @@
 # React Slider
 
+[![npm version](https://badge.fury.io/js/react-slider.svg)](https://badge.fury.io/js/react-slider)
+
 CSS agnostic slider component for React.
 
 ### Installation
