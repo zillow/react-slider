@@ -26,7 +26,8 @@
     "test:watch": "create-react-styleguide script test:watch",
     "prepublishOnly": "create-react-styleguide script prepublishOnly",
     "predeploy": "npm run build:styleguide",
-    "deploy": "gh-pages -d styleguide"
+    "deploy": "gh-pages -d styleguide",
+    "release": "standard-version"
   },
   "husky": {
     "hooks": {
@@ -51,6 +52,7 @@
     "react": "^16.8.6",
     "react-dom": "^16.8.6",
     "react-test-renderer": "^16.8.6",
+    "standard-version": "^5.0.2",
     "styled-components": "^4.2.0"
   },
   "author": "brians@zillowgroup.com",
