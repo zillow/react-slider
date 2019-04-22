@@ -26,6 +26,10 @@
 
 - `npm run clean` will delete built resources.
 
+## Publishing
+
+- `npm run release` will run update the CHANGELOG and bump the package version (you still need to run `npm publish`).
+
 ## Deploying
 
 - `npm run deploy` will deploy the living style guide documentation to GitHub pages.
