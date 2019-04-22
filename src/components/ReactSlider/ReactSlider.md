@@ -1,3 +1,7 @@
+### Single slider
+
+Similar to `<input type="range" defaultValue={50} />`
+
 ```jsx
 initialState = { value: 0 };
 
@@ -11,6 +15,8 @@ initialState = { value: 0 };
     <div>{state.value}</div>
 </ReactSlider>
 ```
+
+### Double slider (with bars between the handles)
 
 ```jsx
 initialState = { value: [0, 100] };
@@ -30,6 +36,8 @@ initialState = { value: [0, 100] };
 </ReactSlider>
 ```
 
+### Multi slider
+
 ```jsx
 initialState = { value: [0, 50, 100] };
 
@@ -46,6 +54,8 @@ initialState = { value: [0, 50, 100] };
     {state.value.map((value, i) => <div key={i}>{value}</div>)}
 </ReactSlider>
 ```
+
+### Vertical slider
 
 ```jsx
 initialState = { value: [0, 50, 100] };
