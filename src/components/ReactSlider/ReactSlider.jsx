@@ -1,5 +1,3 @@
-/* eslint-disable */
-
 import React from 'react';
 import PropTypes from 'prop-types';
 
@@ -36,20 +34,47 @@ function linspace(min, max, count) {
 }
 
 function ensureArray(x) {
-    return x == null ? [] : Array.isArray(x) ? x : [x];
+    if (x == null) {
+        return [];
+    }
+    return Array.isArray(x) ? x : [x];
 }
 
 function undoEnsureArray(x) {
-    return x != null && x.length === 1 ? x[0] : x;
+    return x !== null && x.length === 1 ? x[0] : x;
 }
 
-const isArray =
-    Array.isArray ||
-    function(x) {
-        return Object.prototype.toString.call(x) === '[object Array]';
-    };
+function trimSucceeding(length, nextValue, minDistance, max) {
+    for (let i = 0; i < length; i += 1) {
+        const padding = max - i * minDistance;
+        if (nextValue[length - 1 - i] > padding) {
+            // eslint-disable-next-line no-param-reassign
+            nextValue[length - 1 - i] = padding;
+        }
+    }
+}
 
-// undoEnsureArray(ensureArray(x)) === x
+function trimPreceding(length, nextValue, minDistance, min) {
+    for (let i = 0; i < length; i += 1) {
+        const padding = min + i * minDistance;
+        if (nextValue[i] < padding) {
+            // eslint-disable-next-line no-param-reassign
+            nextValue[i] = padding;
+        }
+    }
+}
+
+function addHandlers(eventMap) {
+    Object.keys(eventMap).forEach(key => {
+        document.addEventListener(key, eventMap[key], false);
+    });
+}
+
+function removeHandlers(eventMap) {
+    Object.keys(eventMap).forEach(key => {
+        document.removeEventListener(key, eventMap[key], false);
+    });
+}
 
 class ReactSlider extends React.Component {
     static displayName = 'ReactSlider';
@@ -79,7 +104,8 @@ class ReactSlider extends React.Component {
         minDistance: PropTypes.number,
 
         /**
-         * Determines the initial positions of the handles and the number of handles if the component has no children.
+         * Determines the initial positions of the handles and the number of handles if the
+         * component has no children.
          *
          * If a number is passed a slider with one handle will be rendered.
          * If an array is passed each value will determine the position of one handle.
@@ -89,12 +115,15 @@ class ReactSlider extends React.Component {
         defaultValue: PropTypes.oneOfType([PropTypes.number, PropTypes.arrayOf(PropTypes.number)]),
 
         /**
-         * Like `defaultValue` but for [controlled components](http://facebook.github.io/react/docs/forms.html#controlled-components).
+         * Like `defaultValue` but for
+         * [controlled components](http://facebook.github.io/react/docs/forms.html#controlled-components).
          */
+        // eslint-disable-next-line zillow/react/require-default-props
         value: PropTypes.oneOfType([PropTypes.number, PropTypes.arrayOf(PropTypes.number)]),
 
         /**
-         * Determines whether the slider moves horizontally (from left to right) or vertically (from top to bottom).
+         * Determines whether the slider moves horizontally (from left to right)
+         * or vertically (from top to bottom).
          */
         orientation: PropTypes.oneOf(['horizontal', 'vertical']),
 
@@ -106,8 +135,8 @@ class ReactSlider extends React.Component {
         /**
          * The css class set on each handle node.
          *
-         * In addition each handle will receive a numbered css class of the form `${handleClassName}-${i}`,
-         * e.g. `handle-0`, `handle-1`, ...
+         * In addition each handle will receive a numbered css class of the form
+         * `${handleClassName}-${i}`, e.g. `handle-0`, `handle-1`, ...
          */
         handleClassName: PropTypes.string,
 
@@ -123,8 +152,8 @@ class ReactSlider extends React.Component {
 
         /**
          * The css class set on the bars between the handles.
-         * In addition bar fragment will receive a numbered css class of the form `${barClassName}-${i}`,
-         * e.g. `bar-0`, `bar-1`, ...
+         * In addition bar fragment will receive a numbered css class of the form
+         * `${barClassName}-${i}`, e.g. `bar-0`, `bar-1`, ...
          */
         barClassName: PropTypes.string,
 
@@ -152,23 +181,56 @@ class ReactSlider extends React.Component {
         /**
          * Callback called before starting to move a handle.
          */
+        // eslint-disable-next-line max-len
+        // eslint-disable-next-line zillow/react/require-default-props, zillow/react/no-unused-prop-types
         onBeforeChange: PropTypes.func,
 
         /**
          * Callback called on every value change.
          */
+        // eslint-disable-next-line max-len
+        // eslint-disable-next-line zillow/react/require-default-props, zillow/react/no-unused-prop-types
         onChange: PropTypes.func,
 
         /**
          * Callback called only after moving a handle has ended.
          */
+        // eslint-disable-next-line max-len
+        // eslint-disable-next-line zillow/react/require-default-props, zillow/react/no-unused-prop-types
         onAfterChange: PropTypes.func,
 
         /**
-         *  Callback called when the the slider is clicked (handle or bars).
-         *  Receives the value at the clicked position as argument.
+         * Callback called when the the slider is clicked (handle or bars).
+         * Receives the value at the clicked position as argument.
          */
+        // eslint-disable-next-line zillow/react/require-default-props
         onSliderClick: PropTypes.func,
+
+        /**
+         * Provide custom handles:
+         *
+         *     <ReactSlider withBars>
+         *       <div className="my-handle">1</div>
+         *       <div className="my-handle">2</div>
+         *       <div className="my-handle">3</div>
+         *     </ReactSlider>
+         */
+        // eslint-disable-next-line zillow/react/require-default-props
+        children: PropTypes.node,
+
+        /**
+         * aria-label for screen-readers to apply to the handles.
+         * Use an array for more than one handle.
+         * The length of the array must match the number of handles in the value array.
+         */
+        // eslint-disable-next-line zillow/react/require-default-props
+        ariaLabel: PropTypes.oneOfType([PropTypes.string, PropTypes.arrayOf(PropTypes.string)]),
+
+        /**
+         * aria-valuetext for screen-readers
+         */
+        // eslint-disable-next-line zillow/react/require-default-props
+        ariaValuetext: PropTypes.string,
     };
 
     static defaultProps = {
@@ -192,7 +254,7 @@ class ReactSlider extends React.Component {
     constructor(props) {
         super(props);
 
-        const value = this._or(ensureArray(props.value), ensureArray(props.defaultValue));
+        const value = this.or(ensureArray(props.value), ensureArray(props.defaultValue));
 
         // reused throughout the component to store results of iterations over `value`
         this.tempArray = value.slice();
@@ -202,7 +264,7 @@ class ReactSlider extends React.Component {
 
         const zIndices = [];
         for (let i = 0; i < value.length; i += 1) {
-            value[i] = this._trimAlignValue(value[i], props);
+            value[i] = this.trimAlignValue(value[i], props);
             zIndices.push(i);
         }
 
@@ -214,28 +276,35 @@ class ReactSlider extends React.Component {
             zIndices,
         };
 
-        this._renderHandle = this._renderHandle.bind(this);
-        this._onSliderMouseDown = this._onSliderMouseDown.bind(this);
-        this._onSliderClick = this._onSliderClick.bind(this);
-        this._onMouseUp = this._onMouseUp.bind(this);
-        this._onMouseMove = this._onMouseMove.bind(this);
-        this._onKeyDown = this._onKeyDown.bind(this);
-        this._onBlur = this._onBlur.bind(this);
-        this._onTouchMove = this._onTouchMove.bind(this);
-        this._onTouchEnd = this._onTouchEnd.bind(this);
-        this._handleResize = this._handleResize.bind(this);
+        this.renderHandle = this.renderHandle.bind(this);
+        this.onSliderMouseDown = this.onSliderMouseDown.bind(this);
+        this.onSliderClick = this.onSliderClick.bind(this);
+        this.onMouseUp = this.onMouseUp.bind(this);
+        this.onMouseMove = this.onMouseMove.bind(this);
+        this.onKeyDown = this.onKeyDown.bind(this);
+        this.onBlur = this.onBlur.bind(this);
+        this.onTouchMove = this.onTouchMove.bind(this);
+        this.onTouchEnd = this.onTouchEnd.bind(this);
+        this.handleResize = this.handleResize.bind(this);
+    }
+
+    componentDidMount() {
+        if (typeof window !== 'undefined') {
+            window.addEventListener('resize', this.handleResize);
+            this.resize();
+        }
     }
 
     // Keep the internal `value` consistent with an outside `value` if present.
     // This basically allows the slider to be a controlled component.
     componentWillReceiveProps(newProps) {
-        const value = this._or(ensureArray(newProps.value), this.state.value);
+        const value = this.or(ensureArray(newProps.value), this.state.value);
 
         // ensure the array keeps the same size as `value`
         this.tempArray = value.slice();
 
         for (let i = 0; i < value.length; i += 1) {
-            this.state.value[i] = this._trimAlignValue(value[i], newProps);
+            this.state.value[i] = this.trimAlignValue(value[i], newProps);
         }
         if (this.state.value.length > value.length) {
             this.state.value.length = value.length;
@@ -244,313 +313,47 @@ class ReactSlider extends React.Component {
         // If an upperBound has not yet been determined (due to the component being hidden
         // during the mount event, or during the last resize), then calculate it now
         if (this.state.upperBound === 0) {
-            this._resize();
-        }
-    }
-
-    // Check if the arity of `value` or `defaultValue` matches the number of children (= number of custom handles).
-    // If no custom handles are provided, just returns `value` if present and `defaultValue` otherwise.
-    // If custom handles are present but neither `value` nor `defaultValue` are applicable the handles are spread out
-    // equally.
-    // TODO: better name? better solution?
-    _or(value, defaultValue) {
-        const count = React.Children.count(this.props.children);
-        switch (count) {
-            case 0:
-                return value.length > 0 ? value : defaultValue;
-            case value.length:
-                return value;
-            case defaultValue.length:
-                return defaultValue;
-            default:
-                if (value.length !== count || defaultValue.length !== count) {
-                    console.warn(
-                        `${
-                            this.constructor.displayName
-                        }: Number of values does not match number of children.`
-                    );
-                }
-                return linspace(this.props.min, this.props.max, count);
-        }
-    }
-
-    componentDidMount() {
-        if (typeof window !== 'undefined') {
-            window.addEventListener('resize', this._handleResize);
-            this._resize();
+            this.resize();
         }
     }
 
     componentWillUnmount() {
-        this._clearPendingResizeTimeouts();
+        this.clearPendingResizeTimeouts();
         if (typeof window !== 'undefined') {
-            window.removeEventListener('resize', this._handleResize);
+            window.removeEventListener('resize', this.handleResize);
         }
     }
 
-    getValue() {
-        return undoEnsureArray(this.state.value);
+    onMouseUp() {
+        this.onEnd(this.getMouseEventMap());
     }
 
-    _resize() {
-        const { slider } = this;
-        const handle = this.handle0;
-        const rect = slider.getBoundingClientRect();
-
-        const size = this._sizeKey();
-
-        const sliderMax = rect[this._posMaxKey()];
-        const sliderMin = rect[this._posMinKey()];
-
-        this.setState({
-            upperBound: slider[size] - handle[size],
-            sliderLength: Math.abs(sliderMax - sliderMin),
-            handleSize: handle[size],
-            sliderStart: this.props.invert ? sliderMax : sliderMin,
-        });
+    onTouchEnd() {
+        this.onEnd(this.getTouchEventMap());
     }
 
-    _handleResize() {
-        // setTimeout of 0 gives element enough time to have assumed its new size if it is being resized
-        const resizeTimeout = window.setTimeout(() => {
-            // drop this timeout from pendingResizeTimeouts to reduce memory usage
-            this.pendingResizeTimeouts.shift();
-            this._resize();
-        }, 0);
-
-        this.pendingResizeTimeouts.push(resizeTimeout);
+    onBlur() {
+        this.onEnd(this.getKeyDownEventMap());
     }
 
-    // clear all pending timeouts to avoid error messages after unmounting
-    _clearPendingResizeTimeouts() {
-        do {
-            const nextTimeout = this.pendingResizeTimeouts.shift();
-
-            clearTimeout(nextTimeout);
-        } while (this.pendingResizeTimeouts.length);
+    onEnd(eventMap) {
+        removeHandlers(eventMap);
+        this.setState({ index: -1 }, this.fireChangeEvent.bind(this, 'onAfterChange'));
     }
 
-    // calculates the offset of a handle in pixels based on its value.
-    _calcOffset(value) {
-        const range = this.props.max - this.props.min;
-        if (range === 0) {
-            return 0;
-        }
-        const ratio = (value - this.props.min) / range;
-        return ratio * this.state.upperBound;
+    onMouseMove(e) {
+        const position = this.getMousePosition(e);
+        const diffPosition = this.getDiffPosition(position[0]);
+        const newValue = this.getValueFromPosition(diffPosition);
+        this.move(newValue);
     }
 
-    // calculates the value corresponding to a given pixel offset, i.e. the inverse of `_calcOffset`.
-    _calcValue(offset) {
-        const ratio = offset / this.state.upperBound;
-        return ratio * (this.props.max - this.props.min) + this.props.min;
-    }
-
-    _buildHandleStyle(offset, i) {
-        const style = {
-            position: 'absolute',
-            willChange: this.state.index >= 0 ? this._posMinKey() : '',
-            zIndex: this.state.zIndices.indexOf(i) + 1,
-        };
-        style[this._posMinKey()] = `${offset}px`;
-        return style;
-    }
-
-    _buildBarStyle(min, max) {
-        const obj = {
-            position: 'absolute',
-            willChange: this.state.index >= 0 ? `${this._posMinKey()},${this._posMaxKey()}` : '',
-        };
-        obj[this._posMinKey()] = min;
-        obj[this._posMaxKey()] = max;
-        return obj;
-    }
-
-    _getClosestIndex(pixelOffset) {
-        let minDist = Number.MAX_VALUE;
-        let closestIndex = -1;
-
-        const { value } = this.state;
-        const l = value.length;
-
-        for (let i = 0; i < l; i += 1) {
-            const offset = this._calcOffset(value[i]);
-            const dist = Math.abs(pixelOffset - offset);
-            if (dist < minDist) {
-                minDist = dist;
-                closestIndex = i;
-            }
-        }
-
-        return closestIndex;
-    }
-
-    _calcOffsetFromPosition(position) {
-        let pixelOffset = position - this.state.sliderStart;
-        if (this.props.invert) {
-            pixelOffset = this.state.sliderLength - pixelOffset;
-        }
-        pixelOffset -= this.state.handleSize / 2;
-        return pixelOffset;
-    }
-
-    // Snaps the nearest handle to the value corresponding to `position` and calls `callback` with that handle's index.
-    _forceValueFromPosition(position, callback) {
-        const pixelOffset = this._calcOffsetFromPosition(position);
-        const closestIndex = this._getClosestIndex(pixelOffset);
-        const nextValue = this._trimAlignValue(this._calcValue(pixelOffset));
-
-        const value = this.state.value.slice(); // Clone this.state.value since we'll modify it temporarily
-        value[closestIndex] = nextValue;
-
-        // Prevents the slider from shrinking below `props.minDistance`
-        for (let i = 0; i < value.length - 1; i += 1) {
-            if (value[i + 1] - value[i] < this.props.minDistance) {
-                return;
-            }
-        }
-
-        this.setState({ value }, callback.bind(this, closestIndex));
-    }
-
-    _getMousePosition(e) {
-        return [e[`page${this._axisKey()}`], e[`page${this._orthogonalAxisKey()}`]];
-    }
-
-    _getTouchPosition(e) {
-        const touch = e.touches[0];
-        return [touch[`page${this._axisKey()}`], touch[`page${this._orthogonalAxisKey()}`]];
-    }
-
-    _getKeyDownEventMap() {
-        return {
-            keydown: this._onKeyDown,
-            focusout: this._onBlur,
-        };
-    }
-
-    _getMouseEventMap() {
-        return {
-            mousemove: this._onMouseMove,
-            mouseup: this._onMouseUp,
-        };
-    }
-
-    _getTouchEventMap() {
-        return {
-            touchmove: this._onTouchMove,
-            touchend: this._onTouchEnd,
-        };
-    }
-
-    // create the `keydown` handler for the i-th handle
-    _createOnKeyDown(i) {
-        return function(e) {
-            if (this.props.disabled) {
-                return;
-            }
-            this._start(i);
-            this._addHandlers(this._getKeyDownEventMap());
-            pauseEvent(e);
-        }.bind(this);
-    }
-
-    // create the `mousedown` handler for the i-th handle
-    _createOnMouseDown(i) {
-        return function(e) {
-            if (this.props.disabled) {
-                return;
-            }
-            const position = this._getMousePosition(e);
-            this._start(i, position[0]);
-            this._addHandlers(this._getMouseEventMap());
-            pauseEvent(e);
-        }.bind(this);
-    }
-
-    // create the `touchstart` handler for the i-th handle
-    _createOnTouchStart(i) {
-        return function(e) {
-            if (this.props.disabled || e.touches.length > 1) {
-                return;
-            }
-            const position = this._getTouchPosition(e);
-            this.startPosition = position;
-            this.isScrolling = undefined; // don't know yet if the user is trying to scroll
-            this._start(i, position[0]);
-            this._addHandlers(this._getTouchEventMap());
-            stopPropagation(e);
-        }.bind(this);
-    }
-
-    _addHandlers(eventMap) {
-        for (const key in eventMap) {
-            document.addEventListener(key, eventMap[key], false);
-        }
-    }
-
-    _removeHandlers(eventMap) {
-        for (const key in eventMap) {
-            document.removeEventListener(key, eventMap[key], false);
-        }
-    }
-
-    _start(i, position) {
-        const activeEl = document.activeElement;
-        const handleRef = this[`handle${i}`];
-        // if activeElement is body window will lost focus in IE9
-        if (activeEl && activeEl != document.body && activeEl != handleRef) {
-            activeEl.blur && activeEl.blur();
-        }
-
-        this.hasMoved = false;
-
-        this._fireChangeEvent('onBeforeChange');
-
-        const { zIndices } = this.state;
-        zIndices.splice(zIndices.indexOf(i), 1); // remove wherever the element is
-        zIndices.push(i); // add to end
-
-        this.setState(function(prevState) {
-            return {
-                startValue: this.state.value[i],
-                startPosition: position !== undefined ? position : prevState.startPosition,
-                index: i,
-                zIndices,
-            };
-        });
-    }
-
-    _onMouseUp() {
-        this._onEnd(this._getMouseEventMap());
-    }
-
-    _onTouchEnd() {
-        this._onEnd(this._getTouchEventMap());
-    }
-
-    _onBlur() {
-        this._onEnd(this._getKeyDownEventMap());
-    }
-
-    _onEnd(eventMap) {
-        this._removeHandlers(eventMap);
-        this.setState({ index: -1 }, this._fireChangeEvent.bind(this, 'onAfterChange'));
-    }
-
-    _onMouseMove(e) {
-        const position = this._getMousePosition(e);
-        const diffPosition = this._getDiffPosition(position[0]);
-        const newValue = this._getValueFromPosition(diffPosition);
-        this._move(newValue);
-    }
-
-    _onTouchMove(e) {
+    onTouchMove(e) {
         if (e.touches.length > 1) {
             return;
         }
 
-        const position = this._getTouchPosition(e);
+        const position = this.getTouchPosition(e);
 
         if (typeof this.isScrolling === 'undefined') {
             const diffMainDir = position[0] - this.startPosition[0];
@@ -565,13 +368,13 @@ class ReactSlider extends React.Component {
 
         pauseEvent(e);
 
-        const diffPosition = this._getDiffPosition(position[0]);
-        const newValue = this._getValueFromPosition(diffPosition);
+        const diffPosition = this.getDiffPosition(position[0]);
+        const newValue = this.getValueFromPosition(diffPosition);
 
-        this._move(newValue);
+        this.move(newValue);
     }
 
-    _onKeyDown(e) {
+    onKeyDown(e) {
         if (e.ctrlKey || e.shiftKey || e.altKey) {
             return;
         }
@@ -579,39 +382,115 @@ class ReactSlider extends React.Component {
             case 'ArrowLeft':
             case 'ArrowDown':
                 e.preventDefault();
-                return this._moveDownOneStep();
+                this.moveDownOneStep();
+                return;
             case 'ArrowRight':
             case 'ArrowUp':
                 e.preventDefault();
-                return this._moveUpOneStep();
+                this.moveUpOneStep();
+                return;
             case 'Home':
-                return this._move(this.props.min);
+                this.move(this.props.min);
+                return;
             case 'End':
-                return this._move(this.props.max);
+                this.move(this.props.max);
+                break;
             default:
         }
     }
 
-    _moveUpOneStep() {
-        const oldValue = this.state.value[this.state.index];
-        const newValue = oldValue + this.props.step;
-        this._move(Math.min(newValue, this.props.max));
+    onSliderMouseDown(e) {
+        if (this.props.disabled) {
+            return;
+        }
+        this.hasMoved = false;
+        if (!this.props.snapDragDisabled) {
+            const position = this.getMousePosition(e);
+            this.forceValueFromPosition(position[0], i => {
+                this.start(i, position[0]);
+                this.fireChangeEvent('onChange');
+                addHandlers(this.getMouseEventMap());
+            });
+        }
+
+        pauseEvent(e);
     }
 
-    _moveDownOneStep() {
-        const oldValue = this.state.value[this.state.index];
-        const newValue = oldValue - this.props.step;
-        this._move(Math.max(newValue, this.props.min));
+    onSliderClick(e) {
+        if (this.props.disabled) {
+            return;
+        }
+
+        if (this.props.onSliderClick && !this.hasMoved) {
+            const position = this.getMousePosition(e);
+            const valueAtPos = this.trimAlignValue(
+                this.calcValue(this.calcOffsetFromPosition(position[0]))
+            );
+            this.props.onSliderClick(valueAtPos);
+        }
     }
 
-    _getValueFromPosition(position) {
+    getValue() {
+        return undoEnsureArray(this.state.value);
+    }
+
+    getClosestIndex(pixelOffset) {
+        let minDist = Number.MAX_VALUE;
+        let closestIndex = -1;
+
+        const { value } = this.state;
+        const l = value.length;
+
+        for (let i = 0; i < l; i += 1) {
+            const offset = this.calcOffset(value[i]);
+            const dist = Math.abs(pixelOffset - offset);
+            if (dist < minDist) {
+                minDist = dist;
+                closestIndex = i;
+            }
+        }
+
+        return closestIndex;
+    }
+
+    getMousePosition(e) {
+        return [e[`page${this.axisKey()}`], e[`page${this.orthogonalAxisKey()}`]];
+    }
+
+    getTouchPosition(e) {
+        const touch = e.touches[0];
+        return [touch[`page${this.axisKey()}`], touch[`page${this.orthogonalAxisKey()}`]];
+    }
+
+    getKeyDownEventMap() {
+        return {
+            keydown: this.onKeyDown,
+            focusout: this.onBlur,
+        };
+    }
+
+    getMouseEventMap() {
+        return {
+            mousemove: this.onMouseMove,
+            mouseup: this.onMouseUp,
+        };
+    }
+
+    getTouchEventMap() {
+        return {
+            touchmove: this.onTouchMove,
+            touchend: this.onTouchEnd,
+        };
+    }
+
+    getValueFromPosition(position) {
         const diffValue =
             (position / (this.state.sliderLength - this.state.handleSize)) *
             (this.props.max - this.props.min);
-        return this._trimAlignValue(this.state.startValue + diffValue);
+        return this.trimAlignValue(this.state.startValue + diffValue);
     }
 
-    _getDiffPosition(position) {
+    getDiffPosition(position) {
         let diffPosition = position - this.state.startPosition;
         if (this.props.invert) {
             diffPosition *= -1;
@@ -619,25 +498,230 @@ class ReactSlider extends React.Component {
         return diffPosition;
     }
 
-    _move(newValue) {
+    // create the `keydown` handler for the i-th handle
+    createOnKeyDown = i => e => {
+        if (this.props.disabled) {
+            return;
+        }
+        this.start(i);
+        addHandlers(this.getKeyDownEventMap());
+        pauseEvent(e);
+    };
+
+    // create the `mousedown` handler for the i-th handle
+    createOnMouseDown = i => e => {
+        if (this.props.disabled) {
+            return;
+        }
+        const position = this.getMousePosition(e);
+        this.start(i, position[0]);
+        addHandlers(this.getMouseEventMap());
+        pauseEvent(e);
+    };
+
+    // create the `touchstart` handler for the i-th handle
+    createOnTouchStart = i => e => {
+        if (this.props.disabled || e.touches.length > 1) {
+            return;
+        }
+        const position = this.getTouchPosition(e);
+        this.startPosition = position;
+        // don't know yet if the user is trying to scroll
+        this.isScrolling = undefined;
+        this.start(i, position[0]);
+        addHandlers(this.getTouchEventMap());
+        stopPropagation(e);
+    };
+
+    buildHandleStyle(offset, i) {
+        const style = {
+            position: 'absolute',
+            willChange: this.state.index >= 0 ? this.posMinKey() : '',
+            zIndex: this.state.zIndices.indexOf(i) + 1,
+        };
+        style[this.posMinKey()] = `${offset}px`;
+        return style;
+    }
+
+    buildBarStyle(min, max) {
+        const obj = {
+            position: 'absolute',
+            willChange: this.state.index >= 0 ? `${this.posMinKey()},${this.posMaxKey()}` : '',
+        };
+        obj[this.posMinKey()] = min;
+        obj[this.posMaxKey()] = max;
+        return obj;
+    }
+
+    // calculates the offset of a handle in pixels based on its value.
+    calcOffset(value) {
+        const range = this.props.max - this.props.min;
+        if (range === 0) {
+            return 0;
+        }
+        const ratio = (value - this.props.min) / range;
+        return ratio * this.state.upperBound;
+    }
+
+    // calculates the value corresponding to a given pixel offset, i.e. the inverse of `calcOffset`.
+    calcValue(offset) {
+        const ratio = offset / this.state.upperBound;
+        return ratio * (this.props.max - this.props.min) + this.props.min;
+    }
+
+    calcOffsetFromPosition(position) {
+        let pixelOffset = position - this.state.sliderStart;
+        if (this.props.invert) {
+            pixelOffset = this.state.sliderLength - pixelOffset;
+        }
+        pixelOffset -= this.state.handleSize / 2;
+        return pixelOffset;
+    }
+
+    // Snaps the nearest handle to the value corresponding to `position`
+    // and calls `callback` with that handle's index.
+    forceValueFromPosition(position, callback) {
+        const pixelOffset = this.calcOffsetFromPosition(position);
+        const closestIndex = this.getClosestIndex(pixelOffset);
+        const nextValue = this.trimAlignValue(this.calcValue(pixelOffset));
+
+        // Clone this.state.value since we'll modify it temporarily
+        // eslint-disable-next-line zillow/react/no-access-state-in-setstate
+        const value = this.state.value.slice();
+        value[closestIndex] = nextValue;
+
+        // Prevents the slider from shrinking below `props.minDistance`
+        for (let i = 0; i < value.length - 1; i += 1) {
+            if (value[i + 1] - value[i] < this.props.minDistance) {
+                return;
+            }
+        }
+
+        this.setState({ value }, callback.bind(this, closestIndex));
+    }
+
+    resize() {
+        const { slider } = this;
+        const handle = this.handle0;
+        const rect = slider.getBoundingClientRect();
+
+        const sizeKey = this.sizeKey();
+
+        const sliderMax = rect[this.posMaxKey()];
+        const sliderMin = rect[this.posMinKey()];
+
+        this.setState({
+            upperBound: slider[sizeKey] - handle[sizeKey],
+            sliderLength: Math.abs(sliderMax - sliderMin),
+            handleSize: handle[sizeKey],
+            sliderStart: this.props.invert ? sliderMax : sliderMin,
+        });
+    }
+
+    handleResize() {
+        // setTimeout of 0 gives element enough time to have assumed its new size if
+        // it is being resized
+        const resizeTimeout = window.setTimeout(() => {
+            // drop this timeout from pendingResizeTimeouts to reduce memory usage
+            this.pendingResizeTimeouts.shift();
+            this.resize();
+        }, 0);
+
+        this.pendingResizeTimeouts.push(resizeTimeout);
+    }
+
+    // clear all pending timeouts to avoid error messages after unmounting
+    clearPendingResizeTimeouts() {
+        do {
+            const nextTimeout = this.pendingResizeTimeouts.shift();
+
+            clearTimeout(nextTimeout);
+        } while (this.pendingResizeTimeouts.length);
+    }
+
+    // Check if the arity of `value` or `defaultValue` matches the number of children
+    // (= number of custom handles).
+    // If no custom handles are provided,
+    // just returns `value` if present and `defaultValue` otherwise.
+    // If custom handles are present but neither `value` nor `defaultValue` are applicable
+    // the handles are spread out equally.
+    // TODO: better name? better solution?
+    or(value, defaultValue) {
+        const count = React.Children.count(this.props.children);
+        switch (count) {
+            case 0:
+                return value.length > 0 ? value : defaultValue;
+            case value.length:
+                return value;
+            case defaultValue.length:
+                return defaultValue;
+            default:
+                if (value.length !== count || defaultValue.length !== count) {
+                    // eslint-disable-next-line no-console
+                    console.warn(
+                        `${
+                            this.constructor.displayName
+                        }: Number of values does not match number of children.`
+                    );
+                }
+                return linspace(this.props.min, this.props.max, count);
+        }
+    }
+
+    start(i, position) {
+        const activeEl = document.activeElement;
+        const handleRef = this[`handle${i}`];
+        // if activeElement is body window will lost focus in IE9
+        if (activeEl && activeEl !== document.body && activeEl !== handleRef && activeEl.blur) {
+            activeEl.blur();
+        }
+
+        this.hasMoved = false;
+
+        this.fireChangeEvent('onBeforeChange');
+
+        const { zIndices } = this.state;
+        // remove wherever the element is
+        zIndices.splice(zIndices.indexOf(i), 1);
+        // add to end
+        zIndices.push(i);
+
+        this.setState(prevState => ({
+            startValue: prevState.value[i],
+            startPosition: position !== undefined ? position : prevState.startPosition,
+            index: i,
+            zIndices,
+        }));
+    }
+
+    moveUpOneStep() {
+        const oldValue = this.state.value[this.state.index];
+        const newValue = oldValue + this.props.step;
+        this.move(Math.min(newValue, this.props.max));
+    }
+
+    moveDownOneStep() {
+        const oldValue = this.state.value[this.state.index];
+        const newValue = oldValue - this.props.step;
+        this.move(Math.max(newValue, this.props.min));
+    }
+
+    move(newValue) {
         this.hasMoved = true;
 
-        const { props } = this;
-        const { state } = this;
-        const { index } = state;
-
-        const { value } = state;
+        const { index, value } = this.state;
         const { length } = value;
         const oldValue = value[index];
 
-        const { minDistance } = props;
+        const { pearling, max, min, minDistance } = this.props;
 
         // if "pearling" (= handles pushing each other) is disabled,
         // prevent the handle from getting closer than `minDistance` to the previous or next handle.
-        if (!props.pearling) {
+        if (!pearling) {
             if (index > 0) {
                 const valueBefore = value[index - 1];
                 if (newValue < valueBefore + minDistance) {
+                    // eslint-disable-next-line no-param-reassign
                     newValue = valueBefore + minDistance;
                 }
             }
@@ -645,6 +729,7 @@ class ReactSlider extends React.Component {
             if (index < length - 1) {
                 const valueAfter = value[index + 1];
                 if (newValue > valueAfter - minDistance) {
+                    // eslint-disable-next-line no-param-reassign
                     newValue = valueAfter - minDistance;
                 }
             }
@@ -653,135 +738,105 @@ class ReactSlider extends React.Component {
         value[index] = newValue;
 
         // if "pearling" is enabled, let the current handle push the pre- and succeeding handles.
-        if (props.pearling && length > 1) {
+        if (pearling && length > 1) {
             if (newValue > oldValue) {
-                this._pushSucceeding(value, minDistance, index);
-                this._trimSucceeding(length, value, minDistance, props.max);
+                this.pushSucceeding(value, minDistance, index);
+                trimSucceeding(length, value, minDistance, max);
             } else if (newValue < oldValue) {
-                this._pushPreceding(value, minDistance, index);
-                this._trimPreceding(length, value, minDistance, props.min);
+                this.pushPreceding(value, minDistance, index);
+                trimPreceding(length, value, minDistance, min);
             }
         }
 
-        // Normally you would use `shouldComponentUpdate`, but since the slider is a low-level component,
+        // Normally you would use `shouldComponentUpdate`,
+        // but since the slider is a low-level component,
         // the extra complexity might be worth the extra performance.
         if (newValue !== oldValue) {
-            this.setState({ value }, this._fireChangeEvent.bind(this, 'onChange'));
+            this.setState({ value }, this.fireChangeEvent.bind(this, 'onChange'));
         }
     }
 
-    _pushSucceeding(value, minDistance, index) {
+    pushSucceeding(value, minDistance, index) {
         let i;
         let padding;
         for (
             i = index, padding = value[i] + minDistance;
-            value[i + 1] != null && padding > value[i + 1];
+            value[i + 1] !== null && padding > value[i + 1];
             i += 1, padding = value[i] + minDistance
         ) {
-            value[i + 1] = this._alignValue(padding);
+            // eslint-disable-next-line no-param-reassign
+            value[i + 1] = this.alignValue(padding);
         }
     }
 
-    _trimSucceeding(length, nextValue, minDistance, max) {
-        for (let i = 0; i < length; i += 1) {
-            const padding = max - i * minDistance;
-            if (nextValue[length - 1 - i] > padding) {
-                nextValue[length - 1 - i] = padding;
-            }
-        }
-    }
-
-    _pushPreceding(value, minDistance, index) {
-        let i;
-        let padding;
+    pushPreceding(value, minDistance, index) {
         for (
-            i = index, padding = value[i] - minDistance;
-            value[i - 1] != null && padding < value[i - 1];
+            let i = index, padding = value[i] - minDistance;
+            value[i - 1] !== null && padding < value[i - 1];
             i -= 1, padding = value[i] - minDistance
         ) {
-            value[i - 1] = this._alignValue(padding);
+            // eslint-disable-next-line no-param-reassign
+            value[i - 1] = this.alignValue(padding);
         }
     }
 
-    _trimPreceding(length, nextValue, minDistance, min) {
-        for (let i = 0; i < length; i += 1) {
-            const padding = min + i * minDistance;
-            if (nextValue[i] < padding) {
-                nextValue[i] = padding;
-            }
-        }
-    }
-
-    _axisKey() {
-        const { orientation } = this.props;
-        if (orientation === 'horizontal') {
-            return 'X';
-        }
-        if (orientation === 'vertical') {
+    axisKey() {
+        if (this.props.orientation === 'vertical') {
             return 'Y';
         }
+        // Defaults to 'horizontal';
+        return 'X';
     }
 
-    _orthogonalAxisKey() {
-        const { orientation } = this.props;
-        if (orientation === 'horizontal') {
-            return 'Y';
-        }
-        if (orientation === 'vertical') {
+    orthogonalAxisKey() {
+        if (this.props.orientation === 'vertical') {
             return 'X';
         }
+        // Defaults to 'horizontal'
+        return 'Y';
     }
 
-    _posMinKey() {
-        const { orientation } = this.props;
-        if (orientation === 'horizontal') {
-            return this.props.invert ? 'right' : 'left';
-        }
-        if (orientation === 'vertical') {
+    posMinKey() {
+        if (this.props.orientation === 'vertical') {
             return this.props.invert ? 'bottom' : 'top';
         }
+        // Defaults to 'horizontal'
+        return this.props.invert ? 'right' : 'left';
     }
 
-    _posMaxKey() {
-        const { orientation } = this.props;
-        if (orientation === 'horizontal') {
-            return this.props.invert ? 'left' : 'right';
-        }
-        if (orientation === 'vertical') {
+    posMaxKey() {
+        if (this.props.orientation === 'vertical') {
             return this.props.invert ? 'top' : 'bottom';
         }
+        // Defaults to 'horizontal'
+        return this.props.invert ? 'left' : 'right';
     }
 
-    _sizeKey() {
-        const { orientation } = this.props;
-        if (orientation === 'horizontal') {
-            return 'clientWidth';
-        }
-        if (orientation === 'vertical') {
+    sizeKey() {
+        if (this.props.orientation === 'vertical') {
             return 'clientHeight';
         }
+        // Defaults to 'horizontal'
+        return 'clientWidth';
     }
 
-    _trimAlignValue(val, props) {
-        return this._alignValue(this._trimValue(val, props), props);
+    trimAlignValue(val, props) {
+        return this.alignValue(this.trimValue(val, props), props);
     }
 
-    _trimValue(val, props) {
-        props = props || this.props;
-
-        if (val <= props.min) {
-            val = props.min;
+    trimValue(val, props = this.props) {
+        let trimmed = val;
+        if (trimmed <= props.min) {
+            trimmed = props.min;
         }
-        if (val >= props.max) {
-            val = props.max;
+        if (trimmed >= props.max) {
+            trimmed = props.max;
         }
 
-        return val;
+        return trimmed;
     }
 
-    _alignValue(val, props) {
-        props = props || this.props;
-
+    alignValue(val, props = this.props) {
         const valModStep = (val - props.min) % props.step;
         let alignValue = val - valModStep;
 
@@ -792,7 +847,13 @@ class ReactSlider extends React.Component {
         return parseFloat(alignValue.toFixed(5));
     }
 
-    _renderHandle(style, child, i) {
+    fireChangeEvent(event) {
+        if (this.props[event]) {
+            this.props[event](undoEnsureArray(this.state.value));
+        }
+    }
+
+    renderHandle(style, child, i) {
         const self = this;
         const className = `${this.props.handleClassName} ${this.props.handleClassName}-${i} ${
             this.state.index === i ? this.props.handleActiveClassName : ''
@@ -807,15 +868,15 @@ class ReactSlider extends React.Component {
                 key: `handle${i}`,
                 className,
                 style,
-                onMouseDown: this._createOnMouseDown(i),
-                onTouchStart: this._createOnTouchStart(i),
-                onFocus: this._createOnKeyDown(i),
+                onMouseDown: this.createOnMouseDown(i),
+                onTouchStart: this.createOnTouchStart(i),
+                onFocus: this.createOnKeyDown(i),
                 tabIndex: 0,
                 role: 'slider',
                 'aria-valuenow': this.state.value[i],
                 'aria-valuemin': this.props.min,
                 'aria-valuemax': this.props.max,
-                'aria-label': isArray(this.props.ariaLabel)
+                'aria-label': Array.isArray(this.props.ariaLabel)
                     ? this.props.ariaLabel[i]
                     : this.props.ariaLabel,
                 'aria-valuetext': this.props.ariaValuetext,
@@ -824,117 +885,72 @@ class ReactSlider extends React.Component {
         );
     }
 
-    _renderHandles(offset) {
+    renderHandles(offset) {
         const { length } = offset;
 
         const styles = this.tempArray;
-        for (var i = 0; i < length; i += 1) {
-            styles[i] = this._buildHandleStyle(offset[i], i);
+        for (let i = 0; i < length; i += 1) {
+            styles[i] = this.buildHandleStyle(offset[i], i);
         }
 
         const res = [];
-        const renderHandle = this._renderHandle;
+        const { renderHandle } = this;
         if (React.Children.count(this.props.children) > 0) {
             React.Children.forEach(this.props.children, (child, i) => {
                 res[i] = renderHandle(styles[i], child, i);
             });
         } else {
-            for (i = 0; i < length; i += 1) {
+            for (let i = 0; i < length; i += 1) {
                 res[i] = renderHandle(styles[i], null, i);
             }
         }
         return res;
     }
 
-    _renderBar(i, offsetFrom, offsetTo) {
-        const self = this;
-        return React.createElement('div', {
-            key: `bar${i}`,
-            ref(r) {
-                self[`bar${i}`] = r;
-            },
-            className: `${this.props.barClassName} ${this.props.barClassName}-${i}`,
-            style: this._buildBarStyle(offsetFrom, this.state.upperBound - offsetTo),
-        });
-    }
+    renderBar = (i, offsetFrom, offsetTo) => (
+        <div
+            key={`bar${i}`}
+            className={`${this.props.barClassName} ${this.props.barClassName}-${i}`}
+            style={this.buildBarStyle(offsetFrom, this.state.upperBound - offsetTo)}
+        />
+    );
 
-    _renderBars(offset) {
+    renderBars(offset) {
         const bars = [];
         const lastIndex = offset.length - 1;
 
-        bars.push(this._renderBar(0, 0, offset[0]));
+        bars.push(this.renderBar(0, 0, offset[0]));
 
         for (let i = 0; i < lastIndex; i += 1) {
-            bars.push(this._renderBar(i + 1, offset[i], offset[i + 1]));
+            bars.push(this.renderBar(i + 1, offset[i], offset[i + 1]));
         }
 
-        bars.push(this._renderBar(lastIndex + 1, offset[lastIndex], this.state.upperBound));
+        bars.push(this.renderBar(lastIndex + 1, offset[lastIndex], this.state.upperBound));
 
         return bars;
     }
 
-    _onSliderMouseDown(e) {
-        if (this.props.disabled) {
-            return;
-        }
-        this.hasMoved = false;
-        if (!this.props.snapDragDisabled) {
-            const position = this._getMousePosition(e);
-            this._forceValueFromPosition(position[0], i => {
-                this._start(i, position[0]);
-                this._fireChangeEvent('onChange');
-                this._addHandlers(this._getMouseEventMap());
-            });
-        }
-
-        pauseEvent(e);
-    }
-
-    _onSliderClick(e) {
-        if (this.props.disabled) {
-            return;
-        }
-
-        if (this.props.onSliderClick && !this.hasMoved) {
-            const position = this._getMousePosition(e);
-            const valueAtPos = this._trimAlignValue(
-                this._calcValue(this._calcOffsetFromPosition(position[0]))
-            );
-            this.props.onSliderClick(valueAtPos);
-        }
-    }
-
-    _fireChangeEvent(event) {
-        if (this.props[event]) {
-            this.props[event](undoEnsureArray(this.state.value));
-        }
-    }
-
     render() {
-        const self = this;
-        const { state } = this;
-        const { props } = this;
-
         const offset = this.tempArray;
-        const { value } = state;
+        const { value } = this.state;
         const l = value.length;
         for (let i = 0; i < l; i += 1) {
-            offset[i] = this._calcOffset(value[i], i);
+            offset[i] = this.calcOffset(value[i], i);
         }
 
-        const bars = props.withBars ? this._renderBars(offset) : null;
-        const handles = this._renderHandles(offset);
+        const bars = this.props.withBars ? this.renderBars(offset) : null;
+        const handles = this.renderHandles(offset);
 
         return React.createElement(
             'div',
             {
-                ref(r) {
-                    self.slider = r;
+                ref: r => {
+                    this.slider = r;
                 },
                 style: { position: 'relative' },
-                className: props.className + (props.disabled ? ' disabled' : ''),
-                onMouseDown: this._onSliderMouseDown,
-                onClick: this._onSliderClick,
+                className: this.props.className + (this.props.disabled ? ' disabled' : ''),
+                onMouseDown: this.onSliderMouseDown,
+                onClick: this.onSliderClick,
             },
             bars,
             handles
