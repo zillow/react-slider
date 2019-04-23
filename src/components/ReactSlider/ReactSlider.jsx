@@ -275,17 +275,6 @@ class ReactSlider extends React.Component {
             value,
             zIndices,
         };
-
-        this.renderHandle = this.renderHandle.bind(this);
-        this.onSliderMouseDown = this.onSliderMouseDown.bind(this);
-        this.onSliderClick = this.onSliderClick.bind(this);
-        this.onMouseUp = this.onMouseUp.bind(this);
-        this.onMouseMove = this.onMouseMove.bind(this);
-        this.onKeyDown = this.onKeyDown.bind(this);
-        this.onBlur = this.onBlur.bind(this);
-        this.onTouchMove = this.onTouchMove.bind(this);
-        this.onTouchEnd = this.onTouchEnd.bind(this);
-        this.handleResize = this.handleResize.bind(this);
     }
 
     componentDidMount() {
@@ -324,31 +313,31 @@ class ReactSlider extends React.Component {
         }
     }
 
-    onMouseUp() {
+    onMouseUp = () => {
         this.onEnd(this.getMouseEventMap());
-    }
+    };
 
-    onTouchEnd() {
+    onTouchEnd = () => {
         this.onEnd(this.getTouchEventMap());
-    }
+    };
 
-    onBlur() {
+    onBlur = () => {
         this.onEnd(this.getKeyDownEventMap());
-    }
+    };
 
     onEnd(eventMap) {
         removeHandlers(eventMap);
         this.setState({ index: -1 }, this.fireChangeEvent.bind(this, 'onAfterChange'));
     }
 
-    onMouseMove(e) {
+    onMouseMove = e => {
         const position = this.getMousePosition(e);
         const diffPosition = this.getDiffPosition(position[0]);
         const newValue = this.getValueFromPosition(diffPosition);
         this.move(newValue);
-    }
+    };
 
-    onTouchMove(e) {
+    onTouchMove = e => {
         if (e.touches.length > 1) {
             return;
         }
@@ -372,9 +361,9 @@ class ReactSlider extends React.Component {
         const newValue = this.getValueFromPosition(diffPosition);
 
         this.move(newValue);
-    }
+    };
 
-    onKeyDown(e) {
+    onKeyDown = e => {
         if (e.ctrlKey || e.shiftKey || e.altKey) {
             return;
         }
@@ -397,9 +386,9 @@ class ReactSlider extends React.Component {
                 break;
             default:
         }
-    }
+    };
 
-    onSliderMouseDown(e) {
+    onSliderMouseDown = e => {
         if (this.props.disabled) {
             return;
         }
@@ -414,9 +403,9 @@ class ReactSlider extends React.Component {
         }
 
         pauseEvent(e);
-    }
+    };
 
-    onSliderClick(e) {
+    onSliderClick = e => {
         if (this.props.disabled) {
             return;
         }
@@ -428,7 +417,7 @@ class ReactSlider extends React.Component {
             );
             this.props.onSliderClick(valueAtPos);
         }
-    }
+    };
 
     getValue() {
         return undoEnsureArray(this.state.value);
@@ -533,24 +522,34 @@ class ReactSlider extends React.Component {
         stopPropagation(e);
     };
 
-    buildHandleStyle(offset, i) {
-        const style = {
-            position: 'absolute',
-            willChange: this.state.index >= 0 ? this.posMinKey() : '',
-            zIndex: this.state.zIndices.indexOf(i) + 1,
-        };
-        style[this.posMinKey()] = `${offset}px`;
-        return style;
-    }
+    handleResize = () => {
+        // setTimeout of 0 gives element enough time to have assumed its new size if
+        // it is being resized
+        const resizeTimeout = window.setTimeout(() => {
+            // drop this timeout from pendingResizeTimeouts to reduce memory usage
+            this.pendingResizeTimeouts.shift();
+            this.resize();
+        }, 0);
 
-    buildBarStyle(min, max) {
-        const obj = {
-            position: 'absolute',
-            willChange: this.state.index >= 0 ? `${this.posMinKey()},${this.posMaxKey()}` : '',
-        };
-        obj[this.posMinKey()] = min;
-        obj[this.posMaxKey()] = max;
-        return obj;
+        this.pendingResizeTimeouts.push(resizeTimeout);
+    };
+
+    resize() {
+        const { slider } = this;
+        const handle = this.handle0;
+        const rect = slider.getBoundingClientRect();
+
+        const sizeKey = this.sizeKey();
+
+        const sliderMax = rect[this.posMaxKey()];
+        const sliderMin = rect[this.posMinKey()];
+
+        this.setState({
+            upperBound: slider[sizeKey] - handle[sizeKey],
+            sliderLength: Math.abs(sliderMax - sliderMin),
+            handleSize: handle[sizeKey],
+            sliderStart: this.props.invert ? sliderMax : sliderMin,
+        });
     }
 
     // calculates the offset of a handle in pixels based on its value.
@@ -600,34 +599,24 @@ class ReactSlider extends React.Component {
         this.setState({ value }, callback.bind(this, closestIndex));
     }
 
-    resize() {
-        const { slider } = this;
-        const handle = this.handle0;
-        const rect = slider.getBoundingClientRect();
-
-        const sizeKey = this.sizeKey();
-
-        const sliderMax = rect[this.posMaxKey()];
-        const sliderMin = rect[this.posMinKey()];
-
-        this.setState({
-            upperBound: slider[sizeKey] - handle[sizeKey],
-            sliderLength: Math.abs(sliderMax - sliderMin),
-            handleSize: handle[sizeKey],
-            sliderStart: this.props.invert ? sliderMax : sliderMin,
-        });
+    buildHandleStyle(offset, i) {
+        const style = {
+            position: 'absolute',
+            willChange: this.state.index >= 0 ? this.posMinKey() : '',
+            zIndex: this.state.zIndices.indexOf(i) + 1,
+        };
+        style[this.posMinKey()] = `${offset}px`;
+        return style;
     }
 
-    handleResize() {
-        // setTimeout of 0 gives element enough time to have assumed its new size if
-        // it is being resized
-        const resizeTimeout = window.setTimeout(() => {
-            // drop this timeout from pendingResizeTimeouts to reduce memory usage
-            this.pendingResizeTimeouts.shift();
-            this.resize();
-        }, 0);
-
-        this.pendingResizeTimeouts.push(resizeTimeout);
+    buildBarStyle(min, max) {
+        const obj = {
+            position: 'absolute',
+            willChange: this.state.index >= 0 ? `${this.posMinKey()},${this.posMaxKey()}` : '',
+        };
+        obj[this.posMinKey()] = min;
+        obj[this.posMaxKey()] = max;
+        return obj;
     }
 
     // clear all pending timeouts to avoid error messages after unmounting
@@ -853,8 +842,7 @@ class ReactSlider extends React.Component {
         }
     }
 
-    renderHandle(style, child, i) {
-        const self = this;
+    renderHandle = (style, child, i) => {
         const className = `${this.props.handleClassName} ${this.props.handleClassName}-${i} ${
             this.state.index === i ? this.props.handleActiveClassName : ''
         }`;
@@ -862,8 +850,8 @@ class ReactSlider extends React.Component {
         return React.createElement(
             'div',
             {
-                ref(r) {
-                    self[`handle${i}`] = r;
+                ref: r => {
+                    this[`handle${i}`] = r;
                 },
                 key: `handle${i}`,
                 className,
@@ -883,7 +871,7 @@ class ReactSlider extends React.Component {
             },
             child
         );
-    }
+    };
 
     renderHandles(offset) {
         const { length } = offset;
@@ -894,14 +882,13 @@ class ReactSlider extends React.Component {
         }
 
         const res = [];
-        const { renderHandle } = this;
         if (React.Children.count(this.props.children) > 0) {
             React.Children.forEach(this.props.children, (child, i) => {
-                res[i] = renderHandle(styles[i], child, i);
+                res[i] = this.renderHandle(styles[i], child, i);
             });
         } else {
             for (let i = 0; i < length; i += 1) {
-                res[i] = renderHandle(styles[i], null, i);
+                res[i] = this.renderHandle(styles[i], null, i);
             }
         }
         return res;
