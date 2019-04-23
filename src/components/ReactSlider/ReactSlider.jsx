@@ -599,26 +599,6 @@ class ReactSlider extends React.Component {
         this.setState({ value }, callback.bind(this, closestIndex));
     }
 
-    buildHandleStyle(offset, i) {
-        const style = {
-            position: 'absolute',
-            willChange: this.state.index >= 0 ? this.posMinKey() : '',
-            zIndex: this.state.zIndices.indexOf(i) + 1,
-        };
-        style[this.posMinKey()] = `${offset}px`;
-        return style;
-    }
-
-    buildBarStyle(min, max) {
-        const obj = {
-            position: 'absolute',
-            willChange: this.state.index >= 0 ? `${this.posMinKey()},${this.posMaxKey()}` : '',
-        };
-        obj[this.posMinKey()] = min;
-        obj[this.posMaxKey()] = max;
-        return obj;
-    }
-
     // clear all pending timeouts to avoid error messages after unmounting
     clearPendingResizeTimeouts() {
         do {
@@ -840,6 +820,26 @@ class ReactSlider extends React.Component {
         if (this.props[event]) {
             this.props[event](undoEnsureArray(this.state.value));
         }
+    }
+
+    buildHandleStyle(offset, i) {
+        const style = {
+            position: 'absolute',
+            willChange: this.state.index >= 0 ? this.posMinKey() : '',
+            zIndex: this.state.zIndices.indexOf(i) + 1,
+        };
+        style[this.posMinKey()] = `${offset}px`;
+        return style;
+    }
+
+    buildBarStyle(min, max) {
+        const obj = {
+            position: 'absolute',
+            willChange: this.state.index >= 0 ? `${this.posMinKey()},${this.posMaxKey()}` : '',
+        };
+        obj[this.posMinKey()] = min;
+        obj[this.posMaxKey()] = max;
+        return obj;
     }
 
     renderHandle = (style, child, i) => {
