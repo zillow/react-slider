@@ -7,30 +7,30 @@ initialState = { value: 0 };
 
 <ReactSlider
     className="horizontal-slider"
-    handleClassName="example-handle"
+    thumbClassName="example-thumb"
     value={state.value}
     onChange={value => setState({ value })}
     orientation="horizontal"
-    ariaLabel="This is a single handle"
+    ariaLabel="This is a single thumb"
 >
     <div>{state.value}</div>
 </ReactSlider>
 ```
 
-### Double slider (with bars between the handles)
+### Double slider (with tracks between the thumbs)
 
 ```jsx
 initialState = { value: [0, 100] };
 
 <ReactSlider
     className="horizontal-slider"
-    barClassName="example-bar"
-    handleClassName="example-handle"
+    trackClassName="example-track"
+    thumbClassName="example-thumb"
     value={state.value}
     onChange={value => setState({ value })}
     orientation="horizontal"
-    withBars
-    ariaLabel={['Lower handle', 'Upper handle']}
+    withTracks
+    ariaLabel={['Lower thumb', 'Upper thumb']}
     ariaValuetext="Some arbitrary value"
     pearling
     minDistance={10}
@@ -46,13 +46,13 @@ initialState = { value: [0, 50, 100] };
 
 <ReactSlider
     className="horizontal-slider"
-    barClassName="example-bar"
-    handleClassName="example-handle"
+    trackClassName="example-track"
+    thumbClassName="example-thumb"
     value={state.value}
     onChange={value => setState({ value })}
     orientation="horizontal"
-    withBars
-    ariaLabel={['Leftmost handle', 'Middle handle', 'Rightmost handle']}
+    withTracks
+    ariaLabel={['Leftmost thumb', 'Middle thumb', 'Rightmost thumb']}
     pearling
     minDistance={10}
 >
@@ -67,14 +67,14 @@ initialState = { value: [0, 50, 100] };
 
 <ReactSlider
     className="vertical-slider"
-    barClassName="example-bar"
-    handleClassName="example-handle"
+    trackClassName="example-track"
+    thumbClassName="example-thumb"
     value={state.value}
     onChange={value => setState({ value })}
     orientation="vertical"
-    withBars
+    withTracks
     invert
-    ariaLabel={['Lowest handle', 'Middle handle', 'Top handle']}
+    ariaLabel={['Lowest thumb', 'Middle thumb', 'Top thumb']}
     pearling
     minDistance={10}
 >
@@ -84,7 +84,7 @@ initialState = { value: [0, 50, 100] };
 
 ### Custom styling with [styled-components](https://www.styled-components.com/)
 
-The bar and handle nodes can be customized with the `renderBar` and `renderHandle` render props.
+The track and thumb nodes can be customized with the `renderTrack` and `renderThumb` render props.
 
 ```jsx
 import styled from 'styled-components';
@@ -94,7 +94,7 @@ const StyledSlider = styled(ReactSlider)`
     height: 25px;
 `;
 
-const StyledHandle = styled.div`
+const StyledThumb = styled.div`
     height: 25px;
     line-height: 25px;
     width: 25px;
@@ -105,21 +105,21 @@ const StyledHandle = styled.div`
     cursor: grab;
 `;
 
-const Handle = ({ value, ...props }) => <StyledHandle {...props}>{value}</StyledHandle>;
+const Thumb = ({ value, ...props }) => <StyledThumb {...props}>{value}</StyledThumb>;
 
-const StyledBar = styled.div`
+const StyledTrack = styled.div`
     top: 0;
     bottom: 0;
     background: ${props => props.index === 2 ? '#f00' : props.index === 1 ? '#0f0' : '#ddd'};
     border-radius: 999px;
 `;
 
-const Bar = ({ className, ...props }) => <StyledBar {...props} />;
+const Track = ({ className, ...props }) => <StyledTrack {...props} />;
 
 <StyledSlider
     defaultValue={[50, 75]}
-    withBars
-    renderBar={Bar}
-    renderHandle={Handle}
+    withTracks
+    renderTrack={Track}
+    renderThumb={Thumb}
 />
 ```

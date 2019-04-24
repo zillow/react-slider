@@ -16,7 +16,7 @@ const GlobalStyle = createGlobalStyle`
         border: 1px solid grey;
     }
 
-    .example-handle {
+    .example-thumb {
         font-size: 0.9em;
         text-align: center;
         background-color: black;
@@ -24,43 +24,43 @@ const GlobalStyle = createGlobalStyle`
         cursor: pointer;
     }
 
-    .example-handle.active {
+    .example-thumb.active {
         background-color: grey;
     }
 
-    .example-bar {
+    .example-track {
         position: relative;
         background: #ddd;
     }
 
-    .example-bar.example-bar-1 {
+    .example-track.example-track-1 {
         background: #f00;
     }
 
-    .example-bar.example-bar-2 {
+    .example-track.example-track-2 {
         background: #0f0;
     }
 
-    .horizontal-slider .example-bar {
+    .horizontal-slider .example-track {
         top: 20px;
         height: 10px;
     }
 
-    .horizontal-slider .example-handle {
+    .horizontal-slider .example-thumb {
         top: 1px;
         width: 50px;
         height: 48px;
         line-height: 48px;
     }
 
-    .vertical-slider .example-handle {
+    .vertical-slider .example-thumb {
         left: 1px;
         width: 48px;
         line-height: 50px;
         height: 50px;
     }
 
-    .vertical-slider .example-bar {
+    .vertical-slider .example-track {
         left: 20px;
         width: 10px;
     }
