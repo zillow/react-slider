@@ -21,18 +21,6 @@ function stopPropagation(e) {
     }
 }
 
-/**
- * Spreads `count` values equally between `min` and `max`.
- */
-function linspace(min, max, count) {
-    const range = (max - min) / (count - 1);
-    const res = [];
-    for (let i = 0; i < count; i += 1) {
-        res.push(min + range * i);
-    }
-    return res;
-}
-
 function ensureArray(x) {
     if (x == null) {
         return [];
@@ -104,13 +92,11 @@ class ReactSlider extends React.Component {
         minDistance: PropTypes.number,
 
         /**
-         * Determines the initial positions of the thumbs and the number of thumbs if the
-         * component has no children.
+         * Determines the initial positions of the thumbs and the number of thumbs.
          *
          * If a number is passed a slider with one thumb will be rendered.
          * If an array is passed each value will determine the position of one thumb.
          * The values in the array must be sorted.
-         * If the component has children, the length of the array must match the number of children.
          */
         defaultValue: PropTypes.oneOfType([PropTypes.number, PropTypes.arrayOf(PropTypes.number)]),
 
@@ -207,22 +193,6 @@ class ReactSlider extends React.Component {
         onSliderClick: PropTypes.func,
 
         /**
-         * Provide custom thumbs:
-         *
-         *     <ReactSlider withTracks>
-         *       <div className="my-thumb">1</div>
-         *       <div className="my-thumb">2</div>
-         *       <div className="my-thumb">3</div>
-         *     </ReactSlider>
-         *
-         * Note: the children nodes must match the number of values provided
-         * to `value` or `defaultValue`. To dynamically create custom thumb
-         * content, use the `renderThumb` render prop.
-         */
-        // eslint-disable-next-line zillow/react/require-default-props
-        children: PropTypes.node,
-
-        /**
          * aria-label for screen-readers to apply to the thumbs.
          * Use an array for more than one thumb.
          * The length of the array must match the number of thumbs in the value array.
@@ -250,7 +220,6 @@ class ReactSlider extends React.Component {
 
         /**
          * Provide a custom render function for dynamic thumb content.
-         * For static thumb content, you can use the `children` prop.
          * The render function will be passed a single argument,
          * an object with the following properties:
          *
@@ -284,7 +253,10 @@ class ReactSlider extends React.Component {
     constructor(props) {
         super(props);
 
-        const value = this.or(ensureArray(props.value), ensureArray(props.defaultValue));
+        let value = ensureArray(props.value);
+        if (!value.length) {
+            value = ensureArray(props.defaultValue);
+        }
 
         // reused throughout the component to store results of iterations over `value`
         this.tempArray = value.slice();
@@ -317,7 +289,11 @@ class ReactSlider extends React.Component {
     // Keep the internal `value` consistent with an outside `value` if present.
     // This basically allows the slider to be a controlled component.
     componentWillReceiveProps(newProps) {
-        const value = this.or(ensureArray(newProps.value), this.state.value);
+        let value = ensureArray(newProps.value);
+        if (!value.length) {
+            // eslint-disable-next-line prefer-destructuring
+            value = this.state.value;
+        }
 
         // ensure the array keeps the same size as `value`
         this.tempArray = value.slice();
@@ -638,35 +614,6 @@ class ReactSlider extends React.Component {
         } while (this.pendingResizeTimeouts.length);
     }
 
-    // Check if the arity of `value` or `defaultValue` matches the number of children
-    // (= number of custom thumbs).
-    // If no custom thumbs are provided,
-    // just returns `value` if present and `defaultValue` otherwise.
-    // If custom thumbs are present but neither `value` nor `defaultValue` are applicable
-    // the thumbs are spread out equally.
-    // TODO: better name? better solution?
-    or(value, defaultValue) {
-        const count = React.Children.count(this.props.children);
-        switch (count) {
-            case 0:
-                return value.length > 0 ? value : defaultValue;
-            case value.length:
-                return value;
-            case defaultValue.length:
-                return defaultValue;
-            default:
-                if (value.length !== count || defaultValue.length !== count) {
-                    // eslint-disable-next-line no-console
-                    console.warn(
-                        `${
-                            this.constructor.displayName
-                        }: Number of values does not match number of children.`
-                    );
-                }
-                return linspace(this.props.min, this.props.max, count);
-        }
-    }
-
     start(i, position) {
         const activeEl = document.activeElement;
         const thumbRef = this[`thumb${i}`];
@@ -912,11 +859,7 @@ class ReactSlider extends React.Component {
         }
 
         const res = [];
-        if (React.Children.count(this.props.children) > 0) {
-            React.Children.forEach(this.props.children, (child, i) => {
-                res[i] = this.renderThumb(styles[i], child, i);
-            });
-        } else if (this.props.renderThumb) {
+        if (this.props.renderThumb) {
             for (let i = 0; i < length; i += 1) {
                 const child = this.props.renderThumb({
                     index: i,
