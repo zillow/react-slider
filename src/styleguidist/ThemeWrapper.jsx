@@ -4,10 +4,6 @@ import { ThemeProvider, createGlobalStyle } from 'styled-components';
 import theme from '../themes';
 
 const GlobalStyle = createGlobalStyle`
-    body {
-        -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
-    }
-
     .horizontal-slider {
         width: 100%;
         max-width: 500px;
@@ -21,7 +17,7 @@ const GlobalStyle = createGlobalStyle`
         border: 1px solid grey;
     }
 
-    .handle {
+    .example-handle {
         font-size: 0.9em;
         text-align: center;
         background-color: black;
@@ -29,43 +25,43 @@ const GlobalStyle = createGlobalStyle`
         cursor: pointer;
     }
 
-    .handle.active {
+    .example-handle.active {
         background-color: grey;
     }
 
-    .bar {
+    .example-bar {
         position: relative;
         background: #ddd;
     }
 
-    .bar.bar-1 {
+    .example-bar.example-bar-1 {
         background: #f00;
     }
 
-    .bar.bar-2 {
+    .example-bar.example-bar-2 {
         background: #0f0;
     }
 
-    .horizontal-slider .bar {
+    .horizontal-slider .example-bar {
         top: 20px;
         height: 10px;
     }
 
-    .horizontal-slider .handle {
+    .horizontal-slider .example-handle {
         top: 1px;
         width: 50px;
         height: 48px;
         line-height: 48px;
     }
 
-    .vertical-slider .handle {
+    .vertical-slider .example-handle {
         left: 1px;
         width: 48px;
         line-height: 50px;
         height: 50px;
     }
 
-    .vertical-slider .bar {
+    .vertical-slider .example-bar {
         left: 20px;
         width: 10px;
     }
