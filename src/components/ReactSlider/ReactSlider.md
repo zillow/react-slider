@@ -7,6 +7,7 @@ initialState = { value: 0 };
 
 <ReactSlider
     className="horizontal-slider"
+    handleClassName="example-handle"
     value={state.value}
     onChange={value => setState({ value })}
     orientation="horizontal"
@@ -23,6 +24,8 @@ initialState = { value: [0, 100] };
 
 <ReactSlider
     className="horizontal-slider"
+    barClassName="example-bar"
+    handleClassName="example-handle"
     value={state.value}
     onChange={value => setState({ value })}
     orientation="horizontal"
@@ -43,6 +46,8 @@ initialState = { value: [0, 50, 100] };
 
 <ReactSlider
     className="horizontal-slider"
+    barClassName="example-bar"
+    handleClassName="example-handle"
     value={state.value}
     onChange={value => setState({ value })}
     orientation="horizontal"
@@ -62,6 +67,8 @@ initialState = { value: [0, 50, 100] };
 
 <ReactSlider
     className="vertical-slider"
+    barClassName="example-bar"
+    handleClassName="example-handle"
     value={state.value}
     onChange={value => setState({ value })}
     orientation="vertical"
@@ -114,6 +121,5 @@ const Bar = ({ className, ...props }) => <StyledBar {...props} />;
     withBars
     renderBar={Bar}
     renderHandle={Handle}
-    handleClassName=""
 />
 ```
