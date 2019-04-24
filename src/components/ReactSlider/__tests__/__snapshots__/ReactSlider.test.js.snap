@@ -12,6 +12,30 @@ exports[`<ReactSlider> can render 1`] = `
   }
 >
   <div
+    className="track track-0"
+    index={0}
+    style={
+      Object {
+        "left": 0,
+        "position": "absolute",
+        "right": 0,
+        "willChange": "",
+      }
+    }
+  />
+  <div
+    className="track track-1"
+    index={1}
+    style={
+      Object {
+        "left": 0,
+        "position": "absolute",
+        "right": 0,
+        "willChange": "",
+      }
+    }
+  />
+  <div
     aria-valuemax={100}
     aria-valuemin={0}
     aria-valuenow={0}
