@@ -273,7 +273,7 @@ class ReactSlider extends React.Component {
         thumbClassName: 'thumb',
         thumbActiveClassName: 'active',
         trackClassName: 'track',
-        withTracks: false,
+        withTracks: true,
         pearling: false,
         disabled: false,
         snapDragDisabled: false,
