@@ -98,17 +98,17 @@ class ReactSlider extends React.Component {
         step: PropTypes.number,
 
         /**
-         * The minimal distance between any pair of handles.
+         * The minimal distance between any pair of thumbs.
          * Must be positive, but zero means they can sit on top of each other.
          */
         minDistance: PropTypes.number,
 
         /**
-         * Determines the initial positions of the handles and the number of handles if the
+         * Determines the initial positions of the thumbs and the number of thumbs if the
          * component has no children.
          *
-         * If a number is passed a slider with one handle will be rendered.
-         * If an array is passed each value will determine the position of one handle.
+         * If a number is passed a slider with one thumb will be rendered.
+         * If an array is passed each value will determine the position of one thumb.
          * The values in the array must be sorted.
          * If the component has children, the length of the array must match the number of children.
          */
@@ -133,43 +133,43 @@ class ReactSlider extends React.Component {
         className: PropTypes.string,
 
         /**
-         * The css class set on each handle node.
+         * The css class set on each thumb node.
          *
-         * In addition each handle will receive a numbered css class of the form
-         * `${handleClassName}-${i}`, e.g. `handle-0`, `handle-1`, ...
+         * In addition each thumb will receive a numbered css class of the form
+         * `${thumbClassName}-${i}`, e.g. `thumb-0`, `thumb-1`, ...
          */
-        handleClassName: PropTypes.string,
+        thumbClassName: PropTypes.string,
 
         /**
-         * The css class set on the handle that is currently being moved.
+         * The css class set on the thumb that is currently being moved.
          */
-        handleActiveClassName: PropTypes.string,
+        thumbActiveClassName: PropTypes.string,
 
         /**
-         * If `true` bars between the handles will be rendered.
+         * If `true` tracks between the thumbs will be rendered.
          */
-        withBars: PropTypes.bool,
+        withTracks: PropTypes.bool,
 
         /**
-         * The css class set on the bars between the handles.
-         * In addition bar fragment will receive a numbered css class of the form
-         * `${barClassName}-${i}`, e.g. `bar-0`, `bar-1`, ...
+         * The css class set on the tracks between the thumbs.
+         * In addition track fragment will receive a numbered css class of the form
+         * `${trackClassName}-${i}`, e.g. `track-0`, `track-1`, ...
          */
-        barClassName: PropTypes.string,
+        trackClassName: PropTypes.string,
 
         /**
-         * If `true` the active handle will push other handles
+         * If `true` the active thumb will push other thumbs
          * within the constraints of `min`, `max`, `step` and `minDistance`.
          */
         pearling: PropTypes.bool,
 
         /**
-         * If `true` the handles can't be moved.
+         * If `true` the thumbs can't be moved.
          */
         disabled: PropTypes.bool,
 
         /**
-         * Disables handle move when clicking the slider bar
+         * Disables thumb move when clicking the slider track
          */
         snapDragDisabled: PropTypes.bool,
 
@@ -179,7 +179,7 @@ class ReactSlider extends React.Component {
         invert: PropTypes.bool,
 
         /**
-         * Callback called before starting to move a handle.
+         * Callback called before starting to move a thumb.
          */
         // eslint-disable-next-line max-len
         // eslint-disable-next-line zillow/react/require-default-props, zillow/react/no-unused-prop-types
@@ -193,39 +193,39 @@ class ReactSlider extends React.Component {
         onChange: PropTypes.func,
 
         /**
-         * Callback called only after moving a handle has ended.
+         * Callback called only after moving a thumb has ended.
          */
         // eslint-disable-next-line max-len
         // eslint-disable-next-line zillow/react/require-default-props, zillow/react/no-unused-prop-types
         onAfterChange: PropTypes.func,
 
         /**
-         * Callback called when the the slider is clicked (handle or bars).
+         * Callback called when the the slider is clicked (thumb or tracks).
          * Receives the value at the clicked position as argument.
          */
         // eslint-disable-next-line zillow/react/require-default-props
         onSliderClick: PropTypes.func,
 
         /**
-         * Provide custom handles:
+         * Provide custom thumbs:
          *
-         *     <ReactSlider withBars>
-         *       <div className="my-handle">1</div>
-         *       <div className="my-handle">2</div>
-         *       <div className="my-handle">3</div>
+         *     <ReactSlider withTracks>
+         *       <div className="my-thumb">1</div>
+         *       <div className="my-thumb">2</div>
+         *       <div className="my-thumb">3</div>
          *     </ReactSlider>
          *
          * Note: the children nodes must match the number of values provided
-         * to `value` or `defaultValue`. To dynamically create custom handle
-         * content, use the `renderHandle` render prop.
+         * to `value` or `defaultValue`. To dynamically create custom thumb
+         * content, use the `renderThumb` render prop.
          */
         // eslint-disable-next-line zillow/react/require-default-props
         children: PropTypes.node,
 
         /**
-         * aria-label for screen-readers to apply to the handles.
-         * Use an array for more than one handle.
-         * The length of the array must match the number of handles in the value array.
+         * aria-label for screen-readers to apply to the thumbs.
+         * Use an array for more than one thumb.
+         * The length of the array must match the number of thumbs in the value array.
          */
         // eslint-disable-next-line zillow/react/require-default-props
         ariaLabel: PropTypes.oneOfType([PropTypes.string, PropTypes.arrayOf(PropTypes.string)]),
@@ -237,29 +237,29 @@ class ReactSlider extends React.Component {
         ariaValuetext: PropTypes.string,
 
         /**
-         * Provide a custom render function for the bar node.
+         * Provide a custom render function for the track node.
          * The render function will be passed a single argument,
          * an object with the following properties:
          *
-         * - `index` {`number`} the index of the bar
-         * - `key` {`string`} a unique key for the bar
+         * - `index` {`number`} the index of the track
+         * - `key` {`string`} a unique key for the track
          * - `style` {`object`} positioning styles that should be applied to the node
-         * - `className` {`string`} default classNames for the bar
+         * - `className` {`string`} default classNames for the track
          */
-        renderBar: PropTypes.func,
+        renderTrack: PropTypes.func,
 
         /**
-         * Provide a custom render function for dynamic handle content.
-         * For static handle content, you can use the `children` prop.
+         * Provide a custom render function for dynamic thumb content.
+         * For static thumb content, you can use the `children` prop.
          * The render function will be passed a single argument,
          * an object with the following properties:
          *
-         * - `index` {`number`} the index of the handle
-         * - `key` {`string`} a unique key for the handle
-         * - `value` {`number`} the value of the handle
+         * - `index` {`number`} the index of the thumb
+         * - `key` {`string`} a unique key for the thumb
+         * - `value` {`number`} the value of the thumb
          */
         // eslint-disable-next-line zillow/react/require-default-props
-        renderHandle: PropTypes.func,
+        renderThumb: PropTypes.func,
     };
 
     static defaultProps = {
@@ -270,15 +270,15 @@ class ReactSlider extends React.Component {
         defaultValue: 0,
         orientation: 'horizontal',
         className: 'slider',
-        handleClassName: 'handle',
-        handleActiveClassName: 'active',
-        barClassName: 'bar',
-        withBars: false,
+        thumbClassName: 'thumb',
+        thumbActiveClassName: 'active',
+        trackClassName: 'track',
+        withTracks: false,
         pearling: false,
         disabled: false,
         snapDragDisabled: false,
         invert: false,
-        renderBar: props => <div {...props} />,
+        renderTrack: props => <div {...props} />,
     };
 
     constructor(props) {
@@ -504,7 +504,7 @@ class ReactSlider extends React.Component {
 
     getValueFromPosition(position) {
         const diffValue =
-            (position / (this.state.sliderLength - this.state.handleSize)) *
+            (position / (this.state.sliderLength - this.state.thumbSize)) *
             (this.props.max - this.props.min);
         return this.trimAlignValue(this.state.startValue + diffValue);
     }
@@ -517,7 +517,7 @@ class ReactSlider extends React.Component {
         return diffPosition;
     }
 
-    // create the `keydown` handler for the i-th handle
+    // create the `keydown` handler for the i-th thumb
     createOnKeyDown = i => e => {
         if (this.props.disabled) {
             return;
@@ -527,7 +527,7 @@ class ReactSlider extends React.Component {
         pauseEvent(e);
     };
 
-    // create the `mousedown` handler for the i-th handle
+    // create the `mousedown` handler for the i-th thumb
     createOnMouseDown = i => e => {
         if (this.props.disabled) {
             return;
@@ -538,7 +538,7 @@ class ReactSlider extends React.Component {
         pauseEvent(e);
     };
 
-    // create the `touchstart` handler for the i-th handle
+    // create the `touchstart` handler for the i-th thumb
     createOnTouchStart = i => e => {
         if (this.props.disabled || e.touches.length > 1) {
             return;
@@ -566,7 +566,7 @@ class ReactSlider extends React.Component {
 
     resize() {
         const { slider } = this;
-        const handle = this.handle0;
+        const thumb = this.thumb0;
         const rect = slider.getBoundingClientRect();
 
         const sizeKey = this.sizeKey();
@@ -575,14 +575,14 @@ class ReactSlider extends React.Component {
         const sliderMin = rect[this.posMinKey()];
 
         this.setState({
-            upperBound: slider[sizeKey] - handle[sizeKey],
+            upperBound: slider[sizeKey] - thumb[sizeKey],
             sliderLength: Math.abs(sliderMax - sliderMin),
-            handleSize: handle[sizeKey],
+            thumbSize: thumb[sizeKey],
             sliderStart: this.props.invert ? sliderMax : sliderMin,
         });
     }
 
-    // calculates the offset of a handle in pixels based on its value.
+    // calculates the offset of a thumb in pixels based on its value.
     calcOffset(value) {
         const range = this.props.max - this.props.min;
         if (range === 0) {
@@ -603,12 +603,12 @@ class ReactSlider extends React.Component {
         if (this.props.invert) {
             pixelOffset = this.state.sliderLength - pixelOffset;
         }
-        pixelOffset -= this.state.handleSize / 2;
+        pixelOffset -= this.state.thumbSize / 2;
         return pixelOffset;
     }
 
-    // Snaps the nearest handle to the value corresponding to `position`
-    // and calls `callback` with that handle's index.
+    // Snaps the nearest thumb to the value corresponding to `position`
+    // and calls `callback` with that thumb's index.
     forceValueFromPosition(position, callback) {
         const pixelOffset = this.calcOffsetFromPosition(position);
         const closestIndex = this.getClosestIndex(pixelOffset);
@@ -639,11 +639,11 @@ class ReactSlider extends React.Component {
     }
 
     // Check if the arity of `value` or `defaultValue` matches the number of children
-    // (= number of custom handles).
-    // If no custom handles are provided,
+    // (= number of custom thumbs).
+    // If no custom thumbs are provided,
     // just returns `value` if present and `defaultValue` otherwise.
-    // If custom handles are present but neither `value` nor `defaultValue` are applicable
-    // the handles are spread out equally.
+    // If custom thumbs are present but neither `value` nor `defaultValue` are applicable
+    // the thumbs are spread out equally.
     // TODO: better name? better solution?
     or(value, defaultValue) {
         const count = React.Children.count(this.props.children);
@@ -669,9 +669,9 @@ class ReactSlider extends React.Component {
 
     start(i, position) {
         const activeEl = document.activeElement;
-        const handleRef = this[`handle${i}`];
+        const thumbRef = this[`thumb${i}`];
         // if activeElement is body window will lost focus in IE9
-        if (activeEl && activeEl !== document.body && activeEl !== handleRef && activeEl.blur) {
+        if (activeEl && activeEl !== document.body && activeEl !== thumbRef && activeEl.blur) {
             activeEl.blur();
         }
 
@@ -714,8 +714,8 @@ class ReactSlider extends React.Component {
 
         const { pearling, max, min, minDistance } = this.props;
 
-        // if "pearling" (= handles pushing each other) is disabled,
-        // prevent the handle from getting closer than `minDistance` to the previous or next handle.
+        // if "pearling" (= thumbs pushing each other) is disabled,
+        // prevent the thumb from getting closer than `minDistance` to the previous or next thumb.
         if (!pearling) {
             if (index > 0) {
                 const valueBefore = value[index - 1];
@@ -736,7 +736,7 @@ class ReactSlider extends React.Component {
 
         value[index] = newValue;
 
-        // if "pearling" is enabled, let the current handle push the pre- and succeeding handles.
+        // if "pearling" is enabled, let the current thumb push the pre- and succeeding thumbs.
         if (pearling && length > 1) {
             if (newValue > oldValue) {
                 this.pushSucceeding(value, minDistance, index);
@@ -852,7 +852,7 @@ class ReactSlider extends React.Component {
         }
     }
 
-    buildHandleStyle(offset, i) {
+    buildThumbStyle(offset, i) {
         const style = {
             position: 'absolute',
             willChange: this.state.index >= 0 ? this.posMinKey() : '',
@@ -862,7 +862,7 @@ class ReactSlider extends React.Component {
         return style;
     }
 
-    buildBarStyle(min, max) {
+    buildTrackStyle(min, max) {
         const obj = {
             position: 'absolute',
             willChange: this.state.index >= 0 ? `${this.posMinKey()},${this.posMaxKey()}` : '',
@@ -872,18 +872,18 @@ class ReactSlider extends React.Component {
         return obj;
     }
 
-    renderHandle = (style, child, i) => {
-        const className = `${this.props.handleClassName} ${this.props.handleClassName}-${i} ${
-            this.state.index === i ? this.props.handleActiveClassName : ''
+    renderThumb = (style, child, i) => {
+        const className = `${this.props.thumbClassName} ${this.props.thumbClassName}-${i} ${
+            this.state.index === i ? this.props.thumbActiveClassName : ''
         }`;
 
         return React.createElement(
             'div',
             {
                 ref: r => {
-                    this[`handle${i}`] = r;
+                    this[`thumb${i}`] = r;
                 },
-                key: `handle${i}`,
+                key: `thumb${i}`,
                 className,
                 style,
                 onMouseDown: this.createOnMouseDown(i),
@@ -903,57 +903,57 @@ class ReactSlider extends React.Component {
         );
     };
 
-    renderHandles(offset) {
+    renderThumbs(offset) {
         const { length } = offset;
 
         const styles = this.tempArray;
         for (let i = 0; i < length; i += 1) {
-            styles[i] = this.buildHandleStyle(offset[i], i);
+            styles[i] = this.buildThumbStyle(offset[i], i);
         }
 
         const res = [];
         if (React.Children.count(this.props.children) > 0) {
             React.Children.forEach(this.props.children, (child, i) => {
-                res[i] = this.renderHandle(styles[i], child, i);
+                res[i] = this.renderThumb(styles[i], child, i);
             });
-        } else if (this.props.renderHandle) {
+        } else if (this.props.renderThumb) {
             for (let i = 0; i < length; i += 1) {
-                const child = this.props.renderHandle({
+                const child = this.props.renderThumb({
                     index: i,
-                    key: `${this.props.handleClassName}-${i}`,
+                    key: `${this.props.thumbClassName}-${i}`,
                     value: this.state.value[i],
                 });
-                res[i] = this.renderHandle(styles[i], child, i);
+                res[i] = this.renderThumb(styles[i], child, i);
             }
         } else {
             for (let i = 0; i < length; i += 1) {
-                res[i] = this.renderHandle(styles[i], null, i);
+                res[i] = this.renderThumb(styles[i], null, i);
             }
         }
         return res;
     }
 
-    renderBar = (i, offsetFrom, offsetTo) =>
-        this.props.renderBar({
+    renderTrack = (i, offsetFrom, offsetTo) =>
+        this.props.renderTrack({
             index: i,
-            key: `${this.props.barClassName}-${i}`,
-            className: `${this.props.barClassName} ${this.props.barClassName}-${i}`,
-            style: this.buildBarStyle(offsetFrom, this.state.upperBound - offsetTo),
+            key: `${this.props.trackClassName}-${i}`,
+            className: `${this.props.trackClassName} ${this.props.trackClassName}-${i}`,
+            style: this.buildTrackStyle(offsetFrom, this.state.upperBound - offsetTo),
         });
 
-    renderBars(offset) {
-        const bars = [];
+    renderTracks(offset) {
+        const tracks = [];
         const lastIndex = offset.length - 1;
 
-        bars.push(this.renderBar(0, 0, offset[0]));
+        tracks.push(this.renderTrack(0, 0, offset[0]));
 
         for (let i = 0; i < lastIndex; i += 1) {
-            bars.push(this.renderBar(i + 1, offset[i], offset[i + 1]));
+            tracks.push(this.renderTrack(i + 1, offset[i], offset[i + 1]));
         }
 
-        bars.push(this.renderBar(lastIndex + 1, offset[lastIndex], this.state.upperBound));
+        tracks.push(this.renderTrack(lastIndex + 1, offset[lastIndex], this.state.upperBound));
 
-        return bars;
+        return tracks;
     }
 
     render() {
@@ -964,8 +964,8 @@ class ReactSlider extends React.Component {
             offset[i] = this.calcOffset(value[i], i);
         }
 
-        const bars = this.props.withBars ? this.renderBars(offset) : null;
-        const handles = this.renderHandles(offset);
+        const tracks = this.props.withTracks ? this.renderTracks(offset) : null;
+        const thumbs = this.renderThumbs(offset);
 
         return React.createElement(
             'div',
@@ -978,8 +978,8 @@ class ReactSlider extends React.Component {
                 onMouseDown: this.onSliderMouseDown,
                 onClick: this.onSliderClick,
             },
-            bars,
-            handles
+            tracks,
+            thumbs
         );
     }
 }
