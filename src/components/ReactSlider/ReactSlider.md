@@ -74,3 +74,30 @@ initialState = { value: [0, 50, 100] };
     {state.value.map((value, i) => <div key={i}>{value}</div>)}
 </ReactSlider>
 ```
+
+### Custom bars
+
+The bar fragment can be customized with the `renderBar` render prop.
+
+```jsx
+import styled from 'styled-components';
+
+const StyledBar = styled.div`
+    top: 1px;
+    bottom: 1px;
+    background: ${props => props.index ? '#0f0' : '#ddd'};
+    border-radius: 999px;
+`;
+
+initialState = { value: 50 };
+
+<ReactSlider
+    className="horizontal-slider"
+    value={state.value}
+    onChange={value => setState({ value })}
+    withBars
+    renderBar={({ className, ...props }) => <StyledBar {...props} />}
+>
+    <div>{state.value}</div>
+</ReactSlider>
+```
