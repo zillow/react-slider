@@ -231,6 +231,18 @@ class ReactSlider extends React.Component {
          */
         // eslint-disable-next-line zillow/react/require-default-props
         ariaValuetext: PropTypes.string,
+
+        /**
+         * Provide a custom render function for the bar fragment.
+         * The render function will be passed a single arguments,
+         * an object with the following properties:
+         *
+         * - `index` {`number`} the index of the bar
+         * - `key` {`string`} a unique key for the bar
+         * - `style` {`object`} positioning styles that should be applied to the fragment
+         * - `className` {`string`} default classNames for the bar
+         */
+        renderBar: PropTypes.func,
     };
 
     static defaultProps = {
@@ -249,6 +261,7 @@ class ReactSlider extends React.Component {
         disabled: false,
         snapDragDisabled: false,
         invert: false,
+        renderBar: props => <div {...props} />,
     };
 
     constructor(props) {
@@ -894,13 +907,13 @@ class ReactSlider extends React.Component {
         return res;
     }
 
-    renderBar = (i, offsetFrom, offsetTo) => (
-        <div
-            key={`bar${i}`}
-            className={`${this.props.barClassName} ${this.props.barClassName}-${i}`}
-            style={this.buildBarStyle(offsetFrom, this.state.upperBound - offsetTo)}
-        />
-    );
+    renderBar = (i, offsetFrom, offsetTo) =>
+        this.props.renderBar({
+            index: i,
+            key: `${this.props.barClassName}-${i}`,
+            className: `${this.props.barClassName} ${this.props.barClassName}-${i}`,
+            style: this.buildBarStyle(offsetFrom, this.state.upperBound - offsetTo),
+        });
 
     renderBars(offset) {
         const bars = [];
