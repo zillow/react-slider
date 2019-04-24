@@ -1,90 +1,62 @@
-### Single slider
-
-Similar to `<input type="range" defaultValue={50} />`
+Single slider, similar to `<input type="range" defaultValue={0} />`
 
 ```jsx
-initialState = { value: 0 };
-
 <ReactSlider
     className="horizontal-slider"
     thumbClassName="example-thumb"
-    value={state.value}
-    onChange={value => setState({ value })}
-    orientation="horizontal"
-    ariaLabel="This is a single thumb"
->
-    <div>{state.value}</div>
-</ReactSlider>
+    trackClassName="example-track"
+    renderThumb={({ value }) => value}
+/>
 ```
 
-### Double slider (with tracks between the thumbs)
+Double slider
 
 ```jsx
-initialState = { value: [0, 100] };
-
 <ReactSlider
     className="horizontal-slider"
-    trackClassName="example-track"
     thumbClassName="example-thumb"
-    value={state.value}
-    onChange={value => setState({ value })}
-    orientation="horizontal"
-    withTracks
+    trackClassName="example-track"
+    defaultValue={[0, 100]}
     ariaLabel={['Lower thumb', 'Upper thumb']}
-    ariaValuetext="Some arbitrary value"
+    renderThumb={({ value }) => value}
     pearling
     minDistance={10}
->
-    {state.value.map((value, i) => <div key={i}>{value}</div>)}
-</ReactSlider>
+/>
 ```
 
-### Multi slider
+Multi slider
 
 ```jsx
-initialState = { value: [0, 50, 100] };
-
 <ReactSlider
     className="horizontal-slider"
-    trackClassName="example-track"
     thumbClassName="example-thumb"
-    value={state.value}
-    onChange={value => setState({ value })}
-    orientation="horizontal"
-    withTracks
+    trackClassName="example-track"
+    defaultValue={[0, 50, 100]}
     ariaLabel={['Leftmost thumb', 'Middle thumb', 'Rightmost thumb']}
+    renderThumb={({ value }) => value}
     pearling
     minDistance={10}
->
-    {state.value.map((value, i) => <div key={i}>{value}</div>)}
-</ReactSlider>
+/>
 ```
 
-### Vertical slider
+Vertical slider
 
 ```jsx
-initialState = { value: [0, 50, 100] };
-
 <ReactSlider
     className="vertical-slider"
-    trackClassName="example-track"
     thumbClassName="example-thumb"
-    value={state.value}
-    onChange={value => setState({ value })}
-    orientation="vertical"
-    withTracks
-    invert
+    trackClassName="example-track"
+    defaultValue={[0, 50, 100]}
     ariaLabel={['Lowest thumb', 'Middle thumb', 'Top thumb']}
+    renderThumb={({ value }) => value}
+    orientation="vertical"
+    invert
     pearling
     minDistance={10}
->
-    {state.value.map((value, i) => <div key={i}>{value}</div>)}
-</ReactSlider>
+/>
 ```
 
-### Custom styling with [styled-components](https://www.styled-components.com/)
-
-The track and thumb nodes can be customized with the `renderTrack` and `renderThumb` render props.
+Custom styling using [styled-components](https://www.styled-components.com/)
 
 ```jsx
 import styled from 'styled-components';
@@ -118,7 +90,6 @@ const Track = ({ className, ...props }) => <StyledTrack {...props} />;
 
 <StyledSlider
     defaultValue={[50, 75]}
-    withTracks
     renderTrack={Track}
     renderThumb={Thumb}
 />
