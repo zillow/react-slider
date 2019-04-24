@@ -75,29 +75,42 @@ initialState = { value: [0, 50, 100] };
 </ReactSlider>
 ```
 
-### Custom bars
+### Custom styling with [styled-components](https://www.styled-components.com/)
 
-The bar fragment can be customized with the `renderBar` render prop.
+The bar fragment can be customized with the `renderBar` render prop,
+and you can pass in custom handles as `children`.
 
 ```jsx
 import styled from 'styled-components';
 
+const StyledSlider = styled(ReactSlider)`
+    width: 100%;
+    height: 25px;
+`;
+
+const StyledHandle = styled.div`
+    height: 25px;
+    width: 25px;
+    background-color: #000;
+    border-radius: 50%;
+    cursor: grab;
+`;
+
 const StyledBar = styled.div`
-    top: 1px;
-    bottom: 1px;
+    top: 0;
+    bottom: 0;
     background: ${props => props.index ? '#0f0' : '#ddd'};
     border-radius: 999px;
 `;
 
-initialState = { value: 50 };
+const Bar = ({ className, ...props }) => <StyledBar {...props} />;
 
-<ReactSlider
-    className="horizontal-slider"
-    value={state.value}
-    onChange={value => setState({ value })}
+<StyledSlider
+    defaultValue={50}
     withBars
-    renderBar={({ className, ...props }) => <StyledBar {...props} />}
+    renderBar={Bar}
+    handleClassName=""
 >
-    <div>{state.value}</div>
-</ReactSlider>
+    <StyledHandle />
+</StyledSlider>
 ```
