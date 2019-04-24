@@ -214,6 +214,10 @@ class ReactSlider extends React.Component {
          *       <div className="my-handle">2</div>
          *       <div className="my-handle">3</div>
          *     </ReactSlider>
+         *
+         * Note: the children nodes must match the number of values provided
+         * to `value` or `defaultValue`. To dynamically create custom handle
+         * content, use the `renderHandle` render prop.
          */
         // eslint-disable-next-line zillow/react/require-default-props
         children: PropTypes.node,
@@ -233,16 +237,29 @@ class ReactSlider extends React.Component {
         ariaValuetext: PropTypes.string,
 
         /**
-         * Provide a custom render function for the bar fragment.
-         * The render function will be passed a single arguments,
+         * Provide a custom render function for the bar node.
+         * The render function will be passed a single argument,
          * an object with the following properties:
          *
          * - `index` {`number`} the index of the bar
          * - `key` {`string`} a unique key for the bar
-         * - `style` {`object`} positioning styles that should be applied to the fragment
+         * - `style` {`object`} positioning styles that should be applied to the node
          * - `className` {`string`} default classNames for the bar
          */
         renderBar: PropTypes.func,
+
+        /**
+         * Provide a custom render function for dynamic handle content.
+         * For static handle content, you can use the `children` prop.
+         * The render function will be passed a single argument,
+         * an object with the following properties:
+         *
+         * - `index` {`number`} the index of the handle
+         * - `key` {`string`} a unique key for the handle
+         * - `value` {`number`} the value of the handle
+         */
+        // eslint-disable-next-line zillow/react/require-default-props
+        renderHandle: PropTypes.func,
     };
 
     static defaultProps = {
@@ -899,6 +916,15 @@ class ReactSlider extends React.Component {
             React.Children.forEach(this.props.children, (child, i) => {
                 res[i] = this.renderHandle(styles[i], child, i);
             });
+        } else if (this.props.renderHandle) {
+            for (let i = 0; i < length; i += 1) {
+                const child = this.props.renderHandle({
+                    index: i,
+                    key: `${this.props.handleClassName}-${i}`,
+                    value: this.state.value[i],
+                });
+                res[i] = this.renderHandle(styles[i], child, i);
+            }
         } else {
             for (let i = 0; i < length; i += 1) {
                 res[i] = this.renderHandle(styles[i], null, i);
