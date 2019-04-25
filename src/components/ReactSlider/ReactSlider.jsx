@@ -422,7 +422,8 @@ class ReactSlider extends React.Component {
     };
 
     onSliderMouseDown = e => {
-        if (this.props.disabled) {
+        // do nothing if disabled or right click
+        if (this.props.disabled || e.button === 2) {
             return;
         }
         this.hasMoved = false;
@@ -532,7 +533,8 @@ class ReactSlider extends React.Component {
 
     // create the `mousedown` handler for the i-th thumb
     createOnMouseDown = i => e => {
-        if (this.props.disabled) {
+        // do nothing if disabled or right click
+        if (this.props.disabled || e.button === 2) {
             return;
         }
         const position = this.getMousePosition(e);
