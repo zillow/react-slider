@@ -213,6 +213,7 @@ class ReactSlider extends React.Component {
          *
          * - `index` {`number`} the index of the track
          * - `key` {`string`} a unique key for the track
+         * - 'value' {`number` | `array`} the current value state
          * - `style` {`object`} positioning styles that should be applied to the node
          * - `className` {`string`} default classNames for the track
          */
@@ -225,7 +226,7 @@ class ReactSlider extends React.Component {
          *
          * - `index` {`number`} the index of the thumb
          * - `key` {`string`} a unique key for the thumb
-         * - `value` {`number`} the value of the thumb
+         * - 'value' {`number` | `array`} the current value state
          */
         // eslint-disable-next-line zillow/react/require-default-props
         renderThumb: PropTypes.func,
@@ -864,7 +865,7 @@ class ReactSlider extends React.Component {
                 const child = this.props.renderThumb({
                     index: i,
                     key: `${this.props.thumbClassName}-${i}`,
-                    value: this.state.value[i],
+                    value: undoEnsureArray(this.state.value),
                 });
                 res[i] = this.renderThumb(styles[i], child, i);
             }
@@ -880,6 +881,7 @@ class ReactSlider extends React.Component {
         this.props.renderTrack({
             index: i,
             key: `${this.props.trackClassName}-${i}`,
+            value: undoEnsureArray(this.state.value),
             className: `${this.props.trackClassName} ${this.props.trackClassName}-${i}`,
             style: this.buildTrackStyle(offsetFrom, this.state.upperBound - offsetTo),
         });
