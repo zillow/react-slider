@@ -839,6 +839,7 @@ class ReactSlider extends React.Component {
                 onFocus: this.createOnKeyDown(i),
                 tabIndex: 0,
                 role: 'slider',
+                'aria-orientation': this.props.orientation,
                 'aria-valuenow': this.state.value[i],
                 'aria-valuemin': this.props.min,
                 'aria-valuemax': this.props.max,
