@@ -210,10 +210,16 @@ class ReactSlider extends React.Component {
         ariaLabel: PropTypes.oneOfType([PropTypes.string, PropTypes.arrayOf(PropTypes.string)]),
 
         /**
-         * aria-valuetext for screen-readers
+         * aria-valuetext for screen-readers.
+         * Can be a static string, or a function that returns a string.
+         * The function will be passed a single argument,
+         * an object with the following properties:
+         *
+         * - `index` {`number`} the index of the thumb
+         * - 'value' {`number` | `array`} the current value state
          */
         // eslint-disable-next-line zillow/react/require-default-props
-        ariaValuetext: PropTypes.string,
+        ariaValuetext: PropTypes.oneOfType([PropTypes.string, PropTypes.func]),
 
         /**
          * Provide a custom render function for the track node.
@@ -841,31 +847,38 @@ class ReactSlider extends React.Component {
             this.state.index === i ? this.props.thumbActiveClassName : ''
         }`;
 
-        return React.createElement(
-            'div',
-            {
-                ref: r => {
-                    this[`thumb${i}`] = r;
-                },
-                key: `thumb${i}`,
-                className,
-                style,
-                onMouseDown: this.createOnMouseDown(i),
-                onTouchStart: this.createOnTouchStart(i),
-                onFocus: this.createOnKeyDown(i),
-                tabIndex: 0,
-                role: 'slider',
-                'aria-orientation': this.props.orientation,
-                'aria-valuenow': this.state.value[i],
-                'aria-valuemin': this.props.min,
-                'aria-valuemax': this.props.max,
-                'aria-label': Array.isArray(this.props.ariaLabel)
-                    ? this.props.ariaLabel[i]
-                    : this.props.ariaLabel,
-                'aria-valuetext': this.props.ariaValuetext,
+        const props = {
+            ref: r => {
+                this[`thumb${i}`] = r;
             },
-            child
-        );
+            key: `thumb${i}`,
+            className,
+            style,
+            onMouseDown: this.createOnMouseDown(i),
+            onTouchStart: this.createOnTouchStart(i),
+            onFocus: this.createOnKeyDown(i),
+            tabIndex: 0,
+            role: 'slider',
+            'aria-orientation': this.props.orientation,
+            'aria-valuenow': this.state.value[i],
+            'aria-valuemin': this.props.min,
+            'aria-valuemax': this.props.max,
+            'aria-label': Array.isArray(this.props.ariaLabel)
+                ? this.props.ariaLabel[i]
+                : this.props.ariaLabel,
+        };
+
+        if (this.props.ariaValuetext) {
+            props['aria-valuetext'] =
+                typeof this.props.ariaValuetext === 'string'
+                    ? this.props.ariaValuetext
+                    : this.props.ariaValuetext({
+                          value: this.state.value,
+                          index: i,
+                      });
+        }
+
+        return React.createElement('div', props, child);
     };
 
     renderThumbs(offset) {
