@@ -18,7 +18,7 @@ Double slider
     trackClassName="example-track"
     defaultValue={[0, 100]}
     ariaLabel={['Lower thumb', 'Upper thumb']}
-    renderThumb={({ value }) => value}
+    renderThumb={({ index, value }) => value[index]}
     pearling
     minDistance={10}
 />
@@ -33,7 +33,7 @@ Multi slider
     trackClassName="example-track"
     defaultValue={[0, 50, 100]}
     ariaLabel={['Leftmost thumb', 'Middle thumb', 'Rightmost thumb']}
-    renderThumb={({ value }) => value}
+    renderThumb={({ index, value }) => value[index]}
     pearling
     minDistance={10}
 />
@@ -48,7 +48,7 @@ Vertical slider
     trackClassName="example-track"
     defaultValue={[0, 50, 100]}
     ariaLabel={['Lowest thumb', 'Middle thumb', 'Top thumb']}
-    renderThumb={({ value }) => value}
+    renderThumb={({ index, value }) => value[index]}
     orientation="vertical"
     invert
     pearling
@@ -77,7 +77,7 @@ const StyledThumb = styled.div`
     cursor: grab;
 `;
 
-const Thumb = ({ value, ...props }) => <StyledThumb {...props}>{value}</StyledThumb>;
+const Thumb = ({ index, value, ...props }) => <StyledThumb {...props}>{value[index]}</StyledThumb>;
 
 const StyledTrack = styled.div`
     top: 0;
