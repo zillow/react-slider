@@ -378,20 +378,28 @@ class ReactSlider extends React.Component {
             case 'ArrowLeft':
             case 'ArrowDown':
                 e.preventDefault();
-                this.moveDownOneStep();
-                return;
+                this.moveDownBySteps();
+                break;
             case 'ArrowRight':
             case 'ArrowUp':
                 e.preventDefault();
-                this.moveUpOneStep();
-                return;
+                this.moveUpBySteps();
+                break;
             case 'Home':
                 e.preventDefault();
                 this.move(this.props.min);
-                return;
+                break;
             case 'End':
                 e.preventDefault();
                 this.move(this.props.max);
+                break;
+            case 'PageDown':
+                e.preventDefault();
+                this.moveDownBySteps(10);
+                break;
+            case 'PageUp':
+                e.preventDefault();
+                this.moveUpBySteps(10);
                 break;
             default:
         }
@@ -643,15 +651,15 @@ class ReactSlider extends React.Component {
         }));
     }
 
-    moveUpOneStep() {
+    moveUpBySteps(steps = 1) {
         const oldValue = this.state.value[this.state.index];
-        const newValue = oldValue + this.props.step;
+        const newValue = oldValue + this.props.step * steps;
         this.move(Math.min(newValue, this.props.max));
     }
 
-    moveDownOneStep() {
+    moveDownBySteps(steps = 1) {
         const oldValue = this.state.value[this.state.index];
-        const newValue = oldValue - this.props.step;
+        const newValue = oldValue - this.props.step * steps;
         this.move(Math.max(newValue, this.props.min));
     }
 
