@@ -219,6 +219,7 @@ class ReactSlider extends React.Component {
          *
          * - `state.index` {`number`} the index of the thumb
          * - `state.value` {`number` | `array`} the current value state
+         * - `state.valueNow` {`number`} the value of the thumb (i.e. aria-valuenow)
          */
         // eslint-disable-next-line zillow/react/require-default-props
         ariaValuetext: PropTypes.oneOfType([PropTypes.string, PropTypes.func]),
@@ -248,6 +249,7 @@ class ReactSlider extends React.Component {
          * - `props` {`object`} props to be spread into your thumb node
          * - `state.index` {`number`} the index of the thumb
          * - `state.value` {`number` | `array`} the current value state
+         * - `state.valueNow` {`number`} the value of the thumb (i.e. aria-valuenow)
          */
         // eslint-disable-next-line zillow/react/require-default-props
         renderThumb: PropTypes.func,
@@ -877,20 +879,18 @@ class ReactSlider extends React.Component {
                 : this.props.ariaLabel,
         };
 
+        const state = {
+            index: i,
+            value: undoEnsureArray(this.state.value),
+            valueNow: this.state.value[i],
+        };
+
         if (this.props.ariaValuetext) {
             props['aria-valuetext'] =
                 typeof this.props.ariaValuetext === 'string'
                     ? this.props.ariaValuetext
-                    : this.props.ariaValuetext({
-                          value: this.state.value,
-                          index: i,
-                      });
+                    : this.props.ariaValuetext(state);
         }
-
-        const state = {
-            index: i,
-            value: undoEnsureArray(this.state.value),
-        };
 
         return this.props.renderThumb(props, state);
     };
