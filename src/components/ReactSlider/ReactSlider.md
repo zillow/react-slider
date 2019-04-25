@@ -5,7 +5,7 @@ Single slider, similar to `<input type="range" defaultValue={0} />`
     className="horizontal-slider"
     thumbClassName="example-thumb"
     trackClassName="example-track"
-    renderThumb={(props, state) => <div {...props}>{state.value}</div>}
+    renderThumb={(props, state) => <div {...props}>{state.valueNow}</div>}
 />
 ```
 
@@ -18,8 +18,8 @@ Double slider
     trackClassName="example-track"
     defaultValue={[0, 100]}
     ariaLabel={['Lower thumb', 'Upper thumb']}
-    ariaValuetext={({ index, value }) => `Thumb value ${value[index]}`}
-    renderThumb={(props, state) => <div {...props}>{state.value[state.index]}</div>}
+    ariaValuetext={state => `Thumb value ${state.valueNow}`}
+    renderThumb={(props, state) => <div {...props}>{state.valueNow}</div>}
     pearling
     minDistance={10}
 />
@@ -34,7 +34,7 @@ Multi slider
     trackClassName="example-track"
     defaultValue={[0, 50, 100]}
     ariaLabel={['Leftmost thumb', 'Middle thumb', 'Rightmost thumb']}
-    renderThumb={(props, state) => <div {...props}>{state.value[state.index]}</div>}
+    renderThumb={(props, state) => <div {...props}>{state.valueNow}</div>}
     pearling
     minDistance={10}
 />
@@ -49,7 +49,7 @@ Vertical slider
     trackClassName="example-track"
     defaultValue={[0, 50, 100]}
     ariaLabel={['Lowest thumb', 'Middle thumb', 'Top thumb']}
-    renderThumb={(props, state) => <div {...props}>{state.value[state.index]}</div>}
+    renderThumb={(props, state) => <div {...props}>{state.valueNow}</div>}
     orientation="vertical"
     invert
     pearling
@@ -78,7 +78,7 @@ const StyledThumb = styled.div`
     cursor: grab;
 `;
 
-const Thumb = (props, state) => <StyledThumb {...props}>{state.value[state.index]}</StyledThumb>;
+const Thumb = (props, state) => <StyledThumb {...props}>{state.valueNow}</StyledThumb>;
 
 const StyledTrack = styled.div`
     top: 0;
