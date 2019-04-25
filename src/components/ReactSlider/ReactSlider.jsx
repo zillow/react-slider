@@ -334,7 +334,7 @@ class ReactSlider extends React.Component {
 
     onEnd(eventMap) {
         removeHandlers(eventMap);
-        this.setState({ index: -1 }, this.fireChangeEvent.bind(this, 'onAfterChange'));
+        this.fireChangeEvent.bind(this, 'onAfterChange');
     }
 
     onMouseMove = e => {
@@ -626,12 +626,8 @@ class ReactSlider extends React.Component {
     }
 
     start(i, position) {
-        const activeEl = document.activeElement;
         const thumbRef = this[`thumb${i}`];
-        // if activeElement is body window will lost focus in IE9
-        if (activeEl && activeEl !== document.body && activeEl !== thumbRef && activeEl.blur) {
-            activeEl.blur();
-        }
+        thumbRef.focus();
 
         this.hasMoved = false;
 
