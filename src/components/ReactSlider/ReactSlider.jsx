@@ -86,6 +86,15 @@ class ReactSlider extends React.Component {
         step: PropTypes.number,
 
         /**
+         * The result of the function is the value to be added or subtracted
+         * when the `Page Up` or `Page Down` keys are pressed.
+         *
+         * The current `step` value will be passed as the only argument.
+         * By default, paging will modify `step` by a factor of 10.
+         */
+        pageFn: PropTypes.func,
+
+        /**
          * The minimal distance between any pair of thumbs.
          * Must be positive, but zero means they can sit on top of each other.
          */
@@ -236,6 +245,7 @@ class ReactSlider extends React.Component {
         min: 0,
         max: 100,
         step: 1,
+        pageFn: step => step * 10,
         minDistance: 0,
         defaultValue: 0,
         orientation: 'horizontal',
@@ -378,12 +388,12 @@ class ReactSlider extends React.Component {
             case 'ArrowLeft':
             case 'ArrowDown':
                 e.preventDefault();
-                this.moveDownBySteps();
+                this.moveDownByStep();
                 break;
             case 'ArrowRight':
             case 'ArrowUp':
                 e.preventDefault();
-                this.moveUpBySteps();
+                this.moveUpByStep();
                 break;
             case 'Home':
                 e.preventDefault();
@@ -395,11 +405,11 @@ class ReactSlider extends React.Component {
                 break;
             case 'PageDown':
                 e.preventDefault();
-                this.moveDownBySteps(10);
+                this.moveDownByStep(this.props.pageFn(this.props.step));
                 break;
             case 'PageUp':
                 e.preventDefault();
-                this.moveUpBySteps(10);
+                this.moveUpByStep(this.props.pageFn(this.props.step));
                 break;
             default:
         }
@@ -647,15 +657,15 @@ class ReactSlider extends React.Component {
         }));
     }
 
-    moveUpBySteps(steps = 1) {
+    moveUpByStep(step = this.props.step) {
         const oldValue = this.state.value[this.state.index];
-        const newValue = oldValue + this.props.step * steps;
+        const newValue = oldValue + step;
         this.move(Math.min(newValue, this.props.max));
     }
 
-    moveDownBySteps(steps = 1) {
+    moveDownByStep(step = this.props.step) {
         const oldValue = this.state.value[this.state.index];
-        const newValue = oldValue - this.props.step * steps;
+        const newValue = oldValue - step;
         this.move(Math.max(newValue, this.props.min));
     }
 
