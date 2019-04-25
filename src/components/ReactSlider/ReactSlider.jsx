@@ -215,33 +215,39 @@ class ReactSlider extends React.Component {
          * The function will be passed a single argument,
          * an object with the following properties:
          *
-         * - `index` {`number`} the index of the thumb
-         * - 'value' {`number` | `array`} the current value state
+         *     state => `Value: ${state.value}`
+         *
+         * - `state.index` {`number`} the index of the thumb
+         * - `state.value` {`number` | `array`} the current value state
          */
         // eslint-disable-next-line zillow/react/require-default-props
         ariaValuetext: PropTypes.oneOfType([PropTypes.string, PropTypes.func]),
 
         /**
          * Provide a custom render function for the track node.
-         * The render function will be passed a single argument,
-         * an object with the following properties:
+         * The render function will be passed two arguments,
+         * an object with props that should be added to your handle node,
+         * and an object with track and slider state:
          *
-         * - `index` {`number`} the index of the track
-         * - `key` {`string`} a unique key for the track
-         * - 'value' {`number` | `array`} the current value state
-         * - `style` {`object`} positioning styles that should be applied to the node
-         * - `className` {`string`} default classNames for the track
+         *     (props, state) => <div {...props} />
+         *
+         * - `props` {`object`} props to be spread into your track node
+         * - `state.index` {`number`} the index of the track
+         * - `state.value` {`number` | `array`} the current value state
          */
         renderTrack: PropTypes.func,
 
         /**
          * Provide a custom render function for dynamic thumb content.
-         * The render function will be passed a single argument,
-         * an object with the following properties:
+         * The render function will be passed two arguments,
+         * an object with props that should be added to your thumb node,
+         * and an object with thumb and slider state:
          *
-         * - `index` {`number`} the index of the thumb
-         * - `key` {`string`} a unique key for the thumb
-         * - 'value' {`number` | `array`} the current value state
+         *     (props, state) => <div {...props} />
+         *
+         * - `props` {`object`} props to be spread into your thumb node
+         * - `state.index` {`number`} the index of the thumb
+         * - `state.value` {`number` | `array`} the current value state
          */
         // eslint-disable-next-line zillow/react/require-default-props
         renderThumb: PropTypes.func,
@@ -264,6 +270,7 @@ class ReactSlider extends React.Component {
         disabled: false,
         snapDragDisabled: false,
         invert: false,
+        renderThumb: props => <div {...props} />,
         renderTrack: props => <div {...props} />,
     };
 
@@ -844,7 +851,7 @@ class ReactSlider extends React.Component {
         return obj;
     }
 
-    renderThumb = (style, child, i) => {
+    renderThumb = (style, i) => {
         const className = `${this.props.thumbClassName} ${this.props.thumbClassName}-${i} ${
             this.state.index === i ? this.props.thumbActiveClassName : ''
         }`;
@@ -853,7 +860,7 @@ class ReactSlider extends React.Component {
             ref: r => {
                 this[`thumb${i}`] = r;
             },
-            key: `thumb${i}`,
+            key: `${this.props.thumbClassName}-${i}`,
             className,
             style,
             onMouseDown: this.createOnMouseDown(i),
@@ -880,7 +887,12 @@ class ReactSlider extends React.Component {
                       });
         }
 
-        return React.createElement('div', props, child);
+        const state = {
+            index: i,
+            value: undoEnsureArray(this.state.value),
+        };
+
+        return this.props.renderThumb(props, state);
     };
 
     renderThumbs(offset) {
@@ -892,31 +904,24 @@ class ReactSlider extends React.Component {
         }
 
         const res = [];
-        if (this.props.renderThumb) {
-            for (let i = 0; i < length; i += 1) {
-                const child = this.props.renderThumb({
-                    index: i,
-                    key: `${this.props.thumbClassName}-${i}`,
-                    value: undoEnsureArray(this.state.value),
-                });
-                res[i] = this.renderThumb(styles[i], child, i);
-            }
-        } else {
-            for (let i = 0; i < length; i += 1) {
-                res[i] = this.renderThumb(styles[i], null, i);
-            }
+        for (let i = 0; i < length; i += 1) {
+            res[i] = this.renderThumb(styles[i], i);
         }
         return res;
     }
 
-    renderTrack = (i, offsetFrom, offsetTo) =>
-        this.props.renderTrack({
-            index: i,
+    renderTrack = (i, offsetFrom, offsetTo) => {
+        const props = {
             key: `${this.props.trackClassName}-${i}`,
-            value: undoEnsureArray(this.state.value),
             className: `${this.props.trackClassName} ${this.props.trackClassName}-${i}`,
             style: this.buildTrackStyle(offsetFrom, this.state.upperBound - offsetTo),
-        });
+        };
+        const state = {
+            index: i,
+            value: undoEnsureArray(this.state.value),
+        };
+        return this.props.renderTrack(props, state);
+    };
 
     renderTracks(offset) {
         const tracks = [];
