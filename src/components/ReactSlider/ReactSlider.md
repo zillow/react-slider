@@ -5,7 +5,7 @@ Single slider, similar to `<input type="range" defaultValue={0} />`
     className="horizontal-slider"
     thumbClassName="example-thumb"
     trackClassName="example-track"
-    renderThumb={({ value }) => value}
+    renderThumb={(props, state) => <div {...props}>{state.value}</div>}
 />
 ```
 
@@ -19,7 +19,7 @@ Double slider
     defaultValue={[0, 100]}
     ariaLabel={['Lower thumb', 'Upper thumb']}
     ariaValuetext={({ index, value }) => `Thumb value ${value[index]}`}
-    renderThumb={({ index, value }) => value[index]}
+    renderThumb={(props, state) => <div {...props}>{state.value[state.index]}</div>}
     pearling
     minDistance={10}
 />
@@ -34,7 +34,7 @@ Multi slider
     trackClassName="example-track"
     defaultValue={[0, 50, 100]}
     ariaLabel={['Leftmost thumb', 'Middle thumb', 'Rightmost thumb']}
-    renderThumb={({ index, value }) => value[index]}
+    renderThumb={(props, state) => <div {...props}>{state.value[state.index]}</div>}
     pearling
     minDistance={10}
 />
@@ -49,7 +49,7 @@ Vertical slider
     trackClassName="example-track"
     defaultValue={[0, 50, 100]}
     ariaLabel={['Lowest thumb', 'Middle thumb', 'Top thumb']}
-    renderThumb={({ index, value }) => value[index]}
+    renderThumb={(props, state) => <div {...props}>{state.value[state.index]}</div>}
     orientation="vertical"
     invert
     pearling
@@ -78,7 +78,7 @@ const StyledThumb = styled.div`
     cursor: grab;
 `;
 
-const Thumb = ({ index, value, ...props }) => <StyledThumb {...props}>{value[index]}</StyledThumb>;
+const Thumb = (props, state) => <StyledThumb {...props}>{state.value[state.index]}</StyledThumb>;
 
 const StyledTrack = styled.div`
     top: 0;
@@ -87,7 +87,7 @@ const StyledTrack = styled.div`
     border-radius: 999px;
 `;
 
-const Track = ({ className, ...props }) => <StyledTrack {...props} />;
+const Track = (props, state) => <StyledTrack {...props} index={state.index} />;
 
 <StyledSlider
     defaultValue={[50, 75]}

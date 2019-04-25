@@ -13,7 +13,6 @@ exports[`<ReactSlider> can render 1`] = `
 >
   <div
     className="track track-0"
-    index={0}
     style={
       Object {
         "left": 0,
@@ -22,11 +21,9 @@ exports[`<ReactSlider> can render 1`] = `
         "willChange": "",
       }
     }
-    value={0}
   />
   <div
     className="track track-1"
-    index={1}
     style={
       Object {
         "left": 0,
@@ -35,7 +32,6 @@ exports[`<ReactSlider> can render 1`] = `
         "willChange": "",
       }
     }
-    value={0}
   />
   <div
     aria-orientation="horizontal"
