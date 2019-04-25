@@ -18,6 +18,7 @@ Double slider
     trackClassName="example-track"
     defaultValue={[0, 100]}
     ariaLabel={['Lower thumb', 'Upper thumb']}
+    ariaValuetext={({ index, value }) => `Thumb value ${value[index]}`}
     renderThumb={({ index, value }) => value[index]}
     pearling
     minDistance={10}
