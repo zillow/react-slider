@@ -345,7 +345,7 @@ class ReactSlider extends React.Component {
     };
 
     onBlur = () => {
-        this.onEnd(this.getKeyDownEventMap());
+        this.setState({ index: -1 }, this.onEnd(this.getKeyDownEventMap()));
     };
 
     onEnd(eventMap) {
