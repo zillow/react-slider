@@ -386,9 +386,11 @@ class ReactSlider extends React.Component {
                 this.moveUpOneStep();
                 return;
             case 'Home':
+                e.preventDefault();
                 this.move(this.props.min);
                 return;
             case 'End':
+                e.preventDefault();
                 this.move(this.props.max);
                 break;
             default:
