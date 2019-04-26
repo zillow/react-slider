@@ -402,11 +402,15 @@ class ReactSlider extends React.Component {
         switch (e.key) {
             case 'ArrowLeft':
             case 'ArrowDown':
+            case 'Left':
+            case 'Down':
                 e.preventDefault();
                 this.moveDownByStep();
                 break;
             case 'ArrowRight':
             case 'ArrowUp':
+            case 'Right':
+            case 'Up':
                 e.preventDefault();
                 this.moveUpByStep();
                 break;
