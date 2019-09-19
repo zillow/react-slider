@@ -54,13 +54,17 @@ function trimPreceding(length, nextValue, minDistance, min) {
 
 function addHandlers(eventMap) {
     Object.keys(eventMap).forEach(key => {
-        document.addEventListener(key, eventMap[key], false);
+        if (typeof document !== 'undefined') {
+            document.addEventListener(key, eventMap[key], false);
+        }
     });
 }
 
 function removeHandlers(eventMap) {
     Object.keys(eventMap).forEach(key => {
-        document.removeEventListener(key, eventMap[key], false);
+        if (typeof document !== 'undefined') {
+            document.removeEventListener(key, eventMap[key], false);
+        }
     });
 }
 
@@ -359,7 +363,7 @@ class ReactSlider extends React.Component {
 
     onEnd(eventMap) {
         removeHandlers(eventMap);
-        this.fireChangeEvent.bind(this, 'onAfterChange');
+        this.fireChangeEvent('onAfterChange');
     }
 
     onMouseMove = e => {
