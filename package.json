@@ -1,6 +1,6 @@
 {
   "name": "@zillowgroup/react-slider",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "description": "Slider component for React",
   "main": "lib/index.js",
   "module": "es/index.js",
