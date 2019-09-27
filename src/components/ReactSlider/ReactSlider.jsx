@@ -867,17 +867,17 @@ class ReactSlider extends React.Component {
         }`;
 
         const props = {
-            ref: r => {
+            'ref': r => {
                 this[`thumb${i}`] = r;
             },
-            key: `${this.props.thumbClassName}-${i}`,
+            'key': `${this.props.thumbClassName}-${i}`,
             className,
             style,
-            onMouseDown: this.createOnMouseDown(i),
-            onTouchStart: this.createOnTouchStart(i),
-            onFocus: this.createOnKeyDown(i),
-            tabIndex: 0,
-            role: 'slider',
+            'onMouseDown': this.createOnMouseDown(i),
+            'onTouchStart': this.createOnTouchStart(i),
+            'onFocus': this.createOnKeyDown(i),
+            'tabIndex': 0,
+            'role': 'slider',
             'aria-orientation': this.props.orientation,
             'aria-valuenow': this.state.value[i],
             'aria-valuemin': this.props.min,
