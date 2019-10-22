@@ -318,7 +318,7 @@ class ReactSlider extends React.Component {
 
     // Keep the internal `value` consistent with an outside `value` if present.
     // This basically allows the slider to be a controlled component.
-    componentWillReceiveProps(newProps) {
+    UNSAFE_componentWillReceiveProps(newProps) {
         let value = ensureArray(newProps.value);
         if (!value.length) {
             // eslint-disable-next-line prefer-destructuring
