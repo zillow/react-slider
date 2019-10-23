@@ -46,7 +46,7 @@
   "devDependencies": {
     "babel-plugin-styled-components": "^1.10.6",
     "babel-preset-zillow": "^4.2.0",
-    "create-react-styleguide": "^4.0.6",
+    "create-react-styleguide": "^5.1.0",
     "eslint-plugin-jest": "^22.17.0",
     "eslint-plugin-zillow": "^3.4.0",
     "gh-pages": "^2.1.1",
