@@ -16,6 +16,12 @@ For component props, methods, and living examples, see the demo:
 
 https://zillow.github.io/react-slider/
 
+### TypeScript Support
+
+```sh
+npm install --save-dev @types/react-slider
+```
+
 ### License
 
 See the [License](LICENSE) file.
