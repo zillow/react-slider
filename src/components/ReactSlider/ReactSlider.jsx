@@ -605,7 +605,6 @@ class ReactSlider extends React.Component {
             upperBound: sliderSize - thumbSize,
             sliderLength: Math.abs(sliderMax - sliderMin),
             thumbSize,
-            sliderStart: this.props.invert ? sliderMax : sliderMin,
         });
     }
 
@@ -626,7 +625,19 @@ class ReactSlider extends React.Component {
     }
 
     calcOffsetFromPosition(position) {
-        let pixelOffset = position - this.state.sliderStart;
+        const { slider } = this;
+
+        const sliderRect = slider.getBoundingClientRect();
+        const sliderMax = sliderRect[this.posMaxKey()];
+        const sliderMin = sliderRect[this.posMinKey()];
+
+        // The `position` value passed in is the mouse position based on the window height.
+        // The slider bounding rect is based on the viewport, so we must add the window scroll
+        // offset to normalize the values.
+        const windowOffset = window[`scroll${this.axisKey()}`];
+        const sliderStart = windowOffset + (this.props.invert ? sliderMax : sliderMin);
+
+        let pixelOffset = position - sliderStart;
         if (this.props.invert) {
             pixelOffset = this.state.sliderLength - pixelOffset;
         }
