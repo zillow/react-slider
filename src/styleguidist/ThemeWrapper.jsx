@@ -22,6 +22,8 @@ const GlobalStyle = createGlobalStyle`
         background-color: black;
         color: white;
         cursor: pointer;
+        border: 5px solid gray;
+        box-sizing: border-box;
     }
 
     .example-thumb.active {
@@ -50,13 +52,13 @@ const GlobalStyle = createGlobalStyle`
         top: 1px;
         width: 50px;
         height: 48px;
-        line-height: 48px;
+        line-height: 38px;
     }
 
     .vertical-slider .example-thumb {
         left: 1px;
         width: 48px;
-        line-height: 50px;
+        line-height: 40px;
         height: 50px;
     }
 
