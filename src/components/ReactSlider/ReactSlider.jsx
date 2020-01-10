@@ -587,19 +587,24 @@ class ReactSlider extends React.Component {
     };
 
     resize() {
-        const { slider } = this;
-        const thumb = this.thumb0;
-        const rect = slider.getBoundingClientRect();
+        const { slider, thumb0: thumb } = this;
 
         const sizeKey = this.sizeKey();
 
-        const sliderMax = rect[this.posMaxKey()];
-        const sliderMin = rect[this.posMinKey()];
+        // For the slider size, we want to use the client width/height, excluding any borders
+        const sliderRect = slider.getBoundingClientRect();
+        const sliderSize = slider[sizeKey];
+        const sliderMax = sliderRect[this.posMaxKey()];
+        const sliderMin = sliderRect[this.posMinKey()];
+
+        // For the thumb size, we want to use the outer width/height, including any borders
+        const thumbRect = thumb.getBoundingClientRect();
+        const thumbSize = thumbRect[sizeKey.replace('client', '').toLowerCase()];
 
         this.setState({
-            upperBound: slider[sizeKey] - thumb[sizeKey],
+            upperBound: sliderSize - thumbSize,
             sliderLength: Math.abs(sliderMax - sliderMin),
-            thumbSize: thumb[sizeKey],
+            thumbSize,
             sliderStart: this.props.invert ? sliderMax : sliderMin,
         });
     }
