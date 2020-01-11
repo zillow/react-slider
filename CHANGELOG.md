@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.0.2](https://github.com/zillow/react-slider/compare/v1.0.1...v1.0.2) (2020-01-11)
+
+
+### Bug Fixes
+
+* clicking on the track of a vertical slider should move the correct handle ([114a56d](https://github.com/zillow/react-slider/commit/114a56d)), closes [#156](https://github.com/zillow/react-slider/issues/156)
+* make sure borders are accounted for when calculating the slider size ([9e6f2f4](https://github.com/zillow/react-slider/commit/9e6f2f4)), closes [#152](https://github.com/zillow/react-slider/issues/152)
+
+
+
 ## [1.0.1](https://github.com/zillow/react-slider/compare/v1.0.0...v1.0.1) (2019-10-22)
 
 
