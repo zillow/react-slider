@@ -6,10 +6,10 @@ import PropTypes from 'prop-types';
  * http://stackoverflow.com/questions/5429827/how-can-i-prevent-text-element-selection-with-cursor-drag
  */
 function pauseEvent(e) {
-    if (e.stopPropagation) {
+    if (e && e.stopPropagation) {
         e.stopPropagation();
     }
-    if (e.preventDefault) {
+    if (e && e.preventDefault) {
         e.preventDefault();
     }
     return false;
@@ -178,7 +178,9 @@ class ReactSlider extends React.Component {
         invert: PropTypes.bool,
 
         /**
-         * Callback called before starting to move a thumb.
+         * Callback called before starting to move a thumb. The callback will only be called if the
+         * action will result in a change. The function will be called with one argument,
+         * the initial value(s).
          */
         // eslint-disable-next-line max-len
         // eslint-disable-next-line zillow/react/require-default-props, zillow/react/no-unused-prop-types
@@ -186,13 +188,16 @@ class ReactSlider extends React.Component {
 
         /**
          * Callback called on every value change.
+         * The function will be called with one argument, the new value(s).
          */
         // eslint-disable-next-line max-len
         // eslint-disable-next-line zillow/react/require-default-props, zillow/react/no-unused-prop-types
         onChange: PropTypes.func,
 
         /**
-         * Callback called only after moving a thumb has ended.
+         * Callback called only after moving a thumb has ended. The callback will only be called if
+         * the action resulted in a change. The function will be called with one argument,
+         * the result value(s).
          */
         // eslint-disable-next-line max-len
         // eslint-disable-next-line zillow/react/require-default-props, zillow/react/no-unused-prop-types
@@ -349,6 +354,10 @@ class ReactSlider extends React.Component {
         }
     }
 
+    onKeyUp = () => {
+        this.onEnd();
+    };
+
     onMouseUp = () => {
         this.onEnd(this.getMouseEventMap());
     };
@@ -362,8 +371,13 @@ class ReactSlider extends React.Component {
     };
 
     onEnd(eventMap) {
-        removeHandlers(eventMap);
-        this.fireChangeEvent('onAfterChange');
+        if (eventMap) {
+            removeHandlers(eventMap);
+        }
+        if (this.hasMoved) {
+            this.fireChangeEvent('onAfterChange');
+        }
+        this.hasMoved = false;
     }
 
     onMouseMove = e => {
@@ -505,6 +519,7 @@ class ReactSlider extends React.Component {
     getKeyDownEventMap() {
         return {
             keydown: this.onKeyDown,
+            keyup: this.onKeyUp,
             focusout: this.onBlur,
         };
     }
@@ -678,11 +693,11 @@ class ReactSlider extends React.Component {
 
     start(i, position) {
         const thumbRef = this[`thumb${i}`];
-        thumbRef.focus();
+        if (thumbRef) {
+            thumbRef.focus();
+        }
 
         this.hasMoved = false;
-
-        this.fireChangeEvent('onBeforeChange');
 
         const { zIndices } = this.state;
         // remove wherever the element is
@@ -711,16 +726,24 @@ class ReactSlider extends React.Component {
     }
 
     move(newValue) {
-        this.hasMoved = true;
-
         const { index, value } = this.state;
         const { length } = value;
-        const oldValue = value[index];
 
-        const { pearling, max, min, minDistance } = this.props;
+        // Short circuit if the value is not changing
+        const oldValue = value[index];
+        if (newValue === oldValue) {
+            return;
+        }
+
+        // Trigger only before the first movement
+        if (!this.hasMoved) {
+            this.fireChangeEvent('onBeforeChange');
+        }
+        this.hasMoved = true;
 
         // if "pearling" (= thumbs pushing each other) is disabled,
         // prevent the thumb from getting closer than `minDistance` to the previous or next thumb.
+        const { pearling, max, min, minDistance } = this.props;
         if (!pearling) {
             if (index > 0) {
                 const valueBefore = value[index - 1];
@@ -755,9 +778,7 @@ class ReactSlider extends React.Component {
         // Normally you would use `shouldComponentUpdate`,
         // but since the slider is a low-level component,
         // the extra complexity might be worth the extra performance.
-        if (newValue !== oldValue) {
-            this.setState({ value }, this.fireChangeEvent.bind(this, 'onChange'));
-        }
+        this.setState({ value }, this.fireChangeEvent.bind(this, 'onChange'));
     }
 
     pushSucceeding(value, minDistance, index) {
