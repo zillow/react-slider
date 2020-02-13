@@ -57,6 +57,20 @@ Vertical slider
 />
 ```
 
+Track changes with `onBeforeChange`, `onChange`, and `onAfterChange` event handlers
+
+```jsx
+<ReactSlider
+    className="horizontal-slider"
+    thumbClassName="example-thumb"
+    trackClassName="example-track"
+    onBeforeChange={val => console.log('onBeforeChange value:', val)}
+    onChange={val => console.log('onChange value:', val)}
+    onAfterChange={val => console.log('onAfterChange value:', val)}
+    renderThumb={(props, state) => <div {...props}>{state.valueNow}</div>}
+/>
+```
+
 Custom styling using [styled-components](https://www.styled-components.com/)
 
 ```jsx
