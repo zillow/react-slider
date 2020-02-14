@@ -405,8 +405,6 @@ class ReactSlider extends React.Component {
             return;
         }
 
-        pauseEvent(e);
-
         const diffPosition = this.getDiffPosition(position[0]);
         const newValue = this.getValueFromPosition(diffPosition);
 
