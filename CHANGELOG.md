@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.0.3](https://github.com/zillow/react-slider/compare/v1.0.2...v1.0.3) (2020-02-14)
+
+
+### Bug Fixes
+
+* change event handlers are now more reliable ([f1282d4](https://github.com/zillow/react-slider/commit/f1282d442d9d8ede3dca6c6ca91174b79461b61f)), closes [#161](https://github.com/zillow/react-slider/issues/161)
+* no need to pause touch events as they do not cause text selection ([8e3e275](https://github.com/zillow/react-slider/commit/8e3e27526a8e48689fe72a88ed5f70e554bf375c)), closes [#162](https://github.com/zillow/react-slider/issues/162)
+
+
+
 ## [1.0.2](https://github.com/zillow/react-slider/compare/v1.0.1...v1.0.2) (2020-01-11)
 
 
