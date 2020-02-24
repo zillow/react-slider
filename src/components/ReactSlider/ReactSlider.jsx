@@ -647,7 +647,7 @@ class ReactSlider extends React.Component {
         // The `position` value passed in is the mouse position based on the window height.
         // The slider bounding rect is based on the viewport, so we must add the window scroll
         // offset to normalize the values.
-        const windowOffset = window[`scroll${this.axisKey()}`];
+        const windowOffset = window[`page${this.axisKey()}Offset`];
         const sliderStart = windowOffset + (this.props.invert ? sliderMax : sliderMin);
 
         let pixelOffset = position - sliderStart;
