@@ -2,7 +2,9 @@
 
 [![npm version](https://badge.fury.io/js/react-slider.svg)](https://badge.fury.io/js/react-slider)
 
-CSS agnostic slider component for React.
+Accessible, CSS agnostic, slider component for React.
+
+[![react-slider example](react-slider.gif)](https://zillow.github.io/react-slider/)
 
 ### Installation
 
