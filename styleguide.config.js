@@ -9,6 +9,7 @@ module.exports = createStyleguideConfig({
         Wrapper: path.join(__dirname, 'src/styleguidist/ThemeWrapper'),
     },
     title: 'react-slider',
+    usageMode: 'expand',
 }, {
     packageSection: false,
     componentsSection: false,
