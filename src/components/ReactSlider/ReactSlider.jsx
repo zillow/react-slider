@@ -879,6 +879,7 @@ class ReactSlider extends React.Component {
     buildThumbStyle(offset, i) {
         const style = {
             position: 'absolute',
+            touchAction: 'none',
             willChange: this.state.index >= 0 ? this.posMinKey() : '',
             zIndex: this.state.zIndices.indexOf(i) + 1,
         };
