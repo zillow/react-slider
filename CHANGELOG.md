@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.0.6](https://github.com/zillow/react-slider/compare/v1.0.5...v1.0.6) (2020-05-10)
+
+
+### Bug Fixes
+
+* prevent vertical scroll on thumb touch ([#171](https://github.com/zillow/react-slider/issues/171)) ([2f6dda3](https://github.com/zillow/react-slider/commit/2f6dda360eb814efc5e491ca8db62ac03719255a))
+
+
+
 ## [1.0.5](https://github.com/zillow/react-slider/compare/v1.0.4...v1.0.5) (2020-05-09)
 
 
