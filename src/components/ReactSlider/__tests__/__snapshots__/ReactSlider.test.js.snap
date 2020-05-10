@@ -47,6 +47,7 @@ exports[`<ReactSlider> can render 1`] = `
       Object {
         "left": "0px",
         "position": "absolute",
+        "touchAction": "none",
         "willChange": "",
         "zIndex": 1,
       }
