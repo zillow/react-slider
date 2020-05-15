@@ -109,3 +109,77 @@ const Track = (props, state) => <StyledTrack {...props} index={state.index} />;
     renderThumb={Thumb}
 />
 ```
+
+In some case you may need to programatically tell the slider to resize, for example if the parent container is resizing independently of the window.
+Set a [ref](https://reactjs.org/docs/refs-and-the-dom.html) on the slider component, and call `resize`.
+
+```jsx
+import styled from 'styled-components';
+
+const StyledSlider = styled(ReactSlider)`
+    width: 100%;
+    height: 25px;
+`;
+
+const StyledThumb = styled.div`
+    height: 25px;
+    line-height: 25px;
+    width: 25px;
+    text-align: center;
+    background-color: #000;
+    color: #fff;
+    border-radius: 50%;
+    cursor: grab;
+`;
+
+const Thumb = (props, state) => <StyledThumb {...props}>{state.valueNow}</StyledThumb>;
+
+const StyledTrack = styled.div`
+    top: 0;
+    bottom: 0;
+    background: ${props => (props.index === 2 ? '#f00' : props.index === 1 ? '#0f0' : '#ddd')};
+    border-radius: 999px;
+`;
+
+const Track = (props, state) => <StyledTrack {...props} index={state.index} />;
+
+const StyledContainer = styled.div`
+    resize: horizontal;
+    overflow: auto;
+    width: 50%;
+    max-width: 100%;
+    padding-right: 8px;
+`;
+
+const ResizableSlider = () => {
+    const containerRef = React.useRef();
+    const sliderRef = React.useRef();
+    React.useEffect(() => {
+        if (typeof ResizeObserver === 'undefined') {
+            return;
+        }
+
+        const resizeObserver = new ResizeObserver(() => {
+            sliderRef.current.resize();
+        });
+        resizeObserver.observe(containerRef.current);
+
+        return () => {
+            resizeObserver.unobserve(containerRef.current);
+        };
+    });
+
+    return (
+        <StyledContainer ref={containerRef}>
+            <StyledSlider
+                ref={sliderRef}
+                defaultValue={[50, 75]}
+                renderTrack={Track}
+                renderThumb={Thumb}
+            />
+        </StyledContainer>
+    );
+};
+
+<ResizableSlider />
+```
