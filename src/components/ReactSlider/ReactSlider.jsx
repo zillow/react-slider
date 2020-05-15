@@ -339,7 +339,9 @@ class ReactSlider extends React.Component {
         if (this.state.value.length > value.length) {
             this.state.value.length = value.length;
         }
+    }
 
+    componentDidUpdate() {
         // If an upperBound has not yet been determined (due to the component being hidden
         // during the mount event, or during the last resize), then calculate it now
         if (this.state.upperBound === 0) {
@@ -601,6 +603,9 @@ class ReactSlider extends React.Component {
 
     resize() {
         const { slider, thumb0: thumb } = this;
+        if (!slider || !thumb) {
+            return;
+        }
 
         const sizeKey = this.sizeKey();
 
@@ -614,11 +619,20 @@ class ReactSlider extends React.Component {
         const thumbRect = thumb.getBoundingClientRect();
         const thumbSize = thumbRect[sizeKey.replace('client', '').toLowerCase()];
 
-        this.setState({
-            upperBound: sliderSize - thumbSize,
-            sliderLength: Math.abs(sliderMax - sliderMin),
-            thumbSize,
-        });
+        const upperBound = sliderSize - thumbSize;
+        const sliderLength = Math.abs(sliderMax - sliderMin);
+
+        if (
+            this.state.upperBound !== upperBound ||
+            this.state.sliderLength !== sliderLength ||
+            this.state.thumbSize !== thumbSize
+        ) {
+            this.setState({
+                upperBound,
+                sliderLength,
+                thumbSize,
+            });
+        }
     }
 
     // calculates the offset of a thumb in pixels based on its value.
