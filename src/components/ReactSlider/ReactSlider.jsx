@@ -21,15 +21,15 @@ function stopPropagation(e) {
     }
 }
 
-function ensureArray(x) {
+function sanitizeInValue(x) {
     if (x == null) {
         return [];
     }
-    return Array.isArray(x) ? x : [x];
+    return Array.isArray(x) ? x.slice() : [x];
 }
 
-function undoEnsureArray(x) {
-    return x !== null && x.length === 1 ? x[0] : x;
+function prepareOutValue(x) {
+    return x !== null && x.length === 1 ? x[0] : x.slice();
 }
 
 function trimSucceeding(length, nextValue, minDistance, max) {
@@ -288,9 +288,9 @@ class ReactSlider extends React.Component {
     constructor(props) {
         super(props);
 
-        let value = ensureArray(props.value);
+        let value = sanitizeInValue(props.value);
         if (!value.length) {
-            value = ensureArray(props.defaultValue);
+            value = sanitizeInValue(props.defaultValue);
         }
 
         // reused throughout the component to store results of iterations over `value`
@@ -324,7 +324,7 @@ class ReactSlider extends React.Component {
     // Keep the internal `value` consistent with an outside `value` if present.
     // This basically allows the slider to be a controlled component.
     UNSAFE_componentWillReceiveProps(newProps) {
-        let value = ensureArray(newProps.value);
+        let value = sanitizeInValue(newProps.value);
         if (!value.length) {
             // eslint-disable-next-line prefer-destructuring
             value = this.state.value;
@@ -485,7 +485,7 @@ class ReactSlider extends React.Component {
     };
 
     getValue() {
-        return undoEnsureArray(this.state.value);
+        return prepareOutValue(this.state.value);
     }
 
     getClosestIndex(pixelOffset) {
@@ -886,7 +886,7 @@ class ReactSlider extends React.Component {
 
     fireChangeEvent(event) {
         if (this.props[event]) {
-            this.props[event](undoEnsureArray(this.state.value));
+            this.props[event](prepareOutValue(this.state.value));
         }
     }
 
@@ -939,7 +939,7 @@ class ReactSlider extends React.Component {
 
         const state = {
             index: i,
-            value: undoEnsureArray(this.state.value),
+            value: prepareOutValue(this.state.value),
             valueNow: this.state.value[i],
         };
 
@@ -976,7 +976,7 @@ class ReactSlider extends React.Component {
         };
         const state = {
             index: i,
-            value: undoEnsureArray(this.state.value),
+            value: prepareOutValue(this.state.value),
         };
         return this.props.renderTrack(props, state);
     };
