@@ -457,12 +457,10 @@ class ReactSlider extends React.Component {
         if (this.props.disabled || e.button === 2) {
             return;
         }
-        this.hasMoved = false;
         if (!this.props.snapDragDisabled) {
             const position = this.getMousePosition(e);
             this.forceValueFromPosition(position[0], i => {
                 this.start(i, position[0]);
-                this.fireChangeEvent('onChange');
                 addHandlers(this.getMouseEventMap());
             });
         }
@@ -691,7 +689,12 @@ class ReactSlider extends React.Component {
             }
         }
 
-        this.setState({ value }, callback.bind(this, closestIndex));
+        this.fireChangeEvent('onBeforeChange');
+        this.hasMoved = true;
+        this.setState({ value }, () => {
+            callback(closestIndex);
+            this.fireChangeEvent('onChange');
+        });
     }
 
     // clear all pending timeouts to avoid error messages after unmounting
@@ -708,8 +711,6 @@ class ReactSlider extends React.Component {
         if (thumbRef) {
             thumbRef.focus();
         }
-
-        this.hasMoved = false;
 
         const { zIndices } = this.state;
         // remove wherever the element is
