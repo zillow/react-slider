@@ -2,6 +2,17 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.0.8](https://github.com/zillow/react-slider/compare/v1.0.7...v1.0.8) (2020-06-15)
+
+
+### Bug Fixes
+
+* account for floating point operations when stepping values with the keyboard ([93f89d8](https://github.com/zillow/react-slider/commit/93f89d811f639837d7ba81a48524224cd672c2aa)), closes [#179](https://github.com/zillow/react-slider/issues/179)
+* call `onBeforeChange` and `onAfterChange` lifecycle methods when clicking track ([1e3d90e](https://github.com/zillow/react-slider/commit/1e3d90e13203cc860ed8b52651008956af197a71)), closes [#180](https://github.com/zillow/react-slider/issues/180)
+* encapsulate value reference within ReactSlider ([#181](https://github.com/zillow/react-slider/issues/181)) ([453855f](https://github.com/zillow/react-slider/commit/453855f24b210be7ae5a889a3ca6b6f7925b2194))
+
+
+
 ## [1.0.7](https://github.com/zillow/react-slider/compare/v1.0.6...v1.0.7) (2020-05-17)
 
 
