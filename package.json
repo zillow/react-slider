@@ -47,9 +47,9 @@
     "babel-plugin-styled-components": "^1.10.7",
     "babel-preset-zillow": "^4.3.0",
     "create-react-styleguide": "^5.2.0",
-    "eslint-plugin-jest": "^23.10.0",
-    "eslint-plugin-zillow": "^3.7.4",
-    "gh-pages": "^2.2.0",
+    "eslint-plugin-jest": "^23.13.2",
+    "eslint-plugin-zillow": "^3.7.8",
+    "gh-pages": "^3.0.0",
     "husky": "^4.2.5",
     "jest-styled-components": "^7.0.2",
     "prop-types": "^15.7.2",
@@ -57,7 +57,7 @@
     "react-dom": "^16.13.1",
     "react-test-renderer": "^16.13.1",
     "standard-version": "^5.0.2",
-    "styled-components": "^5.1.0"
+    "styled-components": "^5.1.1"
   },
   "contributors": [
     {
