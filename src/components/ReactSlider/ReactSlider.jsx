@@ -727,13 +727,13 @@ class ReactSlider extends React.Component {
 
     moveUpByStep(step = this.props.step) {
         const oldValue = this.state.value[this.state.index];
-        const newValue = oldValue + step;
+        const newValue = this.trimAlignValue(oldValue + step);
         this.move(Math.min(newValue, this.props.max));
     }
 
     moveDownByStep(step = this.props.step) {
         const oldValue = this.state.value[this.state.index];
-        const newValue = oldValue - step;
+        const newValue = this.trimAlignValue(oldValue - step);
         this.move(Math.max(newValue, this.props.min));
     }
 
