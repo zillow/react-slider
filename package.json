@@ -56,7 +56,7 @@
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
     "react-test-renderer": "^16.13.1",
-    "standard-version": "^5.0.2",
+    "standard-version": "^9.0.0",
     "styled-components": "^5.2.0"
   },
   "contributors": [
