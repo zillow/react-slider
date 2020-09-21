@@ -68,6 +68,33 @@ function removeHandlers(eventMap) {
     });
 }
 
+function trimAlignValue(val, props) {
+    return alignValue(trimValue(val, props), props);
+}
+
+function alignValue(val, props) {
+    const valModStep = (val - props.min) % props.step;
+    let alignedValue = val - valModStep;
+
+    if (Math.abs(valModStep) * 2 >= props.step) {
+        alignedValue += valModStep > 0 ? props.step : -props.step;
+    }
+
+    return parseFloat(alignedValue.toFixed(5));
+}
+
+function trimValue(val, props) {
+    let trimmed = val;
+    if (trimmed <= props.min) {
+        trimmed = props.min;
+    }
+    if (trimmed >= props.max) {
+        trimmed = props.max;
+    }
+
+    return trimmed;
+}
+
 class ReactSlider extends React.Component {
     static displayName = 'ReactSlider';
 
@@ -293,15 +320,12 @@ class ReactSlider extends React.Component {
             value = sanitizeInValue(props.defaultValue);
         }
 
-        // reused throughout the component to store results of iterations over `value`
-        this.tempArray = value.slice();
-
         // array for storing resize timeouts ids
         this.pendingResizeTimeouts = [];
 
         const zIndices = [];
         for (let i = 0; i < value.length; i += 1) {
-            value[i] = this.trimAlignValue(value[i], props);
+            value[i] = trimAlignValue(value[i], props);
             zIndices.push(i);
         }
 
@@ -311,6 +335,7 @@ class ReactSlider extends React.Component {
             sliderLength: 0,
             value,
             zIndices,
+            tempArray: value.slice(),
         };
     }
 
@@ -323,22 +348,17 @@ class ReactSlider extends React.Component {
 
     // Keep the internal `value` consistent with an outside `value` if present.
     // This basically allows the slider to be a controlled component.
-    UNSAFE_componentWillReceiveProps(newProps) {
-        let value = sanitizeInValue(newProps.value);
+    static getDerivedStateFromProps(props, state) {
+        const value = sanitizeInValue(props.value);
         if (!value.length) {
-            // eslint-disable-next-line prefer-destructuring
-            value = this.state.value;
+            return null;
         }
 
-        // ensure the array keeps the same size as `value`
-        this.tempArray = value.slice();
-
-        for (let i = 0; i < value.length; i += 1) {
-            this.state.value[i] = this.trimAlignValue(value[i], newProps);
-        }
-        if (this.state.value.length > value.length) {
-            this.state.value.length = value.length;
-        }
+        return {
+            ...state,
+            value: value.map(item => trimAlignValue(item, props)),
+            tempArray: value.slice(),
+        };
     }
 
     componentDidUpdate() {
@@ -475,8 +495,9 @@ class ReactSlider extends React.Component {
 
         if (this.props.onSliderClick && !this.hasMoved) {
             const position = this.getMousePosition(e);
-            const valueAtPos = this.trimAlignValue(
-                this.calcValue(this.calcOffsetFromPosition(position[0]))
+            const valueAtPos = trimAlignValue(
+                this.calcValue(this.calcOffsetFromPosition(position[0])),
+                this.props
             );
             this.props.onSliderClick(valueAtPos);
         }
@@ -540,7 +561,7 @@ class ReactSlider extends React.Component {
         const diffValue =
             (position / (this.state.sliderLength - this.state.thumbSize)) *
             (this.props.max - this.props.min);
-        return this.trimAlignValue(this.state.startValue + diffValue);
+        return trimAlignValue(this.state.startValue + diffValue, this.props);
     }
 
     getDiffPosition(position) {
@@ -675,7 +696,7 @@ class ReactSlider extends React.Component {
     forceValueFromPosition(position, callback) {
         const pixelOffset = this.calcOffsetFromPosition(position);
         const closestIndex = this.getClosestIndex(pixelOffset);
-        const nextValue = this.trimAlignValue(this.calcValue(pixelOffset));
+        const nextValue = trimAlignValue(this.calcValue(pixelOffset), this.props);
 
         // Clone this.state.value since we'll modify it temporarily
         // eslint-disable-next-line zillow/react/no-access-state-in-setstate
@@ -728,13 +749,13 @@ class ReactSlider extends React.Component {
 
     moveUpByStep(step = this.props.step) {
         const oldValue = this.state.value[this.state.index];
-        const newValue = this.trimAlignValue(oldValue + step);
+        const newValue = trimAlignValue(oldValue + step, this.props);
         this.move(Math.min(newValue, this.props.max));
     }
 
     moveDownByStep(step = this.props.step) {
         const oldValue = this.state.value[this.state.index];
-        const newValue = this.trimAlignValue(oldValue - step);
+        const newValue = trimAlignValue(oldValue - step, this.props);
         this.move(Math.max(newValue, this.props.min));
     }
 
@@ -803,7 +824,7 @@ class ReactSlider extends React.Component {
             i += 1, padding = value[i] + minDistance
         ) {
             // eslint-disable-next-line no-param-reassign
-            value[i + 1] = this.alignValue(padding);
+            value[i + 1] = alignValue(padding, this.props);
         }
     }
 
@@ -814,7 +835,7 @@ class ReactSlider extends React.Component {
             i -= 1, padding = value[i] - minDistance
         ) {
             // eslint-disable-next-line no-param-reassign
-            value[i - 1] = this.alignValue(padding);
+            value[i - 1] = alignValue(padding, this.props);
         }
     }
 
@@ -856,33 +877,6 @@ class ReactSlider extends React.Component {
         }
         // Defaults to 'horizontal'
         return 'clientWidth';
-    }
-
-    trimAlignValue(val, props) {
-        return this.alignValue(this.trimValue(val, props), props);
-    }
-
-    trimValue(val, props = this.props) {
-        let trimmed = val;
-        if (trimmed <= props.min) {
-            trimmed = props.min;
-        }
-        if (trimmed >= props.max) {
-            trimmed = props.max;
-        }
-
-        return trimmed;
-    }
-
-    alignValue(val, props = this.props) {
-        const valModStep = (val - props.min) % props.step;
-        let alignValue = val - valModStep;
-
-        if (Math.abs(valModStep) * 2 >= props.step) {
-            alignValue += valModStep > 0 ? props.step : -props.step;
-        }
-
-        return parseFloat(alignValue.toFixed(5));
     }
 
     fireChangeEvent(event) {
@@ -957,7 +951,7 @@ class ReactSlider extends React.Component {
     renderThumbs(offset) {
         const { length } = offset;
 
-        const styles = this.tempArray;
+        const styles = this.state.tempArray;
         for (let i = 0; i < length; i += 1) {
             styles[i] = this.buildThumbStyle(offset[i], i);
         }
@@ -998,7 +992,7 @@ class ReactSlider extends React.Component {
     }
 
     render() {
-        const offset = this.tempArray;
+        const offset = this.state.tempArray;
         const { value } = this.state;
         const l = value.length;
         for (let i = 0; i < l; i += 1) {
