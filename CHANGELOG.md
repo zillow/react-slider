@@ -1,6 +1,19 @@
-# Change Log
+# Changelog
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
+
+### [1.0.10](https://github.com/zillow/react-slider/compare/v1.0.9...v1.0.10) (2020-09-21)
+
+
+### Build System
+
+* update create-react-styleguide@^6 ([222ea5f](https://github.com/zillow/react-slider/commit/222ea5f53500d3319b2eed401e2e50ffc432b4ab))
+* update standard-version and add a versionrc to include more config types during releases ([5deae9a](https://github.com/zillow/react-slider/commit/5deae9a8b5cd9f6f304597fca96117c81e86fdc1))
+
+
+### Code Refactoring
+
+* UNSAFE_componentWillReceiveProps replaced in favor of getDerivedStateFromProps ([904e927](https://github.com/zillow/react-slider/commit/904e927bba111820f87726ee09f4890fc4004ba9)), closes [#193](https://github.com/zillow/react-slider/issues/193)
 
 ## [1.0.9](https://github.com/zillow/react-slider/compare/v1.0.8...v1.0.9) (2020-09-08)
 
