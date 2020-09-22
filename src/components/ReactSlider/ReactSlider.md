@@ -121,6 +121,23 @@ Track changes with `onBeforeChange`, `onChange`, and `onAfterChange` event handl
 />
 ```
 
+Using the `onChange` event handler, you can use the slider as a controlled component
+
+```jsx
+const [value, setValue] = React.useState([25, 50]);
+
+<ReactSlider
+    value={value}
+    onBeforeChange={val => console.log('onBeforeChange value:', val)}
+    onChange={val => { console.log('onChange value:', val); setValue(val); }}
+    onAfterChange={val => console.log('onAfterChange value:', val)}
+    className="horizontal-slider"
+    thumbClassName="example-thumb"
+    trackClassName="example-track"
+    renderThumb={(props, state) => <div {...props}>{state.valueNow}</div>}
+/>
+```
+
 Custom styling using [styled-components](https://www.styled-components.com/)
 
 ```jsx
