@@ -224,36 +224,4 @@ describe('<ReactSlider>', () => {
             );
         });
     });
-
-    it('should replace state value when props value changes', () => {
-        const mockRenderThumb = jest.fn();
-        const mockFirstValue = 40;
-        const mockSecondValue = 80;
-        const testRenderer = renderer.create(
-            <ReactSlider
-                thumbClassName="test-thumb"
-                renderThumb={mockRenderThumb}
-                value={mockFirstValue}
-                min={0}
-                step={1}
-            />
-        );
-        expect(mockRenderThumb).toHaveBeenCalledTimes(1);
-        expect(mockRenderThumb.mock.calls[0][1].value).toBe(mockFirstValue);
-
-        renderer.act(() => {
-            testRenderer.update(
-                <ReactSlider
-                    thumbClassName="test-thumb"
-                    renderThumb={mockRenderThumb}
-                    value={mockSecondValue}
-                    min={0}
-                    step={1}
-                />
-            );
-        });
-
-        expect(mockRenderThumb).toHaveBeenCalledTimes(2);
-        expect(mockRenderThumb.mock.calls[1][1].value).toBe(mockSecondValue);
-    });
 });
