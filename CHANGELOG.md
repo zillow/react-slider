@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.0.11](https://github.com/zillow/react-slider/compare/v1.0.10...v1.0.11) (2020-09-22)
+
+
+### Bug Fixes
+
+* Revert "refactor: UNSAFE_componentWillReceiveProps replaced in favor of getDerivedStateFromProps" to fix controlled components ([d068026](https://github.com/zillow/react-slider/commit/d068026ad1e0b723a5c76a819f927cdf20107f55)), closes [#197](https://github.com/zillow/react-slider/issues/197)
+
 ### [1.0.10](https://github.com/zillow/react-slider/compare/v1.0.9...v1.0.10) (2020-09-21)
 
 
