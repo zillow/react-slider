@@ -365,7 +365,6 @@ class ReactSlider extends React.Component {
             sliderLength: 0,
             value,
             zIndices,
-            tempArray: value.slice(),
         };
     }
 
@@ -384,10 +383,13 @@ class ReactSlider extends React.Component {
             return null;
         }
 
+        // Do not allow controlled upates to happen while we have pending updates
+        if (state.pending) {
+            return null;
+        }
+
         return {
-            ...state,
             value: value.map(item => trimAlignValue(item, props)),
-            tempArray: value.slice(),
         };
     }
 
@@ -423,6 +425,9 @@ class ReactSlider extends React.Component {
     };
 
     onEnd(eventMap) {
+        // Allow controlled updates to continue
+        this.setState({ pending: false });
+
         if (eventMap) {
             removeHandlers(eventMap);
         }
@@ -433,6 +438,9 @@ class ReactSlider extends React.Component {
     }
 
     onMouseMove = e => {
+        // Prevent controlled updates from happening while mouse is moving
+        this.setState({ pending: true });
+
         const position = this.getMousePosition(e);
         const diffPosition = this.getDiffPosition(position[0]);
         const newValue = this.getValueFromPosition(diffPosition);
@@ -443,6 +451,9 @@ class ReactSlider extends React.Component {
         if (e.touches.length > 1) {
             return;
         }
+
+        // Prevent controlled updates from happending while touch is moving
+        this.setState({ pending: true });
 
         const position = this.getTouchPosition(e);
 
@@ -467,6 +478,10 @@ class ReactSlider extends React.Component {
         if (e.ctrlKey || e.shiftKey || e.altKey) {
             return;
         }
+
+        // Prevent controlled updates from happening while a key is pressed
+        this.setState({ pending: true });
+
         switch (e.key) {
             case 'ArrowLeft':
             case 'ArrowDown':
@@ -507,6 +522,10 @@ class ReactSlider extends React.Component {
         if (this.props.disabled || e.button === 2) {
             return;
         }
+
+        // Prevent controlled updates from happening while mouse is moving
+        this.setState({ pending: true });
+
         if (!this.props.snapDragDisabled) {
             const position = this.getMousePosition(e);
             this.forceValueFromPosition(position[0], i => {
@@ -618,6 +637,10 @@ class ReactSlider extends React.Component {
         if (this.props.disabled || e.button === 2) {
             return;
         }
+
+        // Prevent controlled updates from happending while mouse is moving
+        this.setState({ pending: true });
+
         const position = this.getMousePosition(e);
         this.start(i, position[0]);
         addHandlers(this.getMouseEventMap());
@@ -629,6 +652,10 @@ class ReactSlider extends React.Component {
         if (this.props.disabled || e.touches.length > 1) {
             return;
         }
+
+        // Prevent controlled updates from happending while touch is moving
+        this.setState({ pending: true });
+
         const position = this.getTouchPosition(e);
         this.startPosition = position;
         // don't know yet if the user is trying to scroll
@@ -981,7 +1008,7 @@ class ReactSlider extends React.Component {
     renderThumbs(offset) {
         const { length } = offset;
 
-        const styles = this.state.tempArray;
+        const styles = [];
         for (let i = 0; i < length; i += 1) {
             styles[i] = this.buildThumbStyle(offset[i], i);
         }
@@ -1055,7 +1082,7 @@ class ReactSlider extends React.Component {
     }
 
     render() {
-        const offset = this.state.tempArray;
+        const offset = [];
         const { value } = this.state;
         const l = value.length;
         for (let i = 0; i < l; i += 1) {
