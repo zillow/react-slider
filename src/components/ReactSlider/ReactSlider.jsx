@@ -267,6 +267,17 @@ class ReactSlider extends React.Component {
          */
         // eslint-disable-next-line zillow/react/require-default-props
         renderThumb: PropTypes.func,
+
+        /**
+         * Provide a custom render function for the mark node.
+         * The render function will be passed one argument,
+         * an object with props that should be added to your handle node
+         *
+         *     (props) => <span {...props} />
+         *
+         * - `props` {`object`} props to be spread into your track node
+         */
+        renderMark: PropTypes.func,
     };
 
     static defaultProps = {
@@ -289,6 +300,7 @@ class ReactSlider extends React.Component {
         marks: [],
         renderThumb: props => <div {...props} />,
         renderTrack: props => <div {...props} />,
+        renderMark: props => <span {...props} />,
     };
 
     constructor(props) {
@@ -1003,24 +1015,23 @@ class ReactSlider extends React.Component {
         return tracks;
     }
 
-    renderPoints() {
+    renderMarks() {
         return this.props.marks
             .map(parseFloat)
             .sort((a, b) => a - b)
-            .map(point => {
-                const offset = this.calcOffset(point);
+            .map(mark => {
+                const offset = this.calcOffset(mark);
 
-                return (
-                    <span
-                        className="example-dot"
-                        style={
-                            this.props.orientation === 'vertical'
-                                ? { [this.props.invert ? 'bottom' : 'top']: offset }
-                                : { [this.props.invert ? 'right' : 'left']: offset }
-                        }
-                        key={point}
-                    />
-                );
+                const props = {
+                    key: mark,
+                };
+
+                props.style =
+                    this.props.orientation === 'vertical'
+                        ? { [this.props.invert ? 'bottom' : 'top']: offset }
+                        : { [this.props.invert ? 'right' : 'left']: offset };
+
+                return this.props.renderMark(props);
             });
     }
 
@@ -1034,7 +1045,7 @@ class ReactSlider extends React.Component {
 
         const tracks = this.props.withTracks ? this.renderTracks(offset) : null;
         const thumbs = this.renderThumbs(offset);
-        const points = this.props.marks.length ? this.renderPoints() : null;
+        const marks = this.props.marks.length ? this.renderMarks() : null;
 
         return React.createElement(
             'div',
@@ -1049,7 +1060,7 @@ class ReactSlider extends React.Component {
             },
             tracks,
             thumbs,
-            points
+            marks
         );
     }
 }
