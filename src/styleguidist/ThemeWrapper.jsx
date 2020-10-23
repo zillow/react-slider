@@ -43,6 +43,17 @@ const GlobalStyle = createGlobalStyle`
         background: #0f0;
     }
 
+    .example-dot {
+        position: absolute;
+        width: 8px;
+        height: 8px;
+        border: 2px solid #000;
+        background-color: #fff;
+        cursor: pointer;
+        border-radius: 50%;
+        vertical-align: middle;
+    }
+
     .horizontal-slider .example-track {
         top: 20px;
         height: 10px;
@@ -55,6 +66,11 @@ const GlobalStyle = createGlobalStyle`
         line-height: 38px;
     }
 
+    .horizontal-slider .example-dot {
+        margin: 0 calc(25px - 6px);
+        bottom: calc(50% - 6px);
+    }
+
     .vertical-slider .example-thumb {
         left: 1px;
         width: 48px;
@@ -65,6 +81,11 @@ const GlobalStyle = createGlobalStyle`
     .vertical-slider .example-track {
         left: 20px;
         width: 10px;
+    }
+
+    .vertical-slider .example-dot {
+        margin: calc(25px - 6px) 0;
+        left: calc(50% - 6px);
     }
 `;
 

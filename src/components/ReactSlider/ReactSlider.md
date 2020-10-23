@@ -9,6 +9,35 @@ Single slider, similar to `<input type="range" defaultValue={0} />`
 />
 ```
 
+Slider with marks
+
+```jsx
+<ReactSlider
+    className="horizontal-slider"
+    marks={[0, 1, 2, 3, 4, 5, 6, 7, 8, 9]}
+    min={0}
+    max={9}
+    thumbClassName="example-thumb"
+    trackClassName="example-track"
+    renderThumb={(props, state) => <div {...props}>{state.valueNow}</div>}
+/>
+```
+
+Slider with marks and right to left
+
+```jsx
+<ReactSlider
+    className="horizontal-slider"
+    marks={[0, 3, 6]}
+    min={0}
+    max={9}
+    invert
+    thumbClassName="example-thumb"
+    trackClassName="example-track"
+    renderThumb={(props, state) => <div {...props}>{state.valueNow}</div>}
+/>
+```
+
 Double slider
 
 ```jsx
@@ -54,6 +83,25 @@ Vertical slider
     invert
     pearling
     minDistance={10}
+/>
+```
+
+Vertical slider with marks
+
+```jsx
+<ReactSlider
+    className="vertical-slider"
+    thumbClassName="example-thumb"
+    trackClassName="example-track"
+    defaultValue={[0, 5, 10]}
+    max={10}
+    ariaLabel={['Lowest thumb', 'Middle thumb', 'Top thumb']}
+    renderThumb={(props, state) => <div {...props}>{state.valueNow}</div>}
+    orientation="vertical"
+    invert
+    pearling
+    minDistance={1}
+    marks={[0, 3, 5, 8, 10]}
 />
 ```
 

@@ -178,6 +178,11 @@ class ReactSlider extends React.Component {
         invert: PropTypes.bool,
 
         /**
+         * Shows passed marks on the track
+         */
+        marks: PropTypes.arrayOf(PropTypes.number),
+
+        /**
          * Callback called before starting to move a thumb. The callback will only be called if the
          * action will result in a change. The function will be called with one argument,
          * the initial value(s).
@@ -281,6 +286,7 @@ class ReactSlider extends React.Component {
         disabled: false,
         snapDragDisabled: false,
         invert: false,
+        marks: [],
         renderThumb: props => <div {...props} />,
         renderTrack: props => <div {...props} />,
     };
@@ -997,6 +1003,27 @@ class ReactSlider extends React.Component {
         return tracks;
     }
 
+    renderPoints() {
+        return this.props.marks
+            .map(parseFloat)
+            .sort((a, b) => a - b)
+            .map(point => {
+                const offset = this.calcOffset(point);
+
+                return (
+                    <span
+                        className="example-dot"
+                        style={
+                            this.props.orientation === 'vertical'
+                                ? { [this.props.invert ? 'bottom' : 'top']: offset }
+                                : { [this.props.invert ? 'right' : 'left']: offset }
+                        }
+                        key={point}
+                    />
+                );
+            });
+    }
+
     render() {
         const offset = this.tempArray;
         const { value } = this.state;
@@ -1007,6 +1034,7 @@ class ReactSlider extends React.Component {
 
         const tracks = this.props.withTracks ? this.renderTracks(offset) : null;
         const thumbs = this.renderThumbs(offset);
+        const points = this.props.marks.length ? this.renderPoints() : null;
 
         return React.createElement(
             'div',
@@ -1020,7 +1048,8 @@ class ReactSlider extends React.Component {
                 onClick: this.onSliderClick,
             },
             tracks,
-            thumbs
+            thumbs,
+            points
         );
     }
 }
