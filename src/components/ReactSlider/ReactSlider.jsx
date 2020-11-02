@@ -178,10 +178,15 @@ class ReactSlider extends React.Component {
         invert: PropTypes.bool,
 
         /**
-         * Shows passed marks on the track, if true it shows all,
-         * if an array of numbers it shows just the passed marks
+         * Shows passed marks on the track, if true it shows all the marks,
+         * if an array of numbers it shows just the passed marks, if a number is passed
+         * it shows just the marks in that steps: like passing 3 shows the marks 3, 6, 9
          */
-        marks: PropTypes.oneOfType([PropTypes.arrayOf(PropTypes.number), PropTypes.bool]),
+        marks: PropTypes.oneOfType([
+            PropTypes.arrayOf(PropTypes.number),
+            PropTypes.bool,
+            PropTypes.number,
+        ]),
 
         /**
          * The css class set on the marks.
@@ -1025,9 +1030,14 @@ class ReactSlider extends React.Component {
     renderMarks() {
         let { marks } = this.props;
 
-        if (!Array.isArray(marks)) {
-            const range = this.props.max - this.props.min + 1;
+        const range = this.props.max - this.props.min + 1;
+
+        if (typeof marks === 'boolean') {
             marks = Array.from({ length: range }).map((_, key) => key);
+        } else if (typeof marks === 'number') {
+            marks = Array.from({ length: range })
+                .map((_, key) => key)
+                .filter(key => key % marks === 0);
         }
 
         return marks

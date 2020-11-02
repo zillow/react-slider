@@ -103,7 +103,7 @@ Vertical slider with marks
     invert
     pearling
     minDistance={1}
-    marks={[0, 3, 5, 8, 10]}
+    marks={3}
     markClassName="example-mark"
 />
 ```
