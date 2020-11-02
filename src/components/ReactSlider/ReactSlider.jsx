@@ -178,9 +178,15 @@ class ReactSlider extends React.Component {
         invert: PropTypes.bool,
 
         /**
-         * Shows passed marks on the track
+         * Shows passed marks on the track, if true it shows all,
+         * if an array of numbers it shows just the passed marks
          */
-        marks: PropTypes.arrayOf(PropTypes.number),
+        marks: PropTypes.oneOfType([PropTypes.arrayOf(PropTypes.number), PropTypes.bool]),
+
+        /**
+         * The css class set on the marks.
+         */
+        markClassName: PropTypes.string,
 
         /**
          * Callback called before starting to move a thumb. The callback will only be called if the
@@ -292,6 +298,7 @@ class ReactSlider extends React.Component {
         thumbClassName: 'thumb',
         thumbActiveClassName: 'active',
         trackClassName: 'track',
+        markClassName: 'mark',
         withTracks: true,
         pearling: false,
         disabled: false,
@@ -1016,7 +1023,14 @@ class ReactSlider extends React.Component {
     }
 
     renderMarks() {
-        return this.props.marks
+        let { marks } = this.props;
+
+        if (!Array.isArray(marks)) {
+            const range = this.props.max - this.props.min + 1;
+            marks = Array.from({ length: range }).map((_, key) => key);
+        }
+
+        return marks
             .map(parseFloat)
             .sort((a, b) => a - b)
             .map(mark => {
@@ -1024,6 +1038,7 @@ class ReactSlider extends React.Component {
 
                 const props = {
                     key: mark,
+                    className: this.props.markClassName,
                 };
 
                 props.style =
@@ -1045,7 +1060,7 @@ class ReactSlider extends React.Component {
 
         const tracks = this.props.withTracks ? this.renderTracks(offset) : null;
         const thumbs = this.renderThumbs(offset);
-        const marks = this.props.marks.length ? this.renderMarks() : null;
+        const marks = this.props.marks ? this.renderMarks() : null;
 
         return React.createElement(
             'div',

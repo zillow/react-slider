@@ -14,8 +14,8 @@ Slider with marks
 ```jsx
 <ReactSlider
     className="horizontal-slider"
-    marks={[0, 1, 2, 3, 4, 5, 6, 7, 8, 9]}
-    renderMark={(props) => <span className="example-dot" {...props} />}
+    marks={true}
+    markClassName="example-mark"
     min={0}
     max={9}
     thumbClassName="example-thumb"
@@ -30,7 +30,7 @@ Slider with marks and right to left
 <ReactSlider
     className="horizontal-slider"
     marks={[5, 7, 9]}
-    renderMark={(props) => <span className="example-dot" {...props} />}
+    markClassName="example-mark"
     min={0}
     max={9}
     invert
@@ -104,7 +104,7 @@ Vertical slider with marks
     pearling
     minDistance={1}
     marks={[0, 3, 5, 8, 10]}
-    renderMark={(props) => <span className="example-dot" {...props} />}
+    markClassName="example-mark"
 />
 ```
 
