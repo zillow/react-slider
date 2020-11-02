@@ -43,7 +43,7 @@ const GlobalStyle = createGlobalStyle`
         background: #0f0;
     }
 
-    .example-dot {
+    .example-mark {
         position: absolute;
         width: 8px;
         height: 8px;
@@ -66,7 +66,7 @@ const GlobalStyle = createGlobalStyle`
         line-height: 38px;
     }
 
-    .horizontal-slider .example-dot {
+    .horizontal-slider .example-mark {
         margin: 0 calc(25px - 6px);
         bottom: calc(50% - 6px);
     }
@@ -83,7 +83,7 @@ const GlobalStyle = createGlobalStyle`
         width: 10px;
     }
 
-    .vertical-slider .example-dot {
+    .vertical-slider .example-mark {
         margin: calc(25px - 6px) 0;
         left: calc(50% - 6px);
     }
