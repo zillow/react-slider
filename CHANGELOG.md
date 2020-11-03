@@ -2,6 +2,21 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.1.0](https://github.com/zillow/react-slider/compare/v1.0.11...v1.1.0) (2020-11-03)
+
+
+### Features
+
+* add step support for marks ([38f29d3](https://github.com/zillow/react-slider/commit/38f29d30c3fd5ba6dc1f4d1a3fc6edca12770b35))
+* add support for boolean marks and mark class ([85060d2](https://github.com/zillow/react-slider/commit/85060d2de5cfa0c9f7ad385eefa682936b4bbc09))
+* add support for marks ([0d1a878](https://github.com/zillow/react-slider/commit/0d1a8784b611c58ed366b3b2d0271b6c3f712175))
+* add support to custom marks ([21da836](https://github.com/zillow/react-slider/commit/21da836379627ac25df469bfc6716154f47d9826))
+
+
+### Documentation
+
+* update examples with marks ([ecffc59](https://github.com/zillow/react-slider/commit/ecffc5954d625bbea54036413618e8bdc2b7b256))
+
 ### [1.0.11](https://github.com/zillow/react-slider/compare/v1.0.10...v1.0.11) (2020-09-22)
 
 
