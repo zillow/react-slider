@@ -14,7 +14,7 @@ Slider with marks
 ```jsx
 <ReactSlider
     className="horizontal-slider"
-    marks={true}
+    marks
     markClassName="example-mark"
     min={0}
     max={9}
@@ -24,12 +24,12 @@ Slider with marks
 />
 ```
 
-Slider with marks and right to left
+An inverted slider with custom marks
 
 ```jsx
 <ReactSlider
     className="horizontal-slider"
-    marks={[5, 7, 9]}
+    marks={[5, 6, 7, 8, 9]}
     markClassName="example-mark"
     min={0}
     max={9}
@@ -88,23 +88,22 @@ Vertical slider
 />
 ```
 
-Vertical slider with marks
+Vertical slider with marks at an interval
 
 ```jsx
 <ReactSlider
     className="vertical-slider"
+    markClassName="example-mark"
     thumbClassName="example-thumb"
     trackClassName="example-track"
-    defaultValue={[0, 5, 10]}
-    max={10}
+    defaultValue={[0, 50, 100]}
+    marks={25}
     ariaLabel={['Lowest thumb', 'Middle thumb', 'Top thumb']}
     renderThumb={(props, state) => <div {...props}>{state.valueNow}</div>}
     orientation="vertical"
     invert
     pearling
-    minDistance={1}
-    marks={3}
-    markClassName="example-mark"
+    minDistance={10}
 />
 ```
 
