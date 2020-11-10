@@ -425,15 +425,16 @@ class ReactSlider extends React.Component {
     };
 
     onEnd(eventMap) {
-        // Allow controlled updates to continue
-        this.setState({ pending: false });
-
         if (eventMap) {
             removeHandlers(eventMap);
         }
         if (this.hasMoved) {
             this.fireChangeEvent('onAfterChange');
         }
+
+        // Allow controlled updates to continue
+        this.setState({ pending: false });
+
         this.hasMoved = false;
     }
 
