@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.1.2](https://github.com/zillow/react-slider/compare/v1.1.1...v1.1.2) (2020-11-10)
+
+
+### Bug Fixes
+
+* `onAfterChange` now returns the correct value when used as a controlled component ([03fcc17](https://github.com/zillow/react-slider/commit/03fcc175df5ee28644e122e87592991d9467f765)), closes [#201](https://github.com/zillow/react-slider/issues/201)
+
 ### [1.1.1](https://github.com/zillow/react-slider/compare/v1.1.0...v1.1.1) (2020-11-03)
 
 
