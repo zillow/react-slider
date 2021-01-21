@@ -40,24 +40,24 @@
   },
   "dependencies": {},
   "peerDependencies": {
-    "react": "16.x",
+    "react": "^16 || ^17",
     "prop-types": "^15.6"
   },
   "devDependencies": {
-    "babel-plugin-styled-components": "^1.11.1",
-    "babel-preset-zillow": "^4.3.0",
+    "babel-plugin-styled-components": "^1.12.0",
+    "babel-preset-zillow": "^4.4.0",
     "create-react-styleguide": "^6.0.0",
-    "eslint-plugin-jest": "^24.0.0",
-    "eslint-plugin-zillow": "^3.7.8",
+    "eslint-plugin-jest": "^24.1.3",
+    "eslint-plugin-zillow": "^3.8.0",
     "gh-pages": "^3.1.0",
-    "husky": "^4.3.0",
+    "husky": "^4.3.8",
     "jest-styled-components": "^7.0.3",
     "prop-types": "^15.7.2",
-    "react": "^16.13.1",
-    "react-dom": "^16.13.1",
-    "react-test-renderer": "^16.13.1",
-    "standard-version": "^9.0.0",
-    "styled-components": "^5.2.0"
+    "react": "^17.0.1",
+    "react-dom": "^17.0.1",
+    "react-test-renderer": "^17.0.1",
+    "standard-version": "^9.1.0",
+    "styled-components": "^5.2.1"
   },
   "contributors": [
     {
