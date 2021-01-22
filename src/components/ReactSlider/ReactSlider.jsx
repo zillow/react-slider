@@ -964,6 +964,13 @@ class ReactSlider extends React.Component {
         return obj;
     }
 
+    buildMarkStyle(offset) {
+        return {
+            position: 'absolute',
+            [this.posMinKey()]: offset,
+        };
+    }
+
     renderThumb = (style, i) => {
         const className = `${this.props.thumbClassName} ${this.props.thumbClassName}-${i} ${
             this.state.index === i ? this.props.thumbActiveClassName : ''
@@ -1071,12 +1078,8 @@ class ReactSlider extends React.Component {
                 const props = {
                     key: mark,
                     className: this.props.markClassName,
+                    style: this.buildMarkStyle(offset),
                 };
-
-                props.style =
-                    this.props.orientation === 'vertical'
-                        ? { [this.props.invert ? 'bottom' : 'top']: offset }
-                        : { [this.props.invert ? 'right' : 'left']: offset };
 
                 return this.props.renderMark(props);
             });
