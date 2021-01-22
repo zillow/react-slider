@@ -44,7 +44,6 @@ const GlobalStyle = createGlobalStyle`
     }
 
     .example-mark {
-        position: absolute;
         width: 8px;
         height: 8px;
         border: 2px solid #000;
