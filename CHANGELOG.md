@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.1.4](https://github.com/zillow/react-slider/compare/v1.1.3...v1.1.4) (2021-01-22)
+
+
+### Bug Fixes
+
+* set position absolute for marks at render ([7d979e7](https://github.com/zillow/react-slider/commit/7d979e7f9e43b8ba94bebc82ac0081d111efecbd)), closes [#203](https://github.com/zillow/react-slider/issues/203)
+
 ### [1.1.3](https://github.com/zillow/react-slider/compare/v1.1.2...v1.1.3) (2021-01-21)
 
 ### [1.1.2](https://github.com/zillow/react-slider/compare/v1.1.1...v1.1.2) (2020-11-10)
