@@ -262,6 +262,13 @@ class ReactSlider extends React.Component {
         ariaLabel: PropTypes.oneOfType([PropTypes.string, PropTypes.arrayOf(PropTypes.string)]),
 
         /**
+         * aria-labelledby for screen-readers to apply to the thumbs.
+         * Used when slider rendered with separate label.
+         */
+        // eslint-disable-next-line zillow/react/require-default-props
+        ariaLabelledby: PropTypes.string,
+
+        /**
          * aria-valuetext for screen-readers.
          * Can be a static string, or a function that returns a string.
          * The function will be passed a single argument,
@@ -995,6 +1002,7 @@ class ReactSlider extends React.Component {
             'aria-label': Array.isArray(this.props.ariaLabel)
                 ? this.props.ariaLabel[i]
                 : this.props.ariaLabel,
+            'aria-labelledby': this.props.ariaLabelledby,
         };
 
         const state = {
