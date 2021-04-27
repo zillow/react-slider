@@ -264,9 +264,14 @@ class ReactSlider extends React.Component {
         /**
          * aria-labelledby for screen-readers to apply to the thumbs.
          * Used when slider rendered with separate label.
+         * Use an array for more than one thumb.
+         * The length of the array must match the number of thumbs in the value array.
          */
         // eslint-disable-next-line zillow/react/require-default-props
-        ariaLabelledby: PropTypes.string,
+        ariaLabelledby: PropTypes.oneOfType([
+            PropTypes.string,
+            PropTypes.arrayOf(PropTypes.string),
+        ]),
 
         /**
          * aria-valuetext for screen-readers.
@@ -1002,7 +1007,9 @@ class ReactSlider extends React.Component {
             'aria-label': Array.isArray(this.props.ariaLabel)
                 ? this.props.ariaLabel[i]
                 : this.props.ariaLabel,
-            'aria-labelledby': this.props.ariaLabelledby,
+            'aria-labelledby': Array.isArray(this.props.ariaLabelledby)
+                ? this.props.ariaLabelledby[i]
+                : this.props.ariaLabelledby,
         };
 
         const state = {

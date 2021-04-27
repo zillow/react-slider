@@ -49,7 +49,7 @@ Double slider
     trackClassName="example-track"
     defaultValue={[0, 100]}
     ariaLabel={['Lower thumb', 'Upper thumb']}
-    ariaLabelledby="Slider label"
+    ariaLabelledby={['Left thumb label', 'Right thumb label']}
     ariaValuetext={state => `Thumb value ${state.valueNow}`}
     renderThumb={(props, state) => <div {...props}>{state.valueNow}</div>}
     pearling
@@ -66,7 +66,7 @@ Multi slider
     trackClassName="example-track"
     defaultValue={[0, 50, 100]}
     ariaLabel={['Leftmost thumb', 'Middle thumb', 'Rightmost thumb']}
-    ariaLabelledby="Slider label"
+    ariaLabelledby={['Left thumb label', 'Middle thumb label', 'Right thumb label']}
     renderThumb={(props, state) => <div {...props}>{state.valueNow}</div>}
     pearling
     minDistance={10}
@@ -82,7 +82,7 @@ Vertical slider
     trackClassName="example-track"
     defaultValue={[0, 50, 100]}
     ariaLabel={['Lowest thumb', 'Middle thumb', 'Top thumb']}
-    ariaLabelledby="Slider label"
+    ariaLabelledby={['Left thumb label', 'Middle thumb label', 'Right thumb label']}
     renderThumb={(props, state) => <div {...props}>{state.valueNow}</div>}
     orientation="vertical"
     invert
@@ -102,7 +102,7 @@ Vertical slider with marks at an interval
     defaultValue={[0, 50, 100]}
     marks={25}
     ariaLabel={['Lowest thumb', 'Middle thumb', 'Top thumb']}
-    ariaLabelledby="Slider label"
+    ariaLabelledby={['Left thumb label', 'Middle thumb label', 'Right thumb label']}
     renderThumb={(props, state) => <div {...props}>{state.valueNow}</div>}
     orientation="vertical"
     invert
