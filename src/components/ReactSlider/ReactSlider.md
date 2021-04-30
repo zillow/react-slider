@@ -49,7 +49,6 @@ Double slider
     trackClassName="example-track"
     defaultValue={[0, 100]}
     ariaLabel={['Lower thumb', 'Upper thumb']}
-    ariaLabelledby={['Left thumb label', 'Right thumb label']}
     ariaValuetext={state => `Thumb value ${state.valueNow}`}
     renderThumb={(props, state) => <div {...props}>{state.valueNow}</div>}
     pearling
@@ -66,7 +65,6 @@ Multi slider
     trackClassName="example-track"
     defaultValue={[0, 50, 100]}
     ariaLabel={['Leftmost thumb', 'Middle thumb', 'Rightmost thumb']}
-    ariaLabelledby={['Left thumb label', 'Middle thumb label', 'Right thumb label']}
     renderThumb={(props, state) => <div {...props}>{state.valueNow}</div>}
     pearling
     minDistance={10}
@@ -82,7 +80,6 @@ Vertical slider
     trackClassName="example-track"
     defaultValue={[0, 50, 100]}
     ariaLabel={['Lowest thumb', 'Middle thumb', 'Top thumb']}
-    ariaLabelledby={['Left thumb label', 'Middle thumb label', 'Right thumb label']}
     renderThumb={(props, state) => <div {...props}>{state.valueNow}</div>}
     orientation="vertical"
     invert
@@ -102,7 +99,6 @@ Vertical slider with marks at an interval
     defaultValue={[0, 50, 100]}
     marks={25}
     ariaLabel={['Lowest thumb', 'Middle thumb', 'Top thumb']}
-    ariaLabelledby={['Left thumb label', 'Middle thumb label', 'Right thumb label']}
     renderThumb={(props, state) => <div {...props}>{state.valueNow}</div>}
     orientation="vertical"
     invert
@@ -254,3 +250,44 @@ const ResizableSlider = () => {
 
 <ResizableSlider />
 ```
+
+Single slider, applying `ariaLabelledby` to establish association with a label
+
+```jsx
+<div>
+    <label id="slider-label" htmlFor="slider">
+        React Slider example
+    </label>
+    <ReactSlider
+        ariaLabelledby="slider-label"
+        className="horizontal-slider"
+        thumbClassName="example-thumb"
+        trackClassName="example-track"
+        renderThumb={(props, state) => <div {...props}>{state.valueNow}</div>}
+    />
+</div>
+```
+
+Double slider, applying `ariaLabelledby` as an array to multiple thumb labels
+
+```jsx
+<div>
+    <label id="first-slider-label" htmlFor="slider">
+        Start slider label
+    </label>
+    <label id="second-slider-label" htmlFor="slider">
+        End slider label
+    </label>
+    <ReactSlider
+        className="horizontal-slider"
+        thumbClassName="example-thumb"
+        trackClassName="example-track"
+        defaultValue={[0, 100]}
+        ariaLabel={['Lower thumb', 'Upper thumb']}
+        ariaLabelledby={['first-slider-label', 'second-slider-label']}
+        ariaValuetext={state => `Thumb value ${state.valueNow}`}
+        renderThumb={(props, state) => <div {...props}>{state.valueNow}</div>}
+        pearling
+        minDistance={10}
+    />
+</div>
