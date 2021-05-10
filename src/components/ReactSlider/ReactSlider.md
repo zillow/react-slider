@@ -255,7 +255,7 @@ Single slider, applying `ariaLabelledby` to establish association with a label
 
 ```jsx
 <div>
-    <label id="slider-label" htmlFor="slider">
+    <label id="slider-label">
         React Slider example
     </label>
     <ReactSlider
@@ -272,10 +272,10 @@ Double slider, applying `ariaLabelledby` as an array to multiple thumb labels
 
 ```jsx
 <div>
-    <label id="first-slider-label" htmlFor="slider">
+    <label id="first-slider-label">
         Start slider label
     </label>
-    <label id="second-slider-label" htmlFor="slider">
+    <label id="second-slider-label">
         End slider label
     </label>
     <ReactSlider
@@ -283,7 +283,6 @@ Double slider, applying `ariaLabelledby` as an array to multiple thumb labels
         thumbClassName="example-thumb"
         trackClassName="example-track"
         defaultValue={[0, 100]}
-        ariaLabel={['Lower thumb', 'Upper thumb']}
         ariaLabelledby={['first-slider-label', 'second-slider-label']}
         ariaValuetext={state => `Thumb value ${state.valueNow}`}
         renderThumb={(props, state) => <div {...props}>{state.valueNow}</div>}
