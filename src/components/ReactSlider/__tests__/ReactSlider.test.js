@@ -10,14 +10,15 @@ describe('<ReactSlider>', () => {
 
     describe('event handlers', () => {
         beforeEach(() => {
-            global.document = {
-                addEventListener: jest.fn(),
-                removeEventListener: jest.fn(),
-            };
-        });
-
-        afterEach(() => {
-            delete global.document;
+            // https://github.com/facebook/jest/issues/890#issuecomment-209698782
+            Object.defineProperty(document, 'addEventListener', {
+                writable: true,
+                value: jest.fn(),
+            });
+            Object.defineProperty(document, 'removeEventListener', {
+                writable: true,
+                value: jest.fn(),
+            });
         });
 
         it('does not call any event handlers if the value does not change', () => {
@@ -38,7 +39,7 @@ describe('<ReactSlider>', () => {
             const testInstance = testRenderer.root;
             const thumb = testInstance.findByProps({ className: 'test-thumb test-thumb-0 ' });
 
-            const { addEventListener } = global.document;
+            const { addEventListener } = document;
             expect(addEventListener).not.toHaveBeenCalled();
 
             // simulate focus on thumb
@@ -93,7 +94,7 @@ describe('<ReactSlider>', () => {
             const testInstance = testRenderer.root;
             const thumb = testInstance.findByProps({ className: 'test-thumb test-thumb-0 ' });
 
-            const { addEventListener } = global.document;
+            const { addEventListener } = document;
             expect(addEventListener).not.toHaveBeenCalled();
 
             // simulate focus on thumb
@@ -138,7 +139,7 @@ describe('<ReactSlider>', () => {
             const testInstance = testRenderer.root;
             const thumb = testInstance.findByProps({ className: 'test-thumb test-thumb-0 ' });
 
-            const { addEventListener } = global.document;
+            const { addEventListener } = document;
             expect(addEventListener).not.toHaveBeenCalled();
 
             // simulate focus on thumb
@@ -182,7 +183,7 @@ describe('<ReactSlider>', () => {
             const testInstance = testRenderer.root;
             const thumb = testInstance.findByProps({ className: 'test-thumb test-thumb-0 ' });
 
-            const { addEventListener } = global.document;
+            const { addEventListener } = document;
             expect(addEventListener).not.toHaveBeenCalled();
 
             // simulate focus on thumb
