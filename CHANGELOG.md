@@ -2,6 +2,20 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.2.0](https://github.com/zillow/react-slider/compare/v1.1.4...v1.2.0) (2021-05-18)
+
+
+### Features
+
+* Add support for multiple values in ariaLabelledby ([28eb332](https://github.com/zillow/react-slider/commit/28eb332decafa692cb4c0a8f44e2a57198638087))
+* Adding a new ariaLabelledby prop for use with Assistive Technologies ([7d8cc4d](https://github.com/zillow/react-slider/commit/7d8cc4d1ea7fa06c6beaa38b1f9f833a38b2c9a6))
+
+
+### Documentation
+
+* Adding separate arialabelledby examples ([5c97326](https://github.com/zillow/react-slider/commit/5c973268051f329024ade9f9f398931f341aead4))
+* Removing ariaLabel from ariaLabelledBy examples and htmlFor declarations ([5fbc3de](https://github.com/zillow/react-slider/commit/5fbc3deb8e270273105ca39ec036c383a3c76933))
+
 ### [1.1.4](https://github.com/zillow/react-slider/compare/v1.1.3...v1.1.4) (2021-01-22)
 
 
