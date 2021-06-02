@@ -222,8 +222,8 @@ class ReactSlider extends React.Component {
 
         /**
          * Callback called before starting to move a thumb. The callback will only be called if the
-         * action will result in a change. The function will be called with one argument,
-         * the initial value(s).
+         * action will result in a change. The function will be called with two arguments, the first
+         * being the initial value(s) the second being thumb index.
          */
         // eslint-disable-next-line max-len
         // eslint-disable-next-line zillow/react/require-default-props, zillow/react/no-unused-prop-types
@@ -231,7 +231,8 @@ class ReactSlider extends React.Component {
 
         /**
          * Callback called on every value change.
-         * The function will be called with one argument, the new value(s).
+         * The function will be called with two arguments, the first being the new value(s) 
+         * the second being thumb index.
          */
         // eslint-disable-next-line max-len
         // eslint-disable-next-line zillow/react/require-default-props, zillow/react/no-unused-prop-types
@@ -239,8 +240,8 @@ class ReactSlider extends React.Component {
 
         /**
          * Callback called only after moving a thumb has ended. The callback will only be called if
-         * the action resulted in a change. The function will be called with one argument,
-         * the result value(s).
+         * the action resulted in a change. The function will be called with two arguments, the
+         * first being the result value(s) the second being thumb index.
          */
         // eslint-disable-next-line max-len
         // eslint-disable-next-line zillow/react/require-default-props, zillow/react/no-unused-prop-types
@@ -951,7 +952,7 @@ class ReactSlider extends React.Component {
 
     fireChangeEvent(event) {
         if (this.props[event]) {
-            this.props[event](prepareOutValue(this.state.value));
+            this.props[event](prepareOutValue(this.state.value), this.state.index);
         }
     }
 
