@@ -114,20 +114,20 @@ describe('<ReactSlider>', () => {
             onKeyDown({ key: 'ArrowRight', preventDefault: () => {} });
 
             expect(onBeforeChange).toHaveBeenCalledTimes(1);
-            expect(onBeforeChange).toHaveBeenCalledWith(0);
+            expect(onBeforeChange).toHaveBeenCalledWith(0, 0);
             expect(onBeforeChange.mock.invocationCallOrder[0]).toBeLessThan(
                 onChange.mock.invocationCallOrder[0]
             );
             expect(onChange).toHaveBeenCalledTimes(1);
-            expect(onChange).toHaveBeenCalledWith(1);
+            expect(onChange).toHaveBeenCalledWith(1, 0);
 
             // simulate keydown
             onKeyDown({ key: 'ArrowRight', preventDefault: () => {} });
 
             expect(onBeforeChange).toHaveBeenCalledTimes(1);
-            expect(onBeforeChange).toHaveBeenCalledWith(0);
+            expect(onBeforeChange).toHaveBeenCalledWith(0, 0);
             expect(onChange).toHaveBeenCalledTimes(2);
-            expect(onChange).toHaveBeenCalledWith(2);
+            expect(onChange).toHaveBeenCalledWith(2, 0);
         });
 
         it('calls onChange for every change', () => {
@@ -158,13 +158,13 @@ describe('<ReactSlider>', () => {
             onKeyDown({ key: 'ArrowRight', preventDefault: () => {} });
 
             expect(onChange).toHaveBeenCalledTimes(1);
-            expect(onChange).toHaveBeenCalledWith(1);
+            expect(onChange).toHaveBeenCalledWith(1, 0);
 
             // simulate keydown
             onKeyDown({ key: 'ArrowLeft', preventDefault: () => {} });
 
             expect(onChange).toHaveBeenCalledTimes(2);
-            expect(onChange).toHaveBeenCalledWith(0);
+            expect(onChange).toHaveBeenCalledWith(0, 0);
         });
 
         it('calls onAfterChange only once after onChange', () => {
@@ -204,14 +204,14 @@ describe('<ReactSlider>', () => {
             onKeyDown({ key: 'ArrowRight', preventDefault: () => {} });
 
             expect(onChange).toHaveBeenCalledTimes(1);
-            expect(onChange).toHaveBeenCalledWith(1);
+            expect(onChange).toHaveBeenCalledWith(1, 0);
             expect(onAfterChange).not.toHaveBeenCalled();
 
             // simulate keydown
             onKeyDown({ key: 'ArrowRight', preventDefault: () => {} });
 
             expect(onChange).toHaveBeenCalledTimes(2);
-            expect(onChange).toHaveBeenCalledWith(2);
+            expect(onChange).toHaveBeenCalledWith(2, 0);
             expect(onAfterChange).not.toHaveBeenCalled();
 
             // simulate keyup
@@ -219,7 +219,7 @@ describe('<ReactSlider>', () => {
 
             expect(onChange).toHaveBeenCalledTimes(2);
             expect(onAfterChange).toHaveBeenCalledTimes(1);
-            expect(onAfterChange).toHaveBeenCalledWith(2);
+            expect(onAfterChange).toHaveBeenCalledWith(2, 0);
             expect(onAfterChange.mock.invocationCallOrder[0]).toBeGreaterThan(
                 onChange.mock.invocationCallOrder[1]
             );

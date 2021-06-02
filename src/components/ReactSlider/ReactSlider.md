@@ -114,9 +114,9 @@ Track changes with `onBeforeChange`, `onChange`, and `onAfterChange` event handl
     className="horizontal-slider"
     thumbClassName="example-thumb"
     trackClassName="example-track"
-    onBeforeChange={val => console.log('onBeforeChange value:', val)}
-    onChange={val => console.log('onChange value:', val)}
-    onAfterChange={val => console.log('onAfterChange value:', val)}
+    onBeforeChange={(value, index) => console.log(`onBeforeChange: ${JSON.stringify({ value, index })}`)}
+    onChange={(value, index) => console.log(`onChange: ${JSON.stringify({ value, index })}`)}
+    onAfterChange={(value, index) => console.log(`onAfterChange: ${JSON.stringify({ value, index })}`)}
     renderThumb={(props, state) => <div {...props}>{state.valueNow}</div>}
 />
 ```
@@ -128,9 +128,9 @@ const [value, setValue] = React.useState([25, 50]);
 
 <ReactSlider
     value={value}
-    onBeforeChange={val => console.log('onBeforeChange value:', val)}
-    onChange={val => { console.log('onChange value:', val); setValue(val); }}
-    onAfterChange={val => console.log('onAfterChange value:', val)}
+    onBeforeChange={(value, index) => console.log(`onBeforeChange: ${JSON.stringify({ value, index })}`)}
+    onChange={(value, index) => console.log(`onChange: ${JSON.stringify({ value, index })}`)}
+    onAfterChange={(value, index) => console.log(`onAfterChange: ${JSON.stringify({ value, index })}`)}
     className="horizontal-slider"
     thumbClassName="example-thumb"
     trackClassName="example-track"
