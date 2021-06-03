@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.3.0](https://github.com/zillow/react-slider/compare/v1.2.0...v1.3.0) (2021-06-03)
+
+
+### Features
+
+* add thumb index to on change events ([f0c9684](https://github.com/zillow/react-slider/commit/f0c9684da65ba0c0dd0774f9f978a644aa436280)), closes [#212](https://github.com/zillow/react-slider/issues/212)
+
 ## [1.2.0](https://github.com/zillow/react-slider/compare/v1.1.4...v1.2.0) (2021-05-18)
 
 
