@@ -231,7 +231,7 @@ class ReactSlider extends React.Component {
 
         /**
          * Callback called on every value change.
-         * The function will be called with two arguments, the first being the new value(s) 
+         * The function will be called with two arguments, the first being the new value(s)
          * the second being thumb index.
          */
         // eslint-disable-next-line max-len
