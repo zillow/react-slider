@@ -489,7 +489,7 @@ class ReactSlider extends React.Component {
     };
 
     onKeyDown = e => {
-        if (e.ctrlKey || e.shiftKey || e.altKey) {
+        if (e.ctrlKey || e.shiftKey || e.altKey || e.metaKey) {
             return;
         }
 
