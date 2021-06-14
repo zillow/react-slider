@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.3.1](https://github.com/zillow/react-slider/compare/v1.3.0...v1.3.1) (2021-06-14)
+
+
+### Bug Fixes
+
+* ignore meta key events in keyDown handler ([cde4c80](https://github.com/zillow/react-slider/commit/cde4c8069bb95cd0a70e52693df533787658b418))
+
 ## [1.3.0](https://github.com/zillow/react-slider/compare/v1.2.0...v1.3.0) (2021-06-03)
 
 
