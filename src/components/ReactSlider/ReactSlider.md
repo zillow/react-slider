@@ -115,8 +115,8 @@ Track changes with `onBeforeChange`, `onChange`, and `onAfterChange` event handl
     thumbClassName="example-thumb"
     trackClassName="example-track"
     onBeforeChange={(value, index) => console.log(`onBeforeChange: ${JSON.stringify({ value, index })}`)}
-    onChange={(value, index) => console.log(`onChange: ${JSON.stringify({ value, index })}`)}
-    onAfterChange={(value, index) => console.log(`onAfterChange: ${JSON.stringify({ value, index })}`)}
+    onChange={(value, index, pushed) => console.log(`onChange: ${JSON.stringify({ value, index, pushed })}`)}
+    onAfterChange={(value, index, pushed) => console.log(`onAfterChange: ${JSON.stringify({ value, index, pushed })}`)}
     renderThumb={(props, state) => <div {...props}>{state.valueNow}</div>}
 />
 ```
@@ -129,12 +129,32 @@ const [value, setValue] = React.useState([25, 50]);
 <ReactSlider
     value={value}
     onBeforeChange={(value, index) => console.log(`onBeforeChange: ${JSON.stringify({ value, index })}`)}
-    onChange={(value, index) => console.log(`onChange: ${JSON.stringify({ value, index })}`)}
-    onAfterChange={(value, index) => console.log(`onAfterChange: ${JSON.stringify({ value, index })}`)}
+    onChange={(value, index, pushed) => {
+        setValue(value);
+        console.log(`onChange: ${JSON.stringify({ value, index, pushed })}`);
+    }}
+    onAfterChange={(value, index, pushed) => console.log(`onAfterChange: ${JSON.stringify({ value, index, pushed })}`)}
     className="horizontal-slider"
     thumbClassName="example-thumb"
     trackClassName="example-track"
     renderThumb={(props, state) => <div {...props}>{state.valueNow}</div>}
+    pearling
+/>
+```
+
+`onChange` and `onAfterChange` can tell you which thumbs are being or have been pushed by the current thumb due to pearling.
+
+```jsx
+<ReactSlider
+    className="horizontal-slider"
+    thumbClassName="example-thumb"
+    trackClassName="example-track"
+    defaultValue={[25, 50, 75]}
+    onChange={(value, index, pushed) => console.log(`onChange: ${JSON.stringify({ value, index, pushed })}`)}
+    onAfterChange={(value, index, pushed) => console.log(`onAfterChange: ${JSON.stringify({ value, index, pushed })}`)}
+    renderThumb={(props, state) => <div {...props}>{state.valueNow}</div>}
+    pearling
+    minDistance={10}
 />
 ```
 

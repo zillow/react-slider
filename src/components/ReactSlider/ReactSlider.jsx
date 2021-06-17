@@ -32,6 +32,15 @@ function prepareOutValue(x) {
     return x !== null && x.length === 1 ? x[0] : x.slice();
 }
 
+function prepareOutPushed(thumbsPushed) {
+    return thumbsPushed.reduce((acc, pushed, index) => {
+        if (pushed) {
+            acc.push(index);
+        }
+        return acc;
+    }, []);
+}
+
 function trimSucceeding(length, nextValue, minDistance, max) {
     for (let i = 0; i < length; i += 1) {
         const padding = max - i * minDistance;
@@ -223,7 +232,7 @@ class ReactSlider extends React.Component {
         /**
          * Callback called before starting to move a thumb. The callback will only be called if the
          * action will result in a change. The function will be called with two arguments, the first
-         * being the initial value(s) the second being thumb index.
+         * being the initial value(s), the second being the thumb index.
          */
         // eslint-disable-next-line max-len
         // eslint-disable-next-line zillow/react/require-default-props, zillow/react/no-unused-prop-types
@@ -231,8 +240,9 @@ class ReactSlider extends React.Component {
 
         /**
          * Callback called on every value change.
-         * The function will be called with two arguments, the first being the new value(s)
-         * the second being thumb index.
+         * The function will be called with three arguments, the first being the new value(s),
+         * the second being the thumb index, the third being an array with the indices of the thumbs
+         * that have been newly pushed due to pearling (if any).
          */
         // eslint-disable-next-line max-len
         // eslint-disable-next-line zillow/react/require-default-props, zillow/react/no-unused-prop-types
@@ -240,8 +250,10 @@ class ReactSlider extends React.Component {
 
         /**
          * Callback called only after moving a thumb has ended. The callback will only be called if
-         * the action resulted in a change. The function will be called with two arguments, the
-         * first being the result value(s) the second being thumb index.
+         * the action resulted in a change. The function will be called with three arguments, the
+         * first being the result value(s), the second being the thumb index, the third being
+         * an array with the indices of all the thumbs that have been pushed
+         * due to pearling (if any).
          */
         // eslint-disable-next-line max-len
         // eslint-disable-next-line zillow/react/require-default-props, zillow/react/no-unused-prop-types
@@ -378,6 +390,7 @@ class ReactSlider extends React.Component {
             sliderLength: 0,
             value,
             zIndices,
+            thumbsPushed: value.map(() => false),
         };
     }
 
@@ -442,11 +455,14 @@ class ReactSlider extends React.Component {
             removeHandlers(eventMap);
         }
         if (this.hasMoved) {
-            this.fireChangeEvent('onAfterChange');
+            this.fireChangeEvent('onAfterChange', this.state.thumbsPushed);
         }
 
         // Allow controlled updates to continue
-        this.setState({ pending: false });
+        this.setState(prevState => ({
+            pending: false,
+            thumbsPushed: prevState.value.map(() => false),
+        }));
 
         this.hasMoved = false;
     }
@@ -785,7 +801,8 @@ class ReactSlider extends React.Component {
         this.hasMoved = true;
         this.setState({ value }, () => {
             callback(closestIndex);
-            this.fireChangeEvent('onChange');
+            // no pushed thumbs
+            this.fireChangeEvent('onChange', []);
         });
     }
 
@@ -868,14 +885,15 @@ class ReactSlider extends React.Component {
         }
 
         value[index] = newValue;
+        const newlyPushed = value.map(() => false);
 
         // if "pearling" is enabled, let the current thumb push the pre- and succeeding thumbs.
         if (pearling && length > 1) {
             if (newValue > oldValue) {
-                this.pushSucceeding(value, minDistance, index);
+                this.pushSucceeding(value, newlyPushed, minDistance, index);
                 trimSucceeding(length, value, minDistance, max);
             } else if (newValue < oldValue) {
-                this.pushPreceding(value, minDistance, index);
+                this.pushPreceding(value, newlyPushed, minDistance, index);
                 trimPreceding(length, value, minDistance, min);
             }
         }
@@ -883,10 +901,14 @@ class ReactSlider extends React.Component {
         // Normally you would use `shouldComponentUpdate`,
         // but since the slider is a low-level component,
         // the extra complexity might be worth the extra performance.
-        this.setState({ value }, this.fireChangeEvent.bind(this, 'onChange'));
+        this.setState(prevState => {
+            // Update array of pushed thumbs indices for `onAfterChange` event
+            const thumbsPushed = prevState.thumbsPushed.map((p, i) => p || newlyPushed[i]);
+            return { value, thumbsPushed };
+        }, this.fireChangeEvent.bind(this, 'onChange', newlyPushed));
     }
 
-    pushSucceeding(value, minDistance, index) {
+    pushSucceeding(value, pushed, minDistance, index) {
         let i;
         let padding;
         for (
@@ -896,10 +918,12 @@ class ReactSlider extends React.Component {
         ) {
             // eslint-disable-next-line no-param-reassign
             value[i + 1] = alignValue(padding, this.props);
+            // eslint-disable-next-line no-param-reassign
+            pushed[i + 1] = true;
         }
     }
 
-    pushPreceding(value, minDistance, index) {
+    pushPreceding(value, pushed, minDistance, index) {
         for (
             let i = index, padding = value[i] - minDistance;
             value[i - 1] !== null && padding < value[i - 1];
@@ -907,6 +931,8 @@ class ReactSlider extends React.Component {
         ) {
             // eslint-disable-next-line no-param-reassign
             value[i - 1] = alignValue(padding, this.props);
+            // eslint-disable-next-line no-param-reassign
+            pushed[i - 1] = true;
         }
     }
 
@@ -950,9 +976,14 @@ class ReactSlider extends React.Component {
         return 'clientWidth';
     }
 
-    fireChangeEvent(event) {
+    fireChangeEvent(event, thumbsPushed) {
+        const args = [prepareOutValue(this.state.value), this.state.index];
+        if (event !== 'onBeforeChange') {
+            args.push(prepareOutPushed(thumbsPushed));
+        }
+
         if (this.props[event]) {
-            this.props[event](prepareOutValue(this.state.value), this.state.index);
+            this.props[event](...args);
         }
     }
 
