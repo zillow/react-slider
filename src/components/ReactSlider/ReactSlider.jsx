@@ -396,7 +396,7 @@ class ReactSlider extends React.Component {
             return null;
         }
 
-        // Do not allow controlled upates to happen while we have pending updates
+        // Do not allow controlled updates to happen while we have pending updates
         if (state.pending) {
             return null;
         }
@@ -466,7 +466,7 @@ class ReactSlider extends React.Component {
             return;
         }
 
-        // Prevent controlled updates from happending while touch is moving
+        // Prevent controlled updates from happening while touch is moving
         this.setState({ pending: true });
 
         const position = this.getTouchPosition(e);
@@ -652,7 +652,7 @@ class ReactSlider extends React.Component {
             return;
         }
 
-        // Prevent controlled updates from happending while mouse is moving
+        // Prevent controlled updates from happening while mouse is moving
         this.setState({ pending: true });
 
         const position = this.getMousePosition(e);
@@ -667,7 +667,7 @@ class ReactSlider extends React.Component {
             return;
         }
 
-        // Prevent controlled updates from happending while touch is moving
+        // Prevent controlled updates from happening while touch is moving
         this.setState({ pending: true });
 
         const position = this.getTouchPosition(e);
