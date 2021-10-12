@@ -255,6 +255,24 @@ class ReactSlider extends React.Component {
         onSliderClick: PropTypes.func,
 
         /**
+         * Labels for each thumb.
+         * Used to render different thumbs, adding customization possibilities.
+         * Use an array for more than one thumb.
+         * The length of the array must match the number of thumbs in the value array.
+         */
+        // eslint-disable-next-line zillow/react/require-default-props
+        dataLabel: PropTypes.oneOfType([PropTypes.string, PropTypes.arrayOf(PropTypes.string)]),
+
+        /**
+         * Labels for each mark.
+         * Used to render different marks, adding customization possibilities.
+         * Use an array for more than one mark.
+         * The length of the array must match the number of marks in the value array.
+         */
+        // eslint-disable-next-line zillow/react/require-default-props
+        markLabel: PropTypes.oneOfType([PropTypes.string, PropTypes.arrayOf(PropTypes.string)]),
+
+        /**
          * aria-label for screen-readers to apply to the thumbs.
          * Use an array for more than one thumb.
          * The length of the array must match the number of thumbs in the value array.
@@ -1001,6 +1019,9 @@ class ReactSlider extends React.Component {
             'onFocus': this.createOnKeyDown(i),
             'tabIndex': 0,
             'role': 'slider',
+            'data-label': Array.isArray(this.props.dataLabel)
+                ? this.props.dataLabel[i]
+                : this.props.dataLabel,
             'aria-orientation': this.props.orientation,
             'aria-valuenow': this.state.value[i],
             'aria-valuemin': this.props.min,
@@ -1088,13 +1109,16 @@ class ReactSlider extends React.Component {
         return marks
             .map(parseFloat)
             .sort((a, b) => a - b)
-            .map(mark => {
+            .map((mark, i) => {
                 const offset = this.calcOffset(mark);
 
                 const props = {
-                    key: mark,
-                    className: this.props.markClassName,
-                    style: this.buildMarkStyle(offset),
+                    'key': mark,
+                    'className': this.props.markClassName,
+                    'style': this.buildMarkStyle(offset),
+                    'data-mark-label': Array.isArray(this.props.markLabel)
+                        ? this.props.markLabel[i]
+                        : this.props.markLabel,
                 };
 
                 return this.props.renderMark(props);
