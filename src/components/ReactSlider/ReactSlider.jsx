@@ -1011,6 +1011,7 @@ class ReactSlider extends React.Component {
             'aria-labelledby': Array.isArray(this.props.ariaLabelledby)
                 ? this.props.ariaLabelledby[i]
                 : this.props.ariaLabelledby,
+            'disabled': this.props.disabled
         };
 
         const state = {
@@ -1049,6 +1050,7 @@ class ReactSlider extends React.Component {
             key: `${this.props.trackClassName}-${i}`,
             className: `${this.props.trackClassName} ${this.props.trackClassName}-${i}`,
             style: this.buildTrackStyle(offsetFrom, this.state.upperBound - offsetTo),
+            'disabled': this.props.disabled
         };
         const state = {
             index: i,
@@ -1095,6 +1097,7 @@ class ReactSlider extends React.Component {
                     key: mark,
                     className: this.props.markClassName,
                     style: this.buildMarkStyle(offset),
+                    'disabled': this.props.disabled
                 };
 
                 return this.props.renderMark(props);
