@@ -38,10 +38,11 @@
       "pre-commit": "npm run eslint && npm run test"
     }
   },
-  "dependencies": {},
+  "dependencies": {
+    "prop-types": "^15.7.2"
+  },
   "peerDependencies": {
-    "react": "^16 || ^17",
-    "prop-types": "^15.6"
+    "react": "^16 || ^17"
   },
   "devDependencies": {
     "babel-plugin-styled-components": "^1.12.0",
@@ -52,7 +53,6 @@
     "gh-pages": "^3.1.0",
     "husky": "^4.3.8",
     "jest-styled-components": "^7.0.3",
-    "prop-types": "^15.7.2",
     "react": "^17.0.1",
     "react-dom": "^17.0.1",
     "react-test-renderer": "^17.0.1",
