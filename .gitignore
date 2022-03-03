@@ -1,6 +1,5 @@
 /coverage
-/es
-/lib
+/dist
 /styleguide
 node_modules
 .idea
