@@ -177,8 +177,7 @@ const Track = (props, state) => <StyledTrack {...props} index={state.index} />;
 />
 ```
 
-In some case you may need to programatically tell the slider to resize, for example if the parent container is resizing independently of the window.
-Set a [ref](https://reactjs.org/docs/refs-and-the-dom.html) on the slider component, and call `resize`.
+In some case you may need to programmatically tell the slider to resize, for example if the parent container is resizing independently of the window. Since `v2.0.0` this is handled internally by `ResizeObserver`.
 
 ```jsx
 import styled from 'styled-components';
@@ -218,35 +217,15 @@ const StyledContainer = styled.div`
     padding-right: 8px;
 `;
 
-const ResizableSlider = () => {
-    const containerRef = React.useRef();
-    const sliderRef = React.useRef();
-    React.useEffect(() => {
-        if (typeof ResizeObserver === 'undefined') {
-            return;
-        }
-
-        const resizeObserver = new ResizeObserver(() => {
-            sliderRef.current.resize();
-        });
-        resizeObserver.observe(containerRef.current);
-
-        return () => {
-            resizeObserver.unobserve(containerRef.current);
-        };
-    });
-
-    return (
-        <StyledContainer ref={containerRef}>
-            <StyledSlider
-                ref={sliderRef}
-                defaultValue={[50, 75]}
-                renderTrack={Track}
-                renderThumb={Thumb}
-            />
-        </StyledContainer>
-    );
-};
+const ResizableSlider = () => (
+    <StyledContainer>
+        <StyledSlider
+            defaultValue={[50, 75]}
+            renderTrack={Track}
+            renderThumb={Thumb}
+        />
+    </StyledContainer>
+);
 
 <ResizableSlider />
 ```

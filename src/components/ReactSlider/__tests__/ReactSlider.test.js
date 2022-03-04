@@ -2,6 +2,14 @@ import React from 'react';
 import renderer from 'react-test-renderer';
 import ReactSlider from '../ReactSlider';
 
+window.ResizeObserver =
+    window.ResizeObserver ||
+    jest.fn().mockImplementation(() => ({
+        disconnect: jest.fn(),
+        observe: jest.fn(),
+        unobserve: jest.fn(),
+    }));
+
 describe('<ReactSlider>', () => {
     it('can render', () => {
         const tree = renderer.create(<ReactSlider />).toJSON();
