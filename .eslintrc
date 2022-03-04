@@ -1,6 +1,6 @@
 {
-  "extends": ["plugin:zillow/recommended", "plugin:zillow/jest"],
-  "env": {
-    "browser": true
-  }
+    "extends": ["plugin:zillow/recommended", "plugin:zillow/jest"],
+    "env": {
+        "browser": true
+    }
 }

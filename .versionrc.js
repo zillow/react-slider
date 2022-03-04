@@ -13,6 +13,6 @@ module.exports = {
         { type: 'refactor', section: 'Code Refactoring' },
         { type: 'test', section: 'Tests' },
         { type: 'build', section: 'Build System' },
-        { type: 'ci', section: 'Continuous Integration' }
-    ]
+        { type: 'ci', section: 'Continuous Integration' },
+    ],
 };
