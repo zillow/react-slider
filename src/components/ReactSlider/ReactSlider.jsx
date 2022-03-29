@@ -372,6 +372,9 @@ class ReactSlider extends React.Component {
             zIndices.push(i);
         }
 
+        this.resizeObserver = null;
+        this.resizeElementRef = React.createRef();
+
         this.state = {
             index: -1,
             upperBound: 0,
@@ -383,7 +386,8 @@ class ReactSlider extends React.Component {
 
     componentDidMount() {
         if (typeof window !== 'undefined') {
-            window.addEventListener('resize', this.handleResize);
+            this.resizeObserver = new ResizeObserver(this.handleResize);
+            this.resizeObserver.observe(this.resizeElementRef.current);
             this.resize();
         }
     }
@@ -416,8 +420,8 @@ class ReactSlider extends React.Component {
 
     componentWillUnmount() {
         this.clearPendingResizeTimeouts();
-        if (typeof window !== 'undefined') {
-            window.removeEventListener('resize', this.handleResize);
+        if (this.resizeObserver) {
+            this.resizeObserver.disconnect();
         }
     }
 
@@ -1118,6 +1122,7 @@ class ReactSlider extends React.Component {
             {
                 ref: r => {
                     this.slider = r;
+                    this.resizeElementRef.current = r;
                 },
                 style: { position: 'relative' },
                 className: this.props.className + (this.props.disabled ? ' disabled' : ''),

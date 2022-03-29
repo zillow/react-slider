@@ -114,9 +114,13 @@ Track changes with `onBeforeChange`, `onChange`, and `onAfterChange` event handl
     className="horizontal-slider"
     thumbClassName="example-thumb"
     trackClassName="example-track"
-    onBeforeChange={(value, index) => console.log(`onBeforeChange: ${JSON.stringify({ value, index })}`)}
+    onBeforeChange={(value, index) =>
+        console.log(`onBeforeChange: ${JSON.stringify({ value, index })}`)
+    }
     onChange={(value, index) => console.log(`onChange: ${JSON.stringify({ value, index })}`)}
-    onAfterChange={(value, index) => console.log(`onAfterChange: ${JSON.stringify({ value, index })}`)}
+    onAfterChange={(value, index) =>
+        console.log(`onAfterChange: ${JSON.stringify({ value, index })}`)
+    }
     renderThumb={(props, state) => <div {...props}>{state.valueNow}</div>}
 />
 ```
@@ -128,14 +132,18 @@ const [value, setValue] = React.useState([25, 50]);
 
 <ReactSlider
     value={value}
-    onBeforeChange={(value, index) => console.log(`onBeforeChange: ${JSON.stringify({ value, index })}`)}
+    onBeforeChange={(value, index) =>
+        console.log(`onBeforeChange: ${JSON.stringify({ value, index })}`)
+    }
     onChange={(value, index) => console.log(`onChange: ${JSON.stringify({ value, index })}`)}
-    onAfterChange={(value, index) => console.log(`onAfterChange: ${JSON.stringify({ value, index })}`)}
+    onAfterChange={(value, index) =>
+        console.log(`onAfterChange: ${JSON.stringify({ value, index })}`)
+    }
     className="horizontal-slider"
     thumbClassName="example-thumb"
     trackClassName="example-track"
     renderThumb={(props, state) => <div {...props}>{state.valueNow}</div>}
-/>
+/>;
 ```
 
 Custom styling using [styled-components](https://www.styled-components.com/)
@@ -164,21 +172,16 @@ const Thumb = (props, state) => <StyledThumb {...props}>{state.valueNow}</Styled
 const StyledTrack = styled.div`
     top: 0;
     bottom: 0;
-    background: ${props => props.index === 2 ? '#f00' : props.index === 1 ? '#0f0' : '#ddd'};
+    background: ${props => (props.index === 2 ? '#f00' : props.index === 1 ? '#0f0' : '#ddd')};
     border-radius: 999px;
 `;
 
 const Track = (props, state) => <StyledTrack {...props} index={state.index} />;
 
-<StyledSlider
-    defaultValue={[50, 75]}
-    renderTrack={Track}
-    renderThumb={Thumb}
-/>
+<StyledSlider defaultValue={[50, 75]} renderTrack={Track} renderThumb={Thumb} />;
 ```
 
-In some case you may need to programatically tell the slider to resize, for example if the parent container is resizing independently of the window.
-Set a [ref](https://reactjs.org/docs/refs-and-the-dom.html) on the slider component, and call `resize`.
+In some case you may need to programmatically tell the slider to resize, for example if the parent container is resizing independently of the window. Since `v2.0.0` this is handled internally by `ResizeObserver`.
 
 ```jsx
 import styled from 'styled-components';
@@ -218,46 +221,20 @@ const StyledContainer = styled.div`
     padding-right: 8px;
 `;
 
-const ResizableSlider = () => {
-    const containerRef = React.useRef();
-    const sliderRef = React.useRef();
-    React.useEffect(() => {
-        if (typeof ResizeObserver === 'undefined') {
-            return;
-        }
+const ResizableSlider = () => (
+    <StyledContainer>
+        <StyledSlider defaultValue={[50, 75]} renderTrack={Track} renderThumb={Thumb} />
+    </StyledContainer>
+);
 
-        const resizeObserver = new ResizeObserver(() => {
-            sliderRef.current.resize();
-        });
-        resizeObserver.observe(containerRef.current);
-
-        return () => {
-            resizeObserver.unobserve(containerRef.current);
-        };
-    });
-
-    return (
-        <StyledContainer ref={containerRef}>
-            <StyledSlider
-                ref={sliderRef}
-                defaultValue={[50, 75]}
-                renderTrack={Track}
-                renderThumb={Thumb}
-            />
-        </StyledContainer>
-    );
-};
-
-<ResizableSlider />
+<ResizableSlider />;
 ```
 
 Single slider, applying `ariaLabelledby` to establish association with a label
 
 ```jsx
 <div>
-    <label id="slider-label">
-        React Slider example
-    </label>
+    <label id="slider-label">React Slider example</label>
     <ReactSlider
         ariaLabelledby="slider-label"
         className="horizontal-slider"
@@ -272,12 +249,8 @@ Double slider, applying `ariaLabelledby` as an array to multiple thumb labels
 
 ```jsx
 <div>
-    <label id="first-slider-label">
-        Start slider label
-    </label>
-    <label id="second-slider-label">
-        End slider label
-    </label>
+    <label id="first-slider-label">Start slider label</label>
+    <label id="second-slider-label">End slider label</label>
     <ReactSlider
         className="horizontal-slider"
         thumbClassName="example-thumb"
@@ -290,3 +263,4 @@ Double slider, applying `ariaLabelledby` as an array to multiple thumb labels
         minDistance={10}
     />
 </div>
+```
