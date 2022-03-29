@@ -2,6 +2,24 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.0.0](https://github.com/zillow/react-slider/compare/v1.3.1...v2.0.0) (2022-03-29)
+
+
+### ⚠ BREAKING CHANGES
+
+* update `create-react-styleguide` to 8x
+
+### Features
+
+* add ResizeObserver to handle slider resize programatically ([95bd172](https://github.com/zillow/react-slider/commit/95bd1720f79896ebf3d78a66af1f31ebb9fc58af))
+* provide root export ([7b0c97d](https://github.com/zillow/react-slider/commit/7b0c97d4ab8be21f66c66ae7dbd08f7d9fa5805c))
+* upgrade husky and add conventional commit ([caf8246](https://github.com/zillow/react-slider/commit/caf824641eb03e8dd19a1ae09dc4e72f30d928e7))
+
+
+### Build System
+
+* update `create-react-styleguide` to 8x ([d1cbe4e](https://github.com/zillow/react-slider/commit/d1cbe4ec3930e8eb06c0e23da8558d5c1d178c35))
+
 ### [1.3.1](https://github.com/zillow/react-slider/compare/v1.3.0...v1.3.1) (2021-06-14)
 
 
