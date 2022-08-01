@@ -1015,6 +1015,7 @@ class ReactSlider extends React.Component {
             'aria-labelledby': Array.isArray(this.props.ariaLabelledby)
                 ? this.props.ariaLabelledby[i]
                 : this.props.ariaLabelledby,
+            'aria-disabled': this.props.disabled,
         };
 
         const state = {
