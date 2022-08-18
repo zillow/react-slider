@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [2.0.2](https://github.com/zillow/react-slider/compare/v2.0.1...v2.0.2) (2022-08-18)
+
+
+### Bug Fixes
+
+* dual package extensions ([ef1cb1e](https://github.com/zillow/react-slider/commit/ef1cb1e8ac130362366dc9cbeb1bc96ac7b9cd3b))
+
 ### [2.0.1](https://github.com/zillow/react-slider/compare/v2.0.0...v2.0.1) (2022-05-16)
 
 ## [2.0.0](https://github.com/zillow/react-slider/compare/v1.3.1...v2.0.0) (2022-03-29)
