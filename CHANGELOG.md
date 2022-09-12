@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [2.0.4](https://github.com/zillow/react-slider/compare/v2.0.3...v2.0.4) (2022-09-12)
+
+
+### Bug Fixes
+
+* module resolution ([2fbdec6](https://github.com/zillow/react-slider/commit/2fbdec621205105c59174df48e9e5b0298b062ca))
+* Set empty style porperty values to undefined instead of empty string ([9456005](https://github.com/zillow/react-slider/commit/9456005bd258518b74a14e58010b385532ace64d)), closes [#271](https://github.com/zillow/react-slider/issues/271)
+
 ### [2.0.3](https://github.com/zillow/react-slider/compare/v2.0.2...v2.0.3) (2022-08-18)
 
 ### [2.0.2](https://github.com/zillow/react-slider/compare/v2.0.1...v2.0.2) (2022-08-18)
