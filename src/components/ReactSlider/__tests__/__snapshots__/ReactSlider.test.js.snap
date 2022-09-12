@@ -18,7 +18,7 @@ exports[`<ReactSlider> can render 1`] = `
         "left": 0,
         "position": "absolute",
         "right": 0,
-        "willChange": "",
+        "willChange": undefined,
       }
     }
   />
@@ -29,7 +29,7 @@ exports[`<ReactSlider> can render 1`] = `
         "left": 0,
         "position": "absolute",
         "right": 0,
-        "willChange": "",
+        "willChange": undefined,
       }
     }
   />
@@ -48,7 +48,7 @@ exports[`<ReactSlider> can render 1`] = `
         "left": "0px",
         "position": "absolute",
         "touchAction": "none",
-        "willChange": "",
+        "willChange": undefined,
         "zIndex": 1,
       }
     }

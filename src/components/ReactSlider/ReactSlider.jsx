@@ -964,7 +964,7 @@ class ReactSlider extends React.Component {
         const style = {
             position: 'absolute',
             touchAction: 'none',
-            willChange: this.state.index >= 0 ? this.posMinKey() : '',
+            willChange: this.state.index >= 0 ? this.posMinKey() : undefined,
             zIndex: this.state.zIndices.indexOf(i) + 1,
         };
         style[this.posMinKey()] = `${offset}px`;
@@ -974,7 +974,8 @@ class ReactSlider extends React.Component {
     buildTrackStyle(min, max) {
         const obj = {
             position: 'absolute',
-            willChange: this.state.index >= 0 ? `${this.posMinKey()},${this.posMaxKey()}` : '',
+            willChange:
+                this.state.index >= 0 ? `${this.posMinKey()},${this.posMaxKey()}` : undefined,
         };
         obj[this.posMinKey()] = min;
         obj[this.posMaxKey()] = max;
