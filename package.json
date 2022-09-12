@@ -2,8 +2,7 @@
   "name": "react-slider",
   "version": "2.0.3",
   "description": "Slider component for React",
-  "main": "dist/cjs/prod/index.js",
-  "module": "dist/es/prod/index.mjs",
+  "main": "dist/cjs/index.js",
   "exports": {
     ".": {
       "development": {
