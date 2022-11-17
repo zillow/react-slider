@@ -433,7 +433,8 @@ class ReactSlider extends React.Component {
         this.onEnd(this.getMouseEventMap());
     };
 
-    onTouchEnd = () => {
+    onTouchEnd = e => {
+        e.preventDefault();
         this.onEnd(this.getTouchEventMap());
     };
 
