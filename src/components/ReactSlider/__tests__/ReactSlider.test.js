@@ -2,11 +2,6 @@ import React from 'react';
 import renderer from 'react-test-renderer';
 import ReactSlider from '../ReactSlider';
 
-jest.mock('react', () => ({
-    ...jest.requireActual('react'),
-    useState: jest.fn(),
-}));
-
 window.ResizeObserver =
     window.ResizeObserver ||
     jest.fn().mockImplementation(() => ({
