@@ -2,6 +2,11 @@ import React from 'react';
 import renderer from 'react-test-renderer';
 import ReactSlider from '../ReactSlider';
 
+jest.mock('react', () => ({
+    ...jest.requireActual('react'),
+    useState: jest.fn(),
+}));
+
 window.ResizeObserver =
     window.ResizeObserver ||
     jest.fn().mockImplementation(() => ({
@@ -231,6 +236,61 @@ describe('<ReactSlider>', () => {
             expect(onAfterChange.mock.invocationCallOrder[0]).toBeGreaterThan(
                 onChange.mock.invocationCallOrder[1]
             );
+        });
+
+        it('should handle left and right arrow keydown events when the slider is horizontal', async () => {
+            const testRenderer = renderer.create(
+                <ReactSlider min={0} max={10} step={1} thumbClassName="test-thumb" />
+            );
+            const testInstance = testRenderer.root;
+            const thumb = testInstance.findByProps({ className: 'test-thumb test-thumb-0 ' });
+            const { addEventListener } = document;
+
+            // simulate focus on thumb
+            thumb.props.onFocus();
+            expect(addEventListener.mock.calls[0][0]).toBe('keydown');
+            const onKeyDown = addEventListener.mock.calls[0][1];
+
+            onKeyDown({ key: 'ArrowLeft', preventDefault: () => {} });
+            const valueTestOne = testRenderer.toJSON().children[2].props['aria-valuenow'];
+            expect(valueTestOne).toBe(0);
+
+            thumb.props.onFocus();
+            onKeyDown({ key: 'ArrowRight', preventDefault: () => {} });
+            onKeyDown({ key: 'ArrowRight', preventDefault: () => {} });
+
+            const valueTestTwo = testRenderer.toJSON().children[2].props['aria-valuenow'];
+            expect(valueTestTwo).toBe(2);
+        });
+
+        it('should handle left and right arrow keydown events when the slider is horizontal and inverted', async () => {
+            const testRenderer = renderer.create(
+                <ReactSlider invert min={0} max={10} step={1} thumbClassName="test-thumb" />
+            );
+
+            const testInstance = testRenderer.root;
+            const thumb = testInstance.findByProps({ className: 'test-thumb test-thumb-0 ' });
+            const { addEventListener } = document;
+
+            // simulate focus on thumb
+            thumb.props.onFocus();
+
+            expect(addEventListener.mock.calls[0][0]).toBe('keydown');
+
+            const onKeyDown = addEventListener.mock.calls[0][1];
+
+            onKeyDown({ key: 'ArrowLeft', preventDefault: () => {} });
+            onKeyDown({ key: 'ArrowLeft', preventDefault: () => {} });
+            onKeyDown({ key: 'ArrowLeft', preventDefault: () => {} });
+
+            const valueTestOne = testRenderer.toJSON().children[2].props['aria-valuenow'];
+            expect(valueTestOne).toBe(3);
+
+            onKeyDown({ key: 'ArrowRight', preventDefault: () => {} });
+            onKeyDown({ key: 'ArrowRight', preventDefault: () => {} });
+
+            const valueTestTwo = testRenderer.toJSON().children[2].props['aria-valuenow'];
+            expect(valueTestTwo).toBe(1);
         });
     });
 
