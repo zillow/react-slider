@@ -824,14 +824,28 @@ class ReactSlider extends React.Component {
 
     moveUpByStep(step = this.props.step) {
         const oldValue = this.state.value[this.state.index];
-        const newValue = trimAlignValue(oldValue + step, this.props);
-        this.move(Math.min(newValue, this.props.max));
+
+        // if the slider is inverted and horizontal we want to honor the inverted value
+        const newValue =
+            this.props.invert && this.props.orientation === 'horizontal'
+                ? oldValue - step
+                : oldValue + step;
+
+        const trimAlign = trimAlignValue(newValue, this.props);
+        this.move(Math.min(trimAlign, this.props.max));
     }
 
     moveDownByStep(step = this.props.step) {
         const oldValue = this.state.value[this.state.index];
-        const newValue = trimAlignValue(oldValue - step, this.props);
-        this.move(Math.max(newValue, this.props.min));
+
+        // if the slider is inverted and horizontal we want to honor the inverted value
+        const newValue =
+            this.props.invert && this.props.orientation === 'horizontal'
+                ? oldValue + step
+                : oldValue - step;
+
+        const trimAlign = trimAlignValue(newValue, this.props);
+        this.move(Math.max(trimAlign, this.props.min));
     }
 
     move(newValue) {
