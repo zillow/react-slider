@@ -65,7 +65,7 @@
     "create-react-styleguide": "^8.2.3",
     "gh-pages": "^3.2.3",
     "husky": "^8.0.1",
-    "jest-styled-components": "^7.0.8",
+    "jest-styled-components": "^7.1.1",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
     "react-test-renderer": "^17.0.2",
