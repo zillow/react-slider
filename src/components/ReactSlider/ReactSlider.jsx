@@ -433,7 +433,8 @@ class ReactSlider extends React.Component {
         this.onEnd(this.getMouseEventMap());
     };
 
-    onTouchEnd = () => {
+    onTouchEnd = e => {
+        e.preventDefault();
         this.onEnd(this.getTouchEventMap());
     };
 
@@ -849,7 +850,10 @@ class ReactSlider extends React.Component {
     }
 
     move(newValue) {
-        const { index, value } = this.state;
+        // Clone this.state.value since we'll modify it temporarily
+        // eslint-disable-next-line zillow/react/no-access-state-in-setstate
+        const value = this.state.value.slice();
+        const { index } = this.state;
         const { length } = value;
 
         // Short circuit if the value is not changing
