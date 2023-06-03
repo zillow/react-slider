@@ -2,6 +2,30 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [2.0.5](https://github.com/zillow/react-slider/compare/v2.0.4...v2.0.5) (2023-06-03)
+
+
+### Bug Fixes
+
+* prevent snap back issue on mobile ([107e2bb](https://github.com/zillow/react-slider/commit/107e2bbd83fb5823ea803714d6c2262ec28f41ae))
+
+
+### Code Refactoring
+
+* avoid manipulating state directly ([6ca5853](https://github.com/zillow/react-slider/commit/6ca5853341022cfc85e0e114ad893582f29dfb97))
+
+
+### Continuous Integration
+
+* inverted sliders, add simple tests ([9c50f38](https://github.com/zillow/react-slider/commit/9c50f389cc6da91c5eaae78ed61193893a5ad500))
+* inverted sliders, cleanup ([bb0ed77](https://github.com/zillow/react-slider/commit/bb0ed7727ebf80b823b7df7a66ecbe2f28f31898))
+* inverted sliders, honor inverted key down handler for horizontal sliders ([bdb2292](https://github.com/zillow/react-slider/commit/bdb22927cf755deff5cfd43f4375caa90a1e8e68))
+
+
+### Tests
+
+* update snapshot ([4ead745](https://github.com/zillow/react-slider/commit/4ead74593ba68dc4fcaaed01139a4c9466dcb48f))
+
 ### [2.0.4](https://github.com/zillow/react-slider/compare/v2.0.3...v2.0.4) (2022-09-12)
 
 
