@@ -2,27 +2,19 @@
   "name": "react-slider",
   "version": "2.0.6",
   "description": "Slider component for React",
-  "main": "dist/cjs/index.js",
+  "type": "module",
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
   "exports": {
     ".": {
-      "development": {
-        "import": "./dist/es/dev/index.mjs",
-        "require": "./dist/cjs/dev/index.js"
-      },
-      "production": {
-        "import": "./dist/es/prod/index.mjs",
-        "require": "./dist/cjs/prod/index.js"
-      },
-      "default": {
-        "import": "./dist/es/prod/index.mjs",
-        "require": "./dist/cjs/prod/index.js"
-      }
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
     }
   },
-  "sideEffects": false,
   "files": [
     "dist"
   ],
+  "sideEffects": false,
   "keywords": [
     "react-component",
     "react",
@@ -31,46 +23,50 @@
   ],
   "author": "Michał Powaga <michalpowaga13@gmail.com>",
   "scripts": {
-    "build": "create-react-styleguide script build",
-    "build:watch": "create-react-styleguide script build:watch",
-    "build:styleguide": "create-react-styleguide script build:styleguide",
-    "clean": "create-react-styleguide script clean",
-    "eslint": "create-react-styleguide script eslint",
-    "eslint:fix": "create-react-styleguide script eslint:fix",
-    "start": "create-react-styleguide script start",
-    "test": "create-react-styleguide script test",
-    "test:coverage": "create-react-styleguide script test:coverage",
-    "test:update": "create-react-styleguide script test:update",
-    "test:watch": "create-react-styleguide script test:watch",
-    "prepublishOnly": "create-react-styleguide script prepublishOnly",
-    "predeploy": "npm run build:styleguide",
-    "deploy": "gh-pages -d styleguide",
-    "release": "standard-version",
-    "prepare": "husky install"
-  },
-  "husky": {
-    "hooks": {
-      "pre-commit": "npm run eslint && npm run test"
-    }
-  },
-  "dependencies": {
-    "prop-types": "^15.8.1"
+    "build:package": "rm -rf dist && vite build",
+    "build:storybook": "storybook build",
+    "dev:storybook": "storybook dev -p 6006",
+    "format": "prettier . --write --ignore-unknown",
+    "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
+    "prepare": "husky install",
+    "test": "vitest"
   },
   "peerDependencies": {
-    "react": "^16 || ^17 || ^18"
+    "react": "^16.8.0 || ^17.0.0 || ^18.0.0",
+    "react-dom": "^16.8.0 || ^17.0.0 || ^18.0.0"
   },
   "devDependencies": {
-    "@commitlint/cli": "^17.0.3",
-    "@commitlint/config-conventional": "^17.0.3",
-    "create-react-styleguide": "^8.2.3",
-    "gh-pages": "^3.2.3",
-    "husky": "^8.0.1",
-    "jest-styled-components": "^7.1.1",
-    "react": "^17.0.2",
-    "react-dom": "^17.0.2",
-    "react-test-renderer": "^17.0.2",
-    "standard-version": "^9.5.0",
-    "styled-components": "^5.3.5"
+    "@commitlint/cli": "^17.7.1",
+    "@commitlint/config-conventional": "^17.7.0",
+    "@storybook/addon-a11y": "^7.2.3",
+    "@storybook/addon-essentials": "^7.2.3",
+    "@storybook/addon-links": "^7.2.3",
+    "@storybook/blocks": "^7.2.3",
+    "@storybook/react": "^7.2.3",
+    "@storybook/react-vite": "^7.2.3",
+    "@storybook/testing-library": "^0.2.0",
+    "@testing-library/jest-dom": "^6.0.0",
+    "@testing-library/react": "^14.0.0",
+    "@types/react": "^18.2.20",
+    "@types/react-dom": "^18.2.7",
+    "@typescript-eslint/eslint-plugin": "^6.3.0",
+    "@typescript-eslint/parser": "^6.3.0",
+    "@vitejs/plugin-react": "^4.0.4",
+    "eslint": "^8.47.0",
+    "eslint-config-prettier": "^9.0.0",
+    "eslint-plugin-react-hooks": "^4.6.0",
+    "eslint-plugin-react-refresh": "^0.4.3",
+    "eslint-plugin-storybook": "^0.6.13",
+    "eslint-plugin-vitest": "^0.2.8",
+    "husky": "^8.0.0",
+    "lint-staged": "^13.3.0",
+    "prettier": "^2.8.8",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "storybook": "^7.2.3",
+    "typescript": "^5.1.6",
+    "vite": "^4.4.9",
+    "vitest": "^0.34.1"
   },
   "contributors": [
     {
@@ -95,5 +91,6 @@
   "repository": {
     "type": "git",
     "url": "https://github.com/zillow/react-slider.git"
-  }
+  },
+  "packageManager": "pnpm@8.6.7"
 }

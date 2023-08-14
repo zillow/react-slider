@@ -1,3 +1,5 @@
+# Contributing
+
 ## Prerequisites
 
 [Node.js](http://nodejs.org/) >= v4 must be installed.

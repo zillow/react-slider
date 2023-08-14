@@ -1,0 +1,108 @@
+*,
+::before,
+::after {
+  box-sizing: border-box;
+}
+
+html {
+  font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif,
+    'Apple Color Emoji', 'Segoe UI Emoji';
+  line-height: 1.15;
+  -webkit-text-size-adjust: 100%;
+  -moz-tab-size: 4;
+  tab-size: 4;
+}
+
+body {
+  margin: 0;
+}
+
+.react-slider {
+}
+
+.react-slider__track {
+  position: relative;
+  background: #0284c7;
+  border-radius: 999px;
+}
+
+.react-slider__track--1 {
+  background: #cbd5e1;
+}
+
+.react-slider__track--2 {
+  background: #0f0;
+}
+
+.react-slider__thumb {
+  box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: bold;
+  background-color: #334155;
+  color: #ffffff;
+  border: 4px solid #ffffff;
+  cursor: pointer;
+}
+
+.react-slider__thumb--active {
+  background-color: #020617;
+}
+
+.react-slider__mark {
+  width: 8px;
+  height: 8px;
+  background-color: #fff;
+  cursor: pointer;
+  border-radius: 50%;
+  vertical-align: middle;
+}
+
+.react-slider--horizontal {
+  width: 100%;
+  max-width: 500px;
+  height: 50px;
+}
+
+.react-slider--horizontal .react-slider__track {
+  top: 17px;
+  height: 16px;
+}
+
+.react-slider--horizontal .react-slider__thumb {
+  top: 9px;
+  padding-left: 8px;
+  padding-right: 8px;
+  height: 32px;
+  min-width: 32px;
+}
+
+.react-slider--horizontal .react-slider__mark {
+  margin: 0 calc(25px - 6px);
+  bottom: calc(50% - 6px);
+}
+
+.react-slider--vertical {
+  height: 380px;
+  width: 50px;
+}
+
+.react-slider--vertical .react-slider__thumb {
+  left: 1px;
+  width: 48px;
+  line-height: 40px;
+  height: 50px;
+}
+
+.react-slider--vertical .react-slider__track {
+  left: 20px;
+  width: 10px;
+}
+
+.react-slider--vertical .react-slider__mark {
+  margin: calc(25px - 6px) 0;
+  left: calc(50% - 6px);
+}
