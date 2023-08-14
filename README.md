@@ -6,24 +6,24 @@ Accessible, CSS agnostic, slider component for React.
 
 [![react-slider example](react-slider.gif)](https://zillow.github.io/react-slider/)
 
-### Installation
+## Installation
 
 ```sh
 npm install react-slider
 ```
 
-### API Documentation
+## API Documentation
 
 For component props, methods, and living examples, see the demo:
 
 https://zillow.github.io/react-slider/
 
-### TypeScript Support
+## TypeScript Support
 
 ```sh
 npm install --save-dev @types/react-slider
 ```
 
-### License
+## License
 
 See the [License](LICENSE) file.
