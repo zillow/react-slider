@@ -320,4 +320,130 @@ describe('<ReactSlider>', () => {
         expect(mockRenderThumb).toHaveBeenCalledTimes(2);
         expect(mockRenderThumb.mock.calls[1][1].value).toBe(mockSecondValue);
     });
+
+    describe('marks prop', () => {
+        describe('boolean value', () => {
+            it('should not render marks if "false" is passed', () => {
+                const mockRenderMark = jest.fn();
+                renderer.create(
+                    <ReactSlider
+                        value={0}
+                        min={0}
+                        max={100}
+                        marks={false}
+                        renderMark={mockRenderMark}
+                    />
+                );
+
+                expect(mockRenderMark).not.toHaveBeenCalled();
+            });
+
+            it('should render marks if "true" is passed', () => {
+                const mockedMin = 0;
+                const mockedMax = 10;
+                const mockRenderMark = jest.fn();
+                renderer.create(
+                    <ReactSlider
+                        value={0}
+                        min={mockedMin}
+                        max={mockedMax}
+                        marks
+                        renderMark={mockRenderMark}
+                    />
+                );
+
+                expect(mockRenderMark).toHaveBeenCalledTimes(mockedMax + 1);
+                mockRenderMark.mock.calls.forEach(([call], index) => {
+                    expect(call.key).toBe(mockedMin + index);
+                });
+            });
+
+            it('should render marks if "true" is passed and "min" is not 0', () => {
+                const mockedMin = 10;
+                const mockedMax = 20;
+                const mockRenderMark = jest.fn();
+                renderer.create(
+                    <ReactSlider
+                        value={0}
+                        min={mockedMin}
+                        max={mockedMax}
+                        marks
+                        renderMark={mockRenderMark}
+                    />
+                );
+
+                expect(mockRenderMark).toHaveBeenCalledTimes(mockedMax - mockedMin + 1);
+                mockRenderMark.mock.calls.forEach(([call], index) => {
+                    expect(call.key).toBe(mockedMin + index);
+                });
+            });
+        });
+
+        describe('number value', () => {
+            it('should render correct marks', () => {
+                const mockedMin = 0;
+                const mockedMax = 10;
+                const mockedMarks = 2;
+                const mockRenderMark = jest.fn();
+                renderer.create(
+                    <ReactSlider
+                        value={0}
+                        min={mockedMin}
+                        max={mockedMax}
+                        marks={mockedMarks}
+                        renderMark={mockRenderMark}
+                    />
+                );
+
+                expect(mockRenderMark).toHaveBeenCalledTimes(6);
+                mockRenderMark.mock.calls.forEach(([call], index) => {
+                    expect(call.key).toBe(mockedMin + mockedMarks * index);
+                });
+            });
+
+            it('should render correct marks if "min" is not 0', () => {
+                const mockedMin = 10;
+                const mockedMax = 20;
+                const mockedMarks = 2;
+                const mockRenderMark = jest.fn();
+                renderer.create(
+                    <ReactSlider
+                        value={0}
+                        min={mockedMin}
+                        max={mockedMax}
+                        marks={mockedMarks}
+                        renderMark={mockRenderMark}
+                    />
+                );
+
+                expect(mockRenderMark).toHaveBeenCalledTimes(6);
+                mockRenderMark.mock.calls.forEach(([call], index) => {
+                    expect(call.key).toBe(mockedMin + mockedMarks * index);
+                });
+            });
+        });
+
+        describe('array of numbers is passed', () => {
+            it('should render correct marks', () => {
+                const mockedMin = 0;
+                const mockedMax = 10;
+                const mockedMarks = [1, 2, 3, 4, 5];
+                const mockRenderMark = jest.fn();
+                renderer.create(
+                    <ReactSlider
+                        value={0}
+                        min={mockedMin}
+                        max={mockedMax}
+                        marks={mockedMarks}
+                        renderMark={mockRenderMark}
+                    />
+                );
+
+                expect(mockRenderMark).toHaveBeenCalledTimes(mockedMarks.length);
+                mockRenderMark.mock.calls.forEach(([call], index) => {
+                    expect(call.key).toBe(mockedMarks[index]);
+                });
+            });
+        });
+    });
 });
