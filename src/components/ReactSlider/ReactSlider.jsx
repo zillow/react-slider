@@ -788,7 +788,7 @@ class ReactSlider extends React.Component {
 
         this.fireChangeEvent('onBeforeChange');
         this.hasMoved = true;
-        this.setState({ value }, () => {
+        this.setState({ value, index: closestIndex }, () => {
             callback(closestIndex);
             this.fireChangeEvent('onChange');
         });
