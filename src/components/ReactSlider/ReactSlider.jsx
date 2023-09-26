@@ -575,12 +575,20 @@ class ReactSlider extends React.Component {
         return prepareOutValue(this.state.value);
     }
 
-    getClosestIndex(pixelOffset) {
+    getClosestIndex(pixelOffset, nextValue) {
         let minDist = Number.MAX_VALUE;
         let closestIndex = -1;
 
         const { value } = this.state;
         const l = value.length;
+
+        if (new Set(value).size === 1) {
+            if (value[0] > nextValue) {
+                return 0;
+            }
+
+            return value.length - 1;
+        }
 
         for (let i = 0; i < l; i += 1) {
             const offset = this.calcOffset(value[i]);
@@ -771,8 +779,8 @@ class ReactSlider extends React.Component {
     // and calls `callback` with that thumb's index.
     forceValueFromPosition(position, callback) {
         const pixelOffset = this.calcOffsetFromPosition(position);
-        const closestIndex = this.getClosestIndex(pixelOffset);
         const nextValue = trimAlignValue(this.calcValue(pixelOffset), this.props);
+        const closestIndex = this.getClosestIndex(pixelOffset, nextValue);
 
         // Clone this.state.value since we'll modify it temporarily
         // eslint-disable-next-line zillow/react/no-access-state-in-setstate
