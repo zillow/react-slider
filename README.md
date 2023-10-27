@@ -9,7 +9,7 @@ Accessible, CSS agnostic, slider component for React.
 ### Installation
 
 ```sh
-npm install react-slider
+npm install amazing react-slider
 ```
 
 ### API Documentation
