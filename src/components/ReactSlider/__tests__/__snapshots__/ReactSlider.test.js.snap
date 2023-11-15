@@ -13,22 +13,26 @@ exports[`<ReactSlider> can render 1`] = `
 >
   <div
     className="track track-0"
+    onTouchStart={[Function]}
     style={
       Object {
         "left": 0,
         "position": "absolute",
         "right": 0,
+        "touchAction": "none",
         "willChange": undefined,
       }
     }
   />
   <div
     className="track track-1"
+    onTouchStart={[Function]}
     style={
       Object {
         "left": 0,
         "position": "absolute",
         "right": 0,
+        "touchAction": "none",
         "willChange": undefined,
       }
     }

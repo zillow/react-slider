@@ -990,11 +990,12 @@ class ReactSlider extends React.Component {
     }
 
     buildTrackStyle(min, max) {
-        const obj = {
-            position: 'absolute',
-            willChange:
-                this.state.index >= 0 ? `${this.posMinKey()},${this.posMaxKey()}` : undefined,
-        };
+        const /** @type {CSSStyleDeclaration} */ obj = {
+                position: 'absolute',
+                willChange:
+                    this.state.index >= 0 ? `${this.posMinKey()},${this.posMaxKey()}` : undefined,
+                touchAction: 'none',
+            };
         obj[this.posMinKey()] = min;
         obj[this.posMaxKey()] = max;
         return obj;
@@ -1073,6 +1074,16 @@ class ReactSlider extends React.Component {
             key: `${this.props.trackClassName}-${i}`,
             className: `${this.props.trackClassName} ${this.props.trackClassName}-${i}`,
             style: this.buildTrackStyle(offsetFrom, this.state.upperBound - offsetTo),
+            /** @param {TouchEvent} e */
+            onTouchStart: e => {
+                // Set thumb value, fake a mouse click
+                e.pageX = e.touches[0].pageX;
+                e.pageY = e.touches[0].pageY;
+                this.onSliderMouseDown(e);
+
+                // Make track draggable
+                this.createOnTouchStart(i)(e);
+            },
         };
         const state = {
             index: i,
