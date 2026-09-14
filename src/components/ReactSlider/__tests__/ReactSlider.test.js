@@ -11,6 +11,17 @@ window.ResizeObserver =
     }));
 
 describe('<ReactSlider>', () => {
+    const expectRemovedEvents = eventNames => {
+        eventNames.forEach((eventName, index) => {
+            expect(document.removeEventListener).toHaveBeenNthCalledWith(
+                index + 1,
+                eventName,
+                expect.any(Function),
+                false
+            );
+        });
+    };
+
     it('can render', () => {
         const tree = renderer.create(<ReactSlider />).toJSON();
         expect(tree).toMatchSnapshot();
@@ -231,6 +242,65 @@ describe('<ReactSlider>', () => {
             expect(onAfterChange.mock.invocationCallOrder[0]).toBeGreaterThan(
                 onChange.mock.invocationCallOrder[1]
             );
+        });
+
+        it('removes touch handlers when a touch interaction is cancelled', () => {
+            const testRenderer = renderer.create(<ReactSlider thumbClassName="test-thumb" />);
+            const thumb = testRenderer.root.findByProps({ className: 'test-thumb test-thumb-0 ' });
+
+            thumb.props.onTouchStart({
+                touches: [{ pageX: 0, pageY: 0 }],
+                stopPropagation: jest.fn(),
+            });
+
+            expect(document.addEventListener).toHaveBeenCalledTimes(3);
+            const onTouchCancel = document.addEventListener.mock.calls[2][1];
+            onTouchCancel();
+
+            expect(document.removeEventListener).toHaveBeenCalledTimes(3);
+            expectRemovedEvents(['touchmove', 'touchend', 'touchcancel']);
+        });
+
+        it('only prevents default for cancelable touch-end events', () => {
+            const testRenderer = renderer.create(<ReactSlider thumbClassName="test-thumb" />);
+            const thumb = testRenderer.root.findByProps({ className: 'test-thumb test-thumb-0 ' });
+            const preventDefault = jest.fn();
+
+            thumb.props.onTouchStart({
+                touches: [{ pageX: 0, pageY: 0 }],
+                stopPropagation: jest.fn(),
+            });
+
+            const onTouchEnd = document.addEventListener.mock.calls[1][1];
+            onTouchEnd({ cancelable: false, preventDefault });
+
+            expect(preventDefault).not.toHaveBeenCalled();
+            expect(document.removeEventListener).toHaveBeenCalledTimes(3);
+        });
+
+        it('removes active document handlers when unmounted', () => {
+            const testRenderer = renderer.create(<ReactSlider thumbClassName="test-thumb" />);
+            const thumb = testRenderer.root.findByProps({ className: 'test-thumb test-thumb-0 ' });
+
+            thumb.props.onTouchStart({
+                touches: [{ pageX: 0, pageY: 0 }],
+                stopPropagation: jest.fn(),
+            });
+            document.removeEventListener.mockClear();
+
+            testRenderer.unmount();
+
+            expect(document.removeEventListener).toHaveBeenCalledTimes(8);
+            expectRemovedEvents([
+                'mousemove',
+                'mouseup',
+                'touchmove',
+                'touchend',
+                'touchcancel',
+                'keydown',
+                'keyup',
+                'focusout',
+            ]);
         });
 
         it('should handle left and right arrow keydown events when the slider is horizontal', async () => {

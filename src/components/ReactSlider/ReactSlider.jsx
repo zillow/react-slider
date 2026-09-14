@@ -419,6 +419,9 @@ class ReactSlider extends React.Component {
     }
 
     componentWillUnmount() {
+        removeHandlers(this.getMouseEventMap());
+        removeHandlers(this.getTouchEventMap());
+        removeHandlers(this.getKeyDownEventMap());
         this.clearPendingResizeTimeouts();
         if (this.resizeObserver) {
             this.resizeObserver.disconnect();
@@ -434,7 +437,13 @@ class ReactSlider extends React.Component {
     };
 
     onTouchEnd = e => {
-        e.preventDefault();
+        if (e.cancelable) {
+            e.preventDefault();
+        }
+        this.onEnd(this.getTouchEventMap());
+    };
+
+    onTouchCancel = () => {
         this.onEnd(this.getTouchEventMap());
     };
 
@@ -622,6 +631,7 @@ class ReactSlider extends React.Component {
         return {
             touchmove: this.onTouchMove,
             touchend: this.onTouchEnd,
+            touchcancel: this.onTouchCancel,
         };
     }
 
