@@ -447,11 +447,20 @@ class ReactSlider extends React.Component {
             removeHandlers(eventMap);
         }
         if (this.hasMoved) {
-            this.fireChangeEvent('onAfterChange');
+            // Bounds can change while a drag keeps controlled updates pending.
+            this.setState(
+                prevState => ({
+                    value: prevState.value.map(value => trimValue(value, this.props)),
+                }),
+                () => {
+                    this.fireChangeEvent('onAfterChange');
+                    this.setState({ pending: false });
+                }
+            );
+        } else {
+            // Allow controlled updates to continue
+            this.setState({ pending: false });
         }
-
-        // Allow controlled updates to continue
-        this.setState({ pending: false });
 
         this.hasMoved = false;
     }
