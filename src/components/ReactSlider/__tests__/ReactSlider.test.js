@@ -29,6 +29,70 @@ describe('<ReactSlider>', () => {
             });
         });
 
+        it.each([
+            [false, 'mouse', 0, 60, 80, 60, 50],
+            [false, 'touch', 40, 100, 20, 40, 50],
+            [true, 'mouse', 0, 60, 80, 60, 50],
+            [true, 'touch', 40, 100, 20, 40, 50],
+            [false, 'mouse', 0, 60, 80, [20, 60], [20, 50]],
+            [true, 'touch', 0, 60, 80, [20, 60], [20, 50]],
+        ])(
+            'commits current bounds after a drag (controlled: %s, %s)',
+            (controlled, input, min, max, dragged, expected, initial) => {
+                const onAfterChange = jest.fn();
+                const valueProps = controlled ? { value: initial } : { defaultValue: initial };
+                const testRenderer = renderer.create(
+                    <ReactSlider {...valueProps} onAfterChange={onAfterChange} />,
+                    {
+                        createNodeMock: () => ({
+                            clientWidth: 100,
+                            getBoundingClientRect: () => ({ left: 0, right: 100, width: 0 }),
+                            focus: () => {},
+                        }),
+                    }
+                );
+                const index = Array.isArray(initial) ? 1 : 0;
+                const getThumb = () => testRenderer.root.findAllByProps({ role: 'slider' })[index];
+                const thumb = getThumb();
+                const event = {
+                    pageX: 50,
+                    pageY: 0,
+                    preventDefault: () => {},
+                    stopPropagation: () => {},
+                };
+                if (input === 'mouse') {
+                    thumb.props.onMouseDown(event);
+                } else {
+                    thumb.props.onTouchStart({ ...event, touches: [event] });
+                }
+                const move = document.addEventListener.mock.calls.find(
+                    ([name]) => name === `${input}move`
+                )[1];
+                const nextEvent = { ...event, pageX: dragged };
+                move(input === 'mouse' ? nextEvent : { ...event, touches: [nextEvent] });
+                expect(getThumb().props['aria-valuenow']).toBe(dragged);
+
+                testRenderer.update(
+                    <ReactSlider
+                        {...valueProps}
+                        min={min}
+                        max={max}
+                        onAfterChange={onAfterChange}
+                    />
+                );
+                const end = document.addEventListener.mock.calls.find(
+                    ([name]) => name === (input === 'mouse' ? 'mouseup' : 'touchend')
+                )[1];
+                end(event);
+                expect(onAfterChange).toHaveBeenLastCalledWith(expected, index);
+                const finalValue = controlled ? initial : expected;
+                expect(getThumb().props['aria-valuenow']).toBe(
+                    Array.isArray(finalValue) ? finalValue[index] : finalValue
+                );
+                testRenderer.unmount();
+            }
+        );
+
         it('does not call any event handlers if the value does not change', () => {
             const onBeforeChange = jest.fn();
             const onChange = jest.fn();
